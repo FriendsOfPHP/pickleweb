@@ -1,0 +1,11 @@
+{
+	"require": {
+		"slim/slim": "2.*",
+		"twig/twig": "~1.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"PickleWeb\\": ["src/"]
+		}
+	}
+}
