@@ -4,7 +4,7 @@ index for PHP extensions.
 Aims to index PHP, HHVM or other implementations extensions, according 
 to pickle goals.
 
-Nothing done yet, see the issues for the TODOs. We will try to keep uptodate as much as possible. For now only the skeleton has bee created, open early :)
+Nothing done yet, see the issues for the TODOs. We will try to keep uptodate as much as possible. For now only the skeleton has been created, open early :)
 
 Setup:
 composer install
