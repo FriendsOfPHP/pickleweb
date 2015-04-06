@@ -97,7 +97,6 @@ class Twig extends \Slim\View
 						'cache' => '/tmp/twig_cache/',
 						));
 
-			\Twig_Autoloader::register();
 			$this->parserInstance = new \Twig_Environment(
 					$loader,
 					$this->parserOptions
