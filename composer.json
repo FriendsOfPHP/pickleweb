@@ -1,7 +1,9 @@
 {
 	"require": {
 		"slim/slim": "2.*",
-		"twig/twig": "~1.0"
+		"twig/twig": "~1.0",
+		"composer/composer": "~1.0-alpha8",
+		"lusitanian/oauth": "~0.3"
 	},
 	"autoload": {
 		"psr-4": {
