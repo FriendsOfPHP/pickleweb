@@ -1,22 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>{{title}}</title>
+    <title>{{title}}</title>
+
+    <link rel="stylesheet" href="/assets/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/assets/css/pickle.css"/>
 </head>
+
 <body>
-<div id="footer">
-{% if user %}
-<a href="/profile/">Account</a> | <a href="/logout">logout</a>
-{% else%}
-<a href="/login">Login</a>
-{% endif %}
+
+<div class="container">
+    <header class="row">
+        <nav class="pull-right">
+            <ul class="nav nav-pills">
+                <li><a href="/">Home</a></li>
+
+                {% if user %}
+                    <li><a href="/profile/">Account</a></li>
+                    <li><a href="/logout">logout</a></li>
+                {% else%}
+                    <li><a href="/login">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <h3 class="pull-left text-muted">
+            <img src="/assets/img/logo.svg"/>
+        </h3>
+    </header>
+
+    <div class="row">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="row">
+        <p>&copy; Copyright 2015 by <a href="https://github.com/FriendsOfPhp/pickleweb">Pickle</a>.</p>
+    </footer>
 </div>
-<h1>{{title}}</h1>
-<div id="content">{% block content %}{% endblock %}</div>
-<div id="footer">
-	{% block footer %}
-		&copy; Copyright 2015 by <a href="https://github.com/FriendsOfPhp/pickleweb">Pickle</a>.
-	{% endblock %}
-</div>
+
 </body>
 </html>

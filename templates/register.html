@@ -1,9 +1,17 @@
 {% extends "index.html" %}
 
 {% block content %}
-<ul>
-	<li><a href="/login/github?go=go">Github</a></li>
-	<li><a href="/user/register/bitbucket">Bitbucket</a></li>
-	<li><a href="/user/register/google">Google</a></li>
-</ul>
+<div class="row">
+    <div class="col-lg-4 col-lg-offset-4">
+        <h2>Login with...</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="well col-lg-4 col-lg-offset-4">
+        <a href="/login/github?go=go" class="btn btn-default btn-lg btn-block">Github</a>
+        <a href="/user/register/bitbucket" class="btn btn-default btn-lg btn-block">Bitbucket</a>
+        <a href="/user/register/google" class="btn btn-default btn-lg btn-block">Google</a>
+    </div>
+</div>
 {% endblock %}
