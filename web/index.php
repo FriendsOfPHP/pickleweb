@@ -9,18 +9,34 @@ $app = new \Slim\Slim([
 		'view' => new PickleWeb\View\Twig(),
 		'json_path' => __DIR__ . '/json/'
 	]);
-session_start();
-
-$app->get('/', function () use ($app) {
+function get_user_auth()
+{	
+	session_start();
 	$user = isset($_SESSION['user']) ? $_SESSION['user']: false;
-	$app->view()->setData([
-		'title' => 'Pickle Packagist, repository index for PHP, HHVM and co extensions',
-		'user'  => $user
-	]);
-	$app->render('index.html');
+	return $user;
 }
+
+
+$app->get('/', function () use ($app, $user) {
+		$app->view()->setData([
+			'title' => 'Pickle Packagist, repository index for PHP, HHVM and co extensions',
+			'user'  => $user
+		]);
+		$app->render('index.html');
+	}
 );
-$app->get('/account/:name', function ($name) use ($app) {
+
+$app->get('/profile/', function() use ($app) {
+		$user = get_user_auth();
+
+		$app->view()->setData([
+				'title' => 'Profile: ' . $user->nickname,
+				'user' => $user
+			]);
+		$app->render('account.html');
+});
+
+$app->get('/account/(:name)', function ($name="") use ($app, $user) {
 		$jsonPath = $app->config('json_path') . 'users/github/' . $name . '.json';
 		if (file_exists($jsonPath)) {
 			$user = json_decode(file_get_contents($jsonPath), true);
@@ -30,14 +46,6 @@ $app->get('/account/:name', function ($name) use ($app) {
 				'user' => $user
 			]);
 		$app->render('account.html');
-		exit();
-	});
-
-$app->get('/user/register', function () use ($app) {
-		$app->view()->setData([
-				'title' => 'Register', 
-			]);
-		$app->render('register.html');
 		exit();
 	});
 
@@ -66,6 +74,10 @@ $app->get('/login/github', function () use ($app) {
 				}
 			}			
 		}
+		session_start();
+		$_SESSION['user'] = $user;
+		header('Location: /profile/');
+		exit();
 		$app->view()->setData([
 				'title' => 'Register as Github user',
 				'user'  => $user
