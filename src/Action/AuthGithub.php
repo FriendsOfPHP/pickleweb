@@ -42,7 +42,7 @@ class AuthGithub {
 
 		$serviceFactory = new \OAuth\ServiceFactory();
 		$gitHub = $serviceFactory->createService('GitHub', $credentials, $storage, array('user:email', 'read:repo_hook'));
-		
+
 		if ($code) {
 			/* This was a callback request from github, get the token */
 			$token = $gitHub->requestAccessToken($code);
@@ -65,7 +65,7 @@ class AuthGithub {
 			if (!file_exists($jsonPath)) {
 				file_put_contents($jsonPath, json_encode($result, JSON_PRETTY_PRINT));
 			}
-			header('Location: ' . /);
+			header('Location: ' . '/');
 		} else {
 			if (!empty($go) && $go === 'go') {
 				$url = $gitHub->getAuthorizationUri();

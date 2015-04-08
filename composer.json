@@ -3,7 +3,7 @@
 		"slim/slim": "2.*",
 		"twig/twig": "~1.0",
 		"composer/composer": "~1.0-alpha8",
-		"lusitanian/oauth": "~0.3"
+		"league/oauth2-client": "*"
 	},
 	"autoload": {
 		"psr-4": {
