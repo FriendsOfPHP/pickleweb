@@ -3,19 +3,26 @@
 require __DIR__ . '/../vendor/autoload.php';
 use \OAuth\Common\Storage\Session as Session;
 
+function redirect_login() {
+	header('Location: /login');
+	exit();
+}
+
 // use PickleWeb\View\Twig;
+
+session_start();
+$user = isset($_SESSION['user']) ? $_SESSION['user']: false;
 
 $app = new \Slim\Slim([
 		'view' => new PickleWeb\View\Twig(),
 		'json_path' => __DIR__ . '/json/'
 	]);
-function get_user_auth()
-{	
-	session_start();
-	$user = isset($_SESSION['user']) ? $_SESSION['user']: false;
-	return $user;
-}
 
+$app->get('/logout', function () {
+	session_destroy();
+	header('Location: /');
+	exit();
+});
 
 $app->get('/', function () use ($app, $user) {
 		$app->view()->setData([
@@ -26,9 +33,10 @@ $app->get('/', function () use ($app, $user) {
 	}
 );
 
-$app->get('/profile/', function() use ($app) {
-		$user = get_user_auth();
-
+$app->get('/profile/', function() use ($app, $user) {
+		if (!$user){
+			redirect_login();
+		}
 		$app->view()->setData([
 				'title' => 'Profile: ' . $user->nickname,
 				'user' => $user
@@ -74,7 +82,7 @@ $app->get('/login/github', function () use ($app) {
 				}
 			}			
 		}
-		session_start();
+
 		$_SESSION['user'] = $user;
 		header('Location: /profile/');
 		exit();

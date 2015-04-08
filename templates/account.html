@@ -1,0 +1,11 @@
+{% extends "index.html" %}
+
+{% block content %}
+<p>Username: {{ user.nickname }}</p>
+<p>Email: {{ user.email }}</p>
+<li>
+{% for url in user.urls %}
+<ul> <a href="{{ url }}">{{ url }}</a></ul>
+{% endfor %}
+</li>
+{% endblock %}
