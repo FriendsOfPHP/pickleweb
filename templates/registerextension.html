@@ -2,10 +2,15 @@
 
 {% block content %}
 <h1>{{ title }}</h1>
+
 <form id="submit-extension-form" action="/package/register" data-check-url="/package/fetch-info" method="post">
-	<p><label for="package_repository">Repository URL (Git)</label></p>
-	<p><input type="text" name="package_repository" required="required" size="100"></p>
-	<input type="hidden" name="package[_token]" value="{{package.token}}" >
-	<p><input id="submit" type="submit" value="Check"></p>
+    <input type="hidden" name="package[_token]" value="{{package.token}}" >
+
+    <div class="form-group">
+        <label for="package_repository">Repository URL (Git)</label>
+        <input type="text" name="package_repository" required="required" size="100" class="form-control"/>
+    </div>
+
+	<input class="btn btn-primary" type="submit" value="Check">
 </form>
 {% endblock %}
