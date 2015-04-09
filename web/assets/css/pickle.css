@@ -20,3 +20,7 @@ header nav {
 header nav ul {
     padding-top: 30px;
 }
+
+h1 .label {
+    font-size: .3em;
+}
