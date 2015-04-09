@@ -1,5 +1,7 @@
 # PickleWeb
 
+![Pickle Logo](https://raw.githubusercontent.com/FriendsOfPHP/pickle_logo/master/pickle.png)
+
 Lite version of packagist, used for PHP extensions via [Pickle](https://github.com/FriendsOfPhp/pickle) or as a simple
 index for PHP extensions.
 
