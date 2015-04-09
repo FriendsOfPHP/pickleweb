@@ -11,3 +11,12 @@ header h3 {
 header h3 img {
     height: 96px;
 }
+
+header nav {
+    height: 96px;
+    margin-bottom: 10px;
+}
+
+header nav ul {
+    padding-top: 30px;
+}

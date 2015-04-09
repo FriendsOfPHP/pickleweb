@@ -1,52 +1,63 @@
 {% extends "index.html" %}
 
+{% block header %}
+    <div class="jumbotron clearfix">
+        <div class="col-lg-5">
+            <img src="/assets/img/logo.svg" class="img-responsive"/>
+        </div>
+
+        <div class="col-lg-7">
+            <h2>{{title}}</h2>
+
+            <p class="lead">
+                Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo,
+                tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+            </p>
+
+            <p>
+                {% if not user %}
+                    <a class="btn btn-lg btn-default" href="/login">Login</a>
+                {% endif %}
+                <a class="btn btn-lg btn-primary" href="#">Register your extension</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
 {% block content %}
-<div class="jumbotron">
-    <h1>{{title}}</h1>
+    {% include "search.html" %}
 
-    <p class="lead">
-        Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo,
-        tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
-    </p>
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>Trending packages</h2>
+        </div>
 
-    <p>
-        <a class="btn btn-lg btn-success" href="#">Register your extension</a>
-    </p>
-</div>
+        <div class="col-lg-6">
+            <h4>hprose</h4>
+            <p>Hprose is a High Performance Remote Object Service Engine.</p>
+            <p><a href="/package/hprose">View package</a></p>
 
-{% include "search.html" %}
+            <h4>uuid</h4>
+            <p>A wrapper around libuuid from the ext2utils project.</p>
+            <p><a href="/package/uuid">View package</a></p>
 
-<div class="row">
-    <div class="col-lg-12">
-        <h2>Trending packages</h2>
+            <h4>pecl_http</h4>
+            <p>This HTTP extension aims to provide a convenient and powerful set of functionality for one of PHPs major applications.</p>
+            <p><a href="/package/pecl_http">View package</a></p>
+        </div>
+
+        <div class="col-lg-6">
+            <h4>libsodium</h4>
+            <p>A simple, low-level PHP extension for libsodium.</p>
+            <p><a href="/package/libsodium">View package</a></p>
+
+            <h4>APC</h4>
+            <p>APC is a free, open, and robust framework for caching and optimizing PHP intermediate code.</p>
+            <p><a href="/package/APC">View package</a></p>
+
+            <h4>xdebug</h4>
+            <p>The Xdebug extension helps you debugging your script by providing a lot of valuable debug information.</p>
+            <p><a href="/package/xdebug">View package</a></p>
+        </div>
     </div>
-
-    <div class="col-lg-6">
-        <h4>hprose</h4>
-        <p>Hprose is a High Performance Remote Object Service Engine.</p>
-        <p><a href="/package/hprose">View package</a></p>
-
-        <h4>uuid</h4>
-        <p>A wrapper around libuuid from the ext2utils project.</p>
-        <p><a href="/package/uuid">View package</a></p>
-
-        <h4>pecl_http</h4>
-        <p>This HTTP extension aims to provide a convenient and powerful set of functionality for one of PHPs major applications.</p>
-        <p><a href="/package/pecl_http">View package</a></p>
-    </div>
-
-    <div class="col-lg-6">
-        <h4>libsodium</h4>
-        <p>A simple, low-level PHP extension for libsodium.</p>
-        <p><a href="/package/libsodium">View package</a></p>
-
-        <h4>APC</h4>
-        <p>APC is a free, open, and robust framework for caching and optimizing PHP intermediate code.</p>
-        <p><a href="/package/APC">View package</a></p>
-
-        <h4>xdebug</h4>
-        <p>The Xdebug extension helps you debugging your script by providing a lot of valuable debug information.</p>
-        <p><a href="/package/xdebug">View package</a></p>
-    </div>
-</div>
 {% endblock %}

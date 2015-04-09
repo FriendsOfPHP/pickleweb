@@ -1,46 +1,44 @@
 {% extends "index.html" %}
 
-{% block title %}{{ name }}{% endblock %}
-
 {% block content %}
-{% include "search.html" %}
+    {% include "search.html" %}
 
-<h1>{{ name }}</h1>
+    <h1>{{ name }}</h1>
 
-<p class="lead">
-    Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo,
-    tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
-</p>
+    <p class="lead">
+        Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo,
+        tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+    </p>
 
-<ul>
-    <li>Maintainer: <a href="#">{{ name }}@php.net</a></li>
-    <li>homepage: <a href="#">http://{{ name }}.com</a></li>
-    <li>Source: <a href="#">https://github.com/{{ name }}/{{ name }}</a></li>
-    <li>Issues: <a href="#">https://github.com/{{ name }}/{{ name }}/issues</a></li>
-</ul>
+    <ul>
+        <li>Maintainer: <a href="#">{{ name }}@php.net</a></li>
+        <li>homepage: <a href="#">http://{{ name }}.com</a></li>
+        <li>Source: <a href="#">https://github.com/{{ name }}/{{ name }}</a></li>
+        <li>Issues: <a href="#">https://github.com/{{ name }}/{{ name }}/issues</a></li>
+    </ul>
 
-<h2>Versions</h2>
+    <h2>Versions</h2>
 
-<table class="table table-striped">
-    <thead>
-    <tr>
-        <th>Version</th>
-        <th>Date</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>2.3.2</td>
-        <td>2015-03-22</td>
-    </tr>
-    <tr>
-        <td>2.3.1</td>
-        <td>2015-02-24</td>
-    </tr>
-    <tr>
-        <td>2.3.0</td>
-        <td>2015-02-22</td>
-    </tr>
-    </tbody>
-</table>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Version</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>2.3.2</td>
+            <td>2015-03-22</td>
+        </tr>
+        <tr>
+            <td>2.3.1</td>
+            <td>2015-02-24</td>
+        </tr>
+        <tr>
+            <td>2.3.0</td>
+            <td>2015-02-22</td>
+        </tr>
+        </tbody>
+    </table>
 {% endblock %}

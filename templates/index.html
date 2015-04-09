@@ -4,6 +4,7 @@
     <title>{{title}}</title>
 
     <link rel="stylesheet" href="/assets/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/assets/css/font-awesome.css"/>
     <link rel="stylesheet" href="/assets/css/pickle.css"/>
 </head>
 
@@ -11,22 +12,24 @@
 
 <div class="container">
     <header class="row">
-        <nav class="pull-right">
-            <ul class="nav nav-pills">
-                <li><a href="/">Home</a></li>
+        {% block header %}
+            <nav class="pull-right">
+                <ul class="nav nav-pills">
+                    <li><a href="/">Home</a></li>
 
-                {% if user %}
-                    <li><a href="/profile/">Account</a></li>
-                    <li><a href="/logout">logout</a></li>
-                {% else%}
-                    <li><a href="/login">Login</a></li>
-                {% endif %}
-            </ul>
-        </nav>
+                    {% if user %}
+                        <li><a href="/profile/">Account</a></li>
+                        <li><a href="/logout">logout</a></li>
+                    {% else%}
+                        <li><a href="/login">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
 
-        <h3 class="pull-left text-muted">
-            <img src="/assets/img/logo.svg"/>
-        </h3>
+            <h3 class="pull-left">
+                <img src="/assets/img/logo.svg"/>
+            </h3>
+        {% endblock %}
     </header>
 
     <div class="row">
