@@ -1,5 +1,6 @@
 {
 	"require": {
+        "php": ">=5.4.0",
 		"slim/slim": "2.*",
 		"twig/twig": "~1.0",
 		"composer/composer": "~1.0-alpha8",
