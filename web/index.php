@@ -41,7 +41,7 @@ $app->get('/package/register', function () use ($app, $user) {
                 'title' => 'Register a new extension',
                 'user' => $user,
             ]);
-        $app->render('registerextensoion.html');
+        $app->render('registerextension.html');
 	}
 );
 $app->get('/package/:package', function ($package) use ($app, $user) {
