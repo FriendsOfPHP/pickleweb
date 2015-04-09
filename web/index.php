@@ -29,8 +29,16 @@ $app->get('/', function () use ($app, $user) {
 			'title' => 'Pickle Packagist, repository index for PHP, HHVM and co extensions',
 			'user'  => $user
 		]);
-		$app->render('index.html');
+		$app->render('home.html');
 	}
+);
+
+$app->get('/package/:package', function ($package) use ($app, $user) {
+        $app->view()->setData([
+            'name' => $package
+        ]);
+        $app->render('package.html');
+    }
 );
 
 $app->get('/profile/', function() use ($app, $user) {
