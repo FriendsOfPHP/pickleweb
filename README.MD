@@ -19,6 +19,26 @@ We will try to keep up-to-date as much as possible. For now only the skeleton ha
 composer install
 ```
 
+### OAuth
+
+To properly test the application, you will have to login using OAuth and one of the three supported providers. To do so,
+you will have to create a test application. For example, on Github:
+
+* Go to [https://github.com/settings/applications](https://github.com/settings/applications)
+* And click on [Register new application](https://github.com/settings/applications/new)
+* Fill in the "Application name" field with a descriptive name, for example "pickleweb-dev"
+* Set the "Homepage URL" to `http://localhost:8080` (this URL depends on the method you chose to run the application, [PHP](#php-built-in-server) or [Docker](#docker))
+* Set the "Authorization callback URL" to `http://localhost:8080/login/github` (this URL depends on the method you chose to run the application, [PHP](#php-built-in-server) or [Docker](#docker))
+
+Once done, click on the "Register Application" button to get the client ID and secret for your application. Then, export those values:
+
+```
+export GITHUB_CLIENT_ID=<your-application-client-id>
+export GITHUB_CLIENT_SECRET=<your-application-client-secret>
+```
+
+You are now ready to [run](#running) the Pickle Web application and use authentication.
+
 ## Running
 
 ### PHP built-in server
