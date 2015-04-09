@@ -36,3 +36,7 @@ img.avatar {
 .list-group .badge a {
     color: white;
 }
+
+.no-margin-top {
+    margin-top: 0;
+}
