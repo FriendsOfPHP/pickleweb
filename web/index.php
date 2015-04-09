@@ -33,6 +33,17 @@ $app->get('/', function () use ($app, $user) {
     }
 );
 
+$app->get('/package/register', function () use ($app, $user) {
+        if (!$user) {
+            redirect_login();
+        }
+        $app->view()->setData([
+                'title' => 'Register a new extension',
+                'user' => $user,
+            ]);
+        $app->render('registerextensoion.html');
+	}
+);
 $app->get('/package/:package', function ($package) use ($app, $user) {
         $app->view()->setData([
             'name' => $package,

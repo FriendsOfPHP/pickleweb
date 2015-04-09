@@ -1,0 +1,11 @@
+{% extends "index.html" %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<form id="submit-extension-form" action="/package/register" data-check-url="/package/fetch-info" method="post">
+	<p><label for="package_repository">Repository URL (Git)</label></p>
+	<p><input type="text" name="package_repository" required="required" size="100"></p>
+	<input type="hidden" name="package[_token]" value="{{package.token}}" >
+	<p><input id="submit" type="submit" value="Check"></p>
+</form>
+{% endblock %}
