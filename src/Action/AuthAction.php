@@ -3,6 +3,7 @@
 namespace PickleWeb\Action;
 
 use League\OAuth2\Client\Provider as Provider;
+use PickleWeb\Auth\GithubProvider;
 
 class AuthAction
 {
@@ -13,7 +14,7 @@ class AuthAction
     public function __construct($provider = 'github', \Slim\Slim $app, $url = 'http://127.0.0.1:8080/login/')
     {
         if ($provider == 'github') {
-            $this->provider = new Provider\Github([
+            $this->provider = new GithubProvider([
             'clientId'      => getenv('GITHUB_CLIENT_ID'),
             'clientSecret'  => getenv('GITHUB_CLIENT_SECRET'),
             //'redirectUri'   => $url . '/github',

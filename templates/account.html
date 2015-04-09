@@ -1,11 +1,38 @@
 {% extends "index.html" %}
 
 {% block content %}
-<p>Username: {{ user.nickname }}</p>
-<p>Email: {{ user.email }}</p>
-<li>
-{% for url in user.urls %}
-<ul> <a href="{{ url }}">{{ url }}</a></ul>
-{% endfor %}
-</li>
+<div class="col-lg-3">
+    <img class="image-responsive img-rounded avatar" src="{{ user.imageUrl }}">
+    <h2>
+        {{ user.name }}<br/>
+        <small>{{ user.nickname }}</small>
+    </h2>
+    <p><span class="text-muted"><i class="fa fa-envelope-o"></i></span> {{ user.email }}</p>
+    <p><span class="text-muted"><i class="fa fa-crosshairs"></i></span> {{ user.location }}</p>
+    {% for url in user.urls %}
+        <p><span class="text-muted"><i class="fa fa-link"></i></span> <a href="{{ url }}">{{ url }}</a></p>
+    {% endfor %}
+</div>
+
+<div class="col-lg-9">
+    <h2>Your extensions</h2>
+
+    <ul class="list-group">
+        <li class="list-group-item">
+            <span class="badge"><a href="/package/hprose"><i class="fa fa-arrow-right"></i></a></span>
+            <h3>hprose</h3>
+            <p>Hprose is a High Performance Remote Object Service Engine.</p>
+        </li>
+        <li class="list-group-item">
+            <span class="badge"><a href="/package/uuid"><i class="fa fa-arrow-right"></i></a></span>
+            <h3>uuid</h3>
+            <p>A wrapper around libuuid from the ext2utils project.</p>
+        </li>
+        <li class="list-group-item">
+            <span class="badge"><a href="/package/xdebug"><i class="fa fa-arrow-right"></i></a></span>
+            <h3>xdebug</h3>
+            <p>The Xdebug extension helps you debugging your script by providing a lot of valuable debug information.</p>
+        </li>
+    </ul>
+</div>
 {% endblock %}

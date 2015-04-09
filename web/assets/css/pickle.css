@@ -24,3 +24,15 @@ header nav ul {
 h1 .label {
     font-size: .3em;
 }
+
+img.avatar {
+    width: 100%;
+}
+
+.list-group h3 {
+    margin-top: 0;
+}
+
+.list-group .badge a {
+    color: white;
+}
