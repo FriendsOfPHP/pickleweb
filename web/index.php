@@ -7,7 +7,7 @@ function redirect_login(\Slim\Slim $app) {
 }
 
 function render_error(\Slim\Slim $app, $code) {
-    $app->render($code . '.html');
+    $app->render('errors/' . $code . '.html');
     $app->stop();
 }
 
