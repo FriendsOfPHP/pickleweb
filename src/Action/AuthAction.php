@@ -11,28 +11,27 @@ class AuthAction
 
     protected $app;
 
-    public function __construct($provider = 'github', \Slim\Slim $app, $url = 'http://127.0.0.1:8080/login/')
+    public function __construct($provider = 'github')
     {
         if ($provider == 'github') {
             $this->provider = new GithubProvider([
-            'clientId'      => getenv('GITHUB_CLIENT_ID'),
-            'clientSecret'  => getenv('GITHUB_CLIENT_SECRET'),
-            //'redirectUri'   => $url . '/github',
-            'scopes'        => ['user:email', 'read:repo_hook'],
-        ]);
-            $this->app = $app;
+                    'clientId'      => getenv('GITHUB_CLIENT_ID'),
+                    'clientSecret'  => getenv('GITHUB_CLIENT_SECRET'),
+                    'scopes'        => ['user:email', 'read:repo_hook'],
+                ]
+            );
         } else {
             throw new \InvalidArgumentException('Provider <'.$provider.'> not supported');
         }
     }
 
-    public function getCode()
+    public function getCode(\Slim\Slim $app)
     {
         // If we don't have an authorization code then get one
         $authUrl = $this->provider->getAuthorizationUrl();
         $_SESSION['oauth2state'] = $this->provider->state;
-        header('Location: '.$authUrl);
-        exit;
+
+        $app->redirect($authUrl);
     }
 
     protected function checkState()

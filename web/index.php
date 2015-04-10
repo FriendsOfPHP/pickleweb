@@ -2,132 +2,169 @@
 
 require __DIR__.'/../vendor/autoload.php';
 
-function redirect_login()
-{
-    header('Location: /login');
-    exit();
-}
-
-// use PickleWeb\View\Twig;
-
 session_start();
-$user = isset($_SESSION['user']) ? $_SESSION['user'] : false;
+$user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$app = new \PickleWeb\Application();
 
-$app = new \Slim\Slim([
-        'view' => new PickleWeb\View\Twig(),
-        'json_path' => __DIR__.'/json/',
-    ]);
+$app->get('/logout', function () use ($app) {
+        session_destroy();
 
-$app->get('/logout', function () {
-    session_destroy();
-    header('Location: /');
-    exit();
-});
-
-$app->get('/', function () use ($app, $user) {
-        $app->view()->setData([
-            'title' => 'Pickle Packagist, repository index for PHP, HHVM and co extensions',
-            'user'  => $user,
-        ]);
-        $app->render('home.html');
+        $app->redirect('/');
     }
 );
 
-$app->get('/package/register', function () use ($app, $user) {
-        if (!$user) {
-            redirect_login();
-        }
-        $app->view()->setData([
-                'title' => 'Register a new extension',
-                'user' => $user,
-            ]);
-        $app->render('registerextension.html');
+$app->get('/', function () use ($app, & $user) {
+        $app
+            ->setViewData([
+                    'user'  => $user,
+                ]
+            )
+            ->render('home.html')
+        ;
     }
 );
 
-$app->post('/package/register', function () use ($app, $user) {
-        if (!$user) {
-            redirect_login();
-        }
-        $repositoryUri = $app->request->post('package_repository');
-        $repository = new PickleWeb\Repository\Github($repositoryUri);
-        $info = $repository->getInformation();
-        $app->view()->setData([
-            'title' => 'Register extension ' . $info['name'],
-            'extension' => $info,
-        ]);
-        $app->render('extension_register_info.html');
-
+$app->get('/package/register', function () use ($app, & $user) {
+        $app
+            ->redirectUnless($user, '/login')
+            ->setViewData([
+                    'user' => $user,
+                ]
+            )
+            ->render('registerextension.html')
+        ;
     }
 );
 
-$app->get('/package/:package', function ($package) use ($app, $user) {
-        $app->view()->setData([
-            'name' => $package,
-        ]);
-        $app->render('package.html');
+$app->post('/package/register', function () use ($app, & $user) {
+        $app
+            ->redirectUnless($user, '/login')
+            ->setViewData([
+                    'extension' => (new PickleWeb\Repository\Github($app->request->post('package_repository')))->getInformation(),
+                    'user' => $user,
+                ]
+            )
+            ->render('extension_register_info.html')
+        ;
     }
 );
 
-$app->get('/profile/', function () use ($app, $user) {
-        if (!$user) {
-            redirect_login();
-        }
-        $app->view()->setData([
-                'title' => 'Profile: '.$user->nickname,
-                'user' => $user,
-            ]);
-        $app->render('account.html');
-});
+$app->get('/package/:package', function ($package) use ($app, & $user) {
+        $jsonPath = $app->config('json_path') . 'extensions/' . $package . '.json';
 
-$app->get('/account/(:name)', function ($name = '') use ($app, $user) {
-        $jsonPath = $app->config('json_path').'users/github/'.$name.'.json';
-        if (file_exists($jsonPath)) {
-            $user = json_decode(file_get_contents($jsonPath), true);
-        }
-        $app->view()->setData([
-                'title' => 'Package: '.$name,
-                'user' => $user,
-            ]);
-        $app->render('account.html');
-        exit();
-    });
+        $app
+            ->notFoundIf(file_exists($jsonPath) === false)
+            ->otherwise(function() use (& $package, $jsonPath) {
+                $json = json_decode(file_get_contents($jsonPath), true);
 
-$app->get('/login', function () use ($app) {
-        $app->view()->setData([
-                'title' => 'Login',
-            ]);
-        $app->render('register.html');
-        exit();
-    });
+                array_map(
+                    function($version) {
+                        $version['time'] = new \DateTime($version['time']);
+                    },
+                    $json['packages'][$package]
+                );
 
-$app->get('/login/github', function () use ($app) {
-        $code = $app->request->get('code');
-        $auth = new PickleWeb\Action\AuthAction('github', $app);
-        if (!$code) {
-            $auth->GetCode();
-        } else {
-            $state = $app->request->get('state');
-            $token = $auth->getToken($code, $state);
-            $user = $auth->getProvider()->getUserDetails($token);
-            $emails = $auth->getProvider()->getUserEmails($token);
-            foreach ($emails as $email) {
-                if ($email->primary) {
-                    $user->exchangeArray(['email' => $email->email]);
-                    break;
+                $latest = reset($json['packages'][$package]);
+
+                $package = [
+                    'name' => key($json['packages']),
+                    'versions' => $json['packages'][$package],
+                    'latest' => $latest,
+                    'maintainer' => reset($latest['authors']),
+                ];
+            })
+            ->setViewData([
+                    'package' => $package,
+                    'user' => $user
+                ]
+            )
+            ->render('package.html')
+        ;
+    }
+);
+
+$app->get('/profile', function () use ($app, & $user) {
+        $app
+            ->redirectUnless($user, '/login')
+            ->setViewData([
+                    'account' => $user,
+                    'user' => $user,
+                ]
+            )
+            ->render('account.html')
+        ;
+    }
+);
+
+$app->get('/account(/:name)', function ($name = null) use ($app, & $user) {
+        $jsonPath = $app->config('json_path') . 'users/github/' . $name . '.json';
+
+        $app
+            ->notFoundIf(file_exists($jsonPath) === false)
+            ->redirectUnless($name, '/profile')
+            ->setViewData([
+                    'account' => json_decode(file_get_contents($jsonPath), true),
+                    'user' => $user,
+                ]
+            )
+            ->render('account.html')
+        ;
+    }
+);
+
+$app->get('/login', function () use ($app, & $user) {
+        $app
+            ->redirectIf($user, '/profile')
+            ->render('register.html')
+        ;
+    }
+);
+
+$app->get('/login/:provider', function ($provider) use ($app, & $user) {
+        $app
+            ->redirectIf($user, '/profile')
+            ->otherwise(function(\PickleWeb\Application $app) use (& $code, & $auth, $provider) {
+                    $code = $app->request->get('code');
+
+                    try {
+                        $auth = new PickleWeb\Action\AuthAction($provider);
+
+                        if (!$code) {
+                            $auth->GetCode($app);
+                        }
+                    } catch (\InvalidArgumentException $exception) {
+                        $app->notFound();
+                    }
                 }
-            }
-        }
+            )
+            ->then(function(\PickleWeb\Application $app) use (& $user, & $code, & $auth) {
+                    $state = $app->request->get('state');
+                    $token = $auth->getToken($code, $state);
+                    $user = $auth->getProvider()->getUserDetails($token);
+                    $emails = array_filter(
+                        $auth->getProvider()->getUserEmails($token),
+                        function($email) {
+                            return $email->primary;
+                        }
+                    );
 
-        $_SESSION['user'] = $user;
-        header('Location: /profile/');
-        exit();
-        $app->view()->setData([
-                'title' => 'Register as Github user',
-                'user'  => $user,
-            ]);
-        $app->render('registergithub.html');
-        exit();
-    });
+                    $user->exchangeArray(['email' => current($emails)->email]);
+
+                    $jsonPath = $app->config('json_path') . 'users/github/' . $user->nickname . '.json';
+                    file_put_contents($jsonPath, json_encode($user->getArrayCopy(), JSON_PRETTY_PRINT));
+
+                    $_SESSION['user'] = $user;
+                }
+            )
+            ->redirect('/profile');
+        ;
+    }
+);
+
+if (is_dir($app->config('json_path')) === false) {
+    mkdir($app->config('json_path'), 0777, true);
+    mkdir($app->config('json_path') . 'users/github', 0777, true);
+    mkdir($app->config('json_path') . 'extensions', 0777, true);
+}
 
 $app->run();

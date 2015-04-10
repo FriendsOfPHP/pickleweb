@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{title}}</title>
+    <title>Pickle - {{title}}</title>
 
     <link rel="stylesheet" href="/assets/css/bootstrap.css"/>
     <link rel="stylesheet" href="/assets/css/font-awesome.css"/>
@@ -13,22 +13,7 @@
 <div class="container">
     <header class="row">
         {% block header %}
-            <nav class="pull-right">
-                <ul class="nav nav-pills">
-                    <li><a href="/">Home</a></li>
-
-                    {% if user %}
-                        <li><a href="/profile/">Account</a></li>
-                        <li><a href="/logout">logout</a></li>
-                    {% else %}
-                        <li><a href="/login">Login</a></li>
-                    {% endif %}
-                </ul>
-            </nav>
-
-            <h3 class="pull-left">
-                <a href="/"><img src="/assets/img/logo.svg"/></a>
-            </h3>
+            {% include "partials/header.html" %}
         {% endblock %}
     </header>
 

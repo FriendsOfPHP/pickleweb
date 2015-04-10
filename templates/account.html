@@ -1,21 +1,30 @@
 {% extends "index.html" %}
 
+{% set title = 'Profile: ' ~ account.name %}
+
 {% block content %}
 <div class="col-lg-3">
-    <img class="image-responsive img-rounded avatar" src="{{ user.imageUrl }}">
+    <img class="image-responsive img-rounded avatar" src="{{ account.imageUrl }}">
     <h2>
-        {{ user.name }}<br/>
-        <small>{{ user.nickname }}</small>
+        {{ account.name }}<br/>
+        <small>{{ account.nickname }}</small>
     </h2>
-    <p><span class="text-muted"><i class="fa fa-envelope-o"></i></span> {{ user.email }}</p>
-    <p><span class="text-muted"><i class="fa fa-crosshairs"></i></span> {{ user.location }}</p>
-    {% for url in user.urls %}
+    <p><span class="text-muted"><i class="fa fa-envelope-o"></i></span> {{ account.email }}</p>
+    <p><span class="text-muted"><i class="fa fa-crosshairs"></i></span> {{ account.location }}</p>
+    {% for url in account.urls %}
         <p><span class="text-muted"><i class="fa fa-link"></i></span> <a href="{{ url }}">{{ url }}</a></p>
     {% endfor %}
 </div>
 
 <div class="col-lg-9">
-    <h2 class="no-margin-top">Your extensions</h2>
+    <h2 class="no-margin-top">
+        {% if account.uid == user.uid %}
+            Your
+        {% else %}
+            {{ account.nickname }}'s
+        {% endif %}
+        extensions
+    </h2>
 
     <ul class="list-group">
         <li class="list-group-item">
@@ -34,5 +43,9 @@
             <p>The Xdebug extension helps you debugging your script by providing a lot of valuable debug information.</p>
         </li>
     </ul>
+
+    {% if account.uid == user.uid %}
+        <a class="btn btn-lg btn-primary pull-right" href="/package/register">Register a new extension</a>
+    {% endif %}
 </div>
 {% endblock %}
