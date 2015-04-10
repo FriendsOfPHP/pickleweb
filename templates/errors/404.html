@@ -1,13 +1,5 @@
-{% extends "index.html" %}
+{% extends "errors/generic.html" %}
 
-{% set title = 'Page not found' %}
+{% set code = 404 %}
+{% set title = "Page not found" %}
 
-{% block content %}
-    <div class="jumbotron" style="text-align: center">
-        <img src="/assets/img/logo.svg" style="width: 50%"/>
-
-        <h1>404 - Page not found</h1>
-    </div>
-
-    {% include "partials/search.html" %}
-{% endblock %}

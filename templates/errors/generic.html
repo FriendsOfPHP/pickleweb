@@ -1,0 +1,11 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <div class="jumbotron" style="text-align: center">
+        <img src="/assets/img/logo.svg" style="width: 50%"/>
+
+        <h1>{{ code }} - {{ title }}</h1>
+    </div>
+
+    {% include "partials/search.html" %}
+{% endblock %}

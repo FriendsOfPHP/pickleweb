@@ -17,7 +17,14 @@
 </div>
 
 <div class="col-lg-9">
-    <h2 class="no-margin-top">Your extensions</h2>
+    <h2 class="no-margin-top">
+        {% if account.uid == user.uid %}
+            Your
+        {% else %}
+            {{ account.nickname }}'s
+        {% endif %}
+        extensions
+    </h2>
 
     <ul class="list-group">
         <li class="list-group-item">
