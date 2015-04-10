@@ -53,10 +53,11 @@ $app->post('/package/register', function () use ($app, $user) {
         $repository = new PickleWeb\Repository\Github($repositoryUri);
         $info = $repository->getInformation();
         $app->view()->setData([
-        'title' => 'Profile: '.$user->nickname,
-        'user' => $user,
+            'title' => 'Register extension ' . $info['name'],
+            'extension' => $info,
         ]);
-        $app->render('account.html');
+        $app->render('extension_register_info.html');
+
     }
 );
 

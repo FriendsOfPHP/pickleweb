@@ -1,0 +1,23 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<h1>{{ title }}</h1>
+<h2>Description</h2>
+<p>{{ extension.description }}</p>
+<h2>License</h2>
+<ul>	
+{% for license in extension.license %}
+    <li>{{ license }}</li>
+{% endfor %}
+</ul>
+<p>VCS URL {{ extension.support.source }}</p>
+
+<h2>Author(s)</h2>
+<ul>	
+{% for author in extension.authors %}
+    <li>{{ author.name }} ({{ author.email}})</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
