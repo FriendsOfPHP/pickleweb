@@ -11,7 +11,7 @@ class Application extends Slim
         return parent::__construct(
             array_merge(
                 [
-                    'view' => new View\Twig(),
+                    'view' => new View\Twig($this),
                     'json_path' => __DIR__ . '/../json/'
                 ],
                 $userSettings
