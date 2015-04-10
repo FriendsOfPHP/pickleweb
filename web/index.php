@@ -16,7 +16,7 @@ $user = isset($_SESSION['user']) ? $_SESSION['user'] : false;
 
 $app = new \Slim\Slim([
         'view' => new PickleWeb\View\Twig(),
-        'json_path' => __DIR__.'/json/',
+        'json_path' => __DIR__ . '/../json/',
     ]
 );
 
@@ -115,7 +115,11 @@ $app->get('/login', function () use ($app) {
     }
 );
 
-$app->get('/login/github', function () use ($app) {
+$app->get('/login/github', function () use ($app, $user) {
+        if ($user) {
+            $app->redirect('/profile');
+        }
+
         $code = $app->request->get('code');
         $auth = new PickleWeb\Action\AuthAction('github', $app);
         if (!$code) {
@@ -132,10 +136,18 @@ $app->get('/login/github', function () use ($app) {
                 }
             }
 
+            $jsonPath = $app->config('json_path') . 'users/github/' . $user->nickname . '.json';
+            file_put_contents($jsonPath, json_encode($user->getArrayCopy(), JSON_PRETTY_PRINT));
+
             $_SESSION['user'] = $user;
             $app->redirect('/profile');
         }
     }
 );
+
+if (is_dir($app->config('json_path')) === false) {
+    mkdir($app->config('json_path'), 0777, true);
+    mkdir($app->config('json_path') . 'users/github', 0777, true);
+}
 
 $app->run();

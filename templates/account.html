@@ -37,7 +37,7 @@
         </li>
     </ul>
 
-    {% if account == user %}
+    {% if account.uid == user.uid %}
         <a class="btn btn-lg btn-primary pull-right" href="/package/register">Register a new extension</a>
     {% endif %}
 </div>
