@@ -29,4 +29,4 @@ class GithubProvider extends Provider\Github
 
         return $user;
     }
-} 
+}

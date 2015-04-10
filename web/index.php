@@ -42,8 +42,24 @@ $app->get('/package/register', function () use ($app, $user) {
                 'user' => $user,
             ]);
         $app->render('registerextension.html');
-	}
+    }
 );
+
+$app->post('/package/register', function () use ($app, $user) {
+        if (!$user) {
+            redirect_login();
+        }
+        $repositoryUri = $app->request->post('package_repository');
+        $repository = new PickleWeb\Repository\Github($repositoryUri);
+        $info = $repository->getInformation();
+        $app->view()->setData([
+        'title' => 'Profile: '.$user->nickname,
+        'user' => $user,
+        ]);
+        $app->render('account.html');
+    }
+);
+
 $app->get('/package/:package', function ($package) use ($app, $user) {
         $app->view()->setData([
             'name' => $package,
