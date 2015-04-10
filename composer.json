@@ -1,4 +1,21 @@
 {
+    "name": "friendsofphp/pickleweb",
+    "type": "application",
+    "description": "PickleWeb is the main Pickle repository. It aggregates extensions for all PHP implementations.",
+    "homepage": "https://github.com/FriendsOfPHP/pickleweb",
+    "license": "PHP-3.01",
+    "authors": [
+        {
+            "name": "Pierre Joye",
+            "email": "pierre.php@gmail.com",
+            "homepage": "http://pecl.php.net/user/pajoye",
+            "role": "Developer"
+        },
+        {
+            "name": "Community",
+            "homepage": "https://github.com/FriendsOfPHP/pickleweb/graphs/contributors"
+        }
+    ],
 	"require": {
         "php": ">=5.4.0",
 		"slim/slim": "2.*",
