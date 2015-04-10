@@ -50,9 +50,31 @@ $app->post('/package/register', function () use ($app, & $user) {
 );
 
 $app->get('/package/:package', function ($package) use ($app, & $user) {
+        $jsonPath = $app->config('json_path') . 'extensions/' . $package . '.json';
+
         $app
+            ->notFoundIf(file_exists($jsonPath) === false)
+            ->otherwise(function() use (& $package, $jsonPath) {
+                $json = json_decode(file_get_contents($jsonPath), true);
+
+                array_map(
+                    function($version) {
+                        $version['time'] = new \DateTime($version['time']);
+                    },
+                    $json['packages'][$package]
+                );
+
+                $latest = reset($json['packages'][$package]);
+
+                $package = [
+                    'name' => key($json['packages']),
+                    'versions' => $json['packages'][$package],
+                    'latest' => $latest,
+                    'maintainer' => reset($latest['authors']),
+                ];
+            })
             ->setViewData([
-                    'name' => $package,
+                    'package' => $package,
                     'user' => $user
                 ]
             )
@@ -142,6 +164,7 @@ $app->get('/login/:provider', function ($provider) use ($app, & $user) {
 if (is_dir($app->config('json_path')) === false) {
     mkdir($app->config('json_path'), 0777, true);
     mkdir($app->config('json_path') . 'users/github', 0777, true);
+    mkdir($app->config('json_path') . 'extensions', 0777, true);
 }
 
 $app->run();

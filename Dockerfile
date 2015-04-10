@@ -1,6 +1,7 @@
 FROM php:5.6
 
 RUN apt-get update -y
+RUN echo 'date.timezone = UTC' > /usr/local/etc/php/conf.d/date.ini
 
 VOLUME /app
 WORKDIR /app
