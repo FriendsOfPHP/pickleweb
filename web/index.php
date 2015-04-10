@@ -8,6 +8,11 @@ function redirect_login()
     exit();
 }
 
+function render_error($app, $code) {
+    $app->render($code . '.html');
+    exit();
+}
+
 // use PickleWeb\View\Twig;
 
 session_start();
@@ -81,14 +86,20 @@ $app->get('/profile/', function () use ($app, $user) {
 
 $app->get('/account/(:name)', function ($name = '') use ($app, $user) {
         $jsonPath = $app->config('json_path').'users/github/'.$name.'.json';
+
         if (file_exists($jsonPath)) {
             $account = json_decode(file_get_contents($jsonPath), true);
-        }
-        $app->view()->setData([
+
+            $app->view()->setData([
                 'account' => $account,
                 'user' => $user,
             ]);
-        $app->render('account.html');
+
+            $app->render('account.html');
+        } else {
+            render_error($app, 404);
+        }
+
         exit();
     });
 

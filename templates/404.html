@@ -1,0 +1,13 @@
+{% extends "index.html" %}
+
+{% set title = 'Page not found' %}
+
+{% block content %}
+    <div class="jumbotron" style="text-align: center">
+        <img src="/assets/img/logo.svg" style="width: 50%"/>
+
+        <h1>404 - Page not found</h1>
+    </div>
+
+    {% include "search.html" %}
+{% endblock %}
