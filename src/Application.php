@@ -44,7 +44,7 @@ class Application extends Slim
     }
 
     public function notFoundIf($condition) {
-        if ((bool) $condition === false) {
+        if ((bool) $condition === true) {
             $this->notFound();
         }
 
