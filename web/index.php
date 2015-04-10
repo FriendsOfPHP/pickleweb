@@ -2,18 +2,14 @@
 
 require __DIR__.'/../vendor/autoload.php';
 
-function redirect_login()
-{
-    header('Location: /login');
-    exit();
+function redirect_login(\Slim\Slim $app) {
+    $app->redirect('/login');
 }
 
-function render_error($app, $code) {
+function render_error(\Slim\Slim $app, $code) {
     $app->render($code . '.html');
-    exit();
+    $app->stop();
 }
-
-// use PickleWeb\View\Twig;
 
 session_start();
 $user = isset($_SESSION['user']) ? $_SESSION['user'] : false;
@@ -21,44 +17,52 @@ $user = isset($_SESSION['user']) ? $_SESSION['user'] : false;
 $app = new \Slim\Slim([
         'view' => new PickleWeb\View\Twig(),
         'json_path' => __DIR__.'/json/',
-    ]);
+    ]
+);
 
-$app->get('/logout', function () {
-    session_destroy();
-    header('Location: /');
-    exit();
-});
+$app->get('/logout', function () use ($app) {
+        session_destroy();
+
+        $app->redirect('/');
+    }
+);
 
 $app->get('/', function () use ($app, $user) {
         $app->view()->setData([
             'user'  => $user,
         ]);
+
         $app->render('home.html');
     }
 );
 
 $app->get('/package/register', function () use ($app, $user) {
         if (!$user) {
-            redirect_login();
+            redirect_login($app);
         }
+
         $app->view()->setData([
-                'user' => $user,
-            ]);
+            'user' => $user,
+        ]);
+
         $app->render('registerextension.html');
     }
 );
 
 $app->post('/package/register', function () use ($app, $user) {
         if (!$user) {
-            redirect_login();
+            redirect_login($app);
         }
+
         $repositoryUri = $app->request->post('package_repository');
         $repository = new PickleWeb\Repository\Github($repositoryUri);
         $info = $repository->getInformation();
+
         $app->view()->setData([
             'extension' => $info,
             'user' => $user,
         ]);
+
         $app->render('extension_register_info.html');
 
     }
@@ -69,20 +73,24 @@ $app->get('/package/:package', function ($package) use ($app, $user) {
             'name' => $package,
             'user' => $user,
         ]);
+
         $app->render('package.html');
     }
 );
 
-$app->get('/profile/', function () use ($app, $user) {
+$app->get('/profile', function () use ($app, $user) {
         if (!$user) {
-            redirect_login();
+            redirect_login($app);
         }
+
         $app->view()->setData([
-                'account' => $user,
-                'user' => $user,
-            ]);
+            'account' => $user,
+            'user' => $user,
+        ]);
+
         $app->render('account.html');
-});
+    }
+);
 
 $app->get('/account/(:name)', function ($name = '') use ($app, $user) {
         $jsonPath = $app->config('json_path').'users/github/'.$name.'.json';
@@ -99,14 +107,13 @@ $app->get('/account/(:name)', function ($name = '') use ($app, $user) {
         } else {
             render_error($app, 404);
         }
-
-        exit();
-    });
+    }
+);
 
 $app->get('/login', function () use ($app) {
         $app->render('register.html');
-        exit();
-    });
+    }
+);
 
 $app->get('/login/github', function () use ($app) {
         $code = $app->request->get('code');
@@ -126,9 +133,9 @@ $app->get('/login/github', function () use ($app) {
             }
 
             $_SESSION['user'] = $user;
-            header('Location: /profile/');
+            $app->redirect('/profile');
         }
-        exit();
-    });
+    }
+);
 
 $app->run();
