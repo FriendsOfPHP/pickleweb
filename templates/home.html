@@ -1,5 +1,7 @@
 {% extends "index.html" %}
 
+{% set title = 'Extension repository' %}
+
 {% block header %}
     <div class="jumbotron clearfix">
         <div class="col-lg-5">
@@ -7,7 +9,7 @@
         </div>
 
         <div class="col-lg-7">
-            <h2>{{title}}</h2>
+            <h2>Pickle Packagist, repository index for PHP, HHVM and co extensions</h2>
 
             <p class="lead">
                 PickleWeb is the main <a href="https://github.com/FriendsOfPHP/pickle">Pickle</a> repository. It aggregates extensions for all PHP implementations
@@ -16,12 +18,12 @@
 
             <p>
                 {% if not user %}
-                    <a class="btn btn-lg btn-default" href="/login">Login</a>
+                    <a class="btn btn-lg btn-primary" href="/login">Login to register an extension</a>
                 {% else %}
                     <a class="btn btn-lg btn-default" href="/profile">Account</a>
                     <a class="btn btn-lg btn-default" href="/logout">Logout</a>
+                    <a class="btn btn-lg btn-primary" href="/package/register">Register your extension</a>
                 {% endif %}
-                <a class="btn btn-lg btn-primary" href="/package/register">Register your extension</a>
             </p>
         </div>
     </div>

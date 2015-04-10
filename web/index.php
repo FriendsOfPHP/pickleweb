@@ -26,7 +26,6 @@ $app->get('/logout', function () {
 
 $app->get('/', function () use ($app, $user) {
         $app->view()->setData([
-            'title' => 'Pickle Packagist, repository index for PHP, HHVM and co extensions',
             'user'  => $user,
         ]);
         $app->render('home.html');
@@ -38,7 +37,6 @@ $app->get('/package/register', function () use ($app, $user) {
             redirect_login();
         }
         $app->view()->setData([
-                'title' => 'Register a new extension',
                 'user' => $user,
             ]);
         $app->render('registerextension.html');
@@ -53,8 +51,8 @@ $app->post('/package/register', function () use ($app, $user) {
         $repository = new PickleWeb\Repository\Github($repositoryUri);
         $info = $repository->getInformation();
         $app->view()->setData([
-            'title' => 'Register extension ' . $info['name'],
             'extension' => $info,
+            'user' => $user,
         ]);
         $app->render('extension_register_info.html');
 
@@ -64,6 +62,7 @@ $app->post('/package/register', function () use ($app, $user) {
 $app->get('/package/:package', function ($package) use ($app, $user) {
         $app->view()->setData([
             'name' => $package,
+            'user' => $user,
         ]);
         $app->render('package.html');
     }
@@ -74,7 +73,7 @@ $app->get('/profile/', function () use ($app, $user) {
             redirect_login();
         }
         $app->view()->setData([
-                'title' => 'Profile: '.$user->nickname,
+                'account' => $user,
                 'user' => $user,
             ]);
         $app->render('account.html');
@@ -83,10 +82,10 @@ $app->get('/profile/', function () use ($app, $user) {
 $app->get('/account/(:name)', function ($name = '') use ($app, $user) {
         $jsonPath = $app->config('json_path').'users/github/'.$name.'.json';
         if (file_exists($jsonPath)) {
-            $user = json_decode(file_get_contents($jsonPath), true);
+            $account = json_decode(file_get_contents($jsonPath), true);
         }
         $app->view()->setData([
-                'title' => 'Package: '.$name,
+                'account' => $account,
                 'user' => $user,
             ]);
         $app->render('account.html');
@@ -94,9 +93,6 @@ $app->get('/account/(:name)', function ($name = '') use ($app, $user) {
     });
 
 $app->get('/login', function () use ($app) {
-        $app->view()->setData([
-                'title' => 'Login',
-            ]);
         $app->render('register.html');
         exit();
     });
@@ -117,16 +113,10 @@ $app->get('/login/github', function () use ($app) {
                     break;
                 }
             }
-        }
 
-        $_SESSION['user'] = $user;
-        header('Location: /profile/');
-        exit();
-        $app->view()->setData([
-                'title' => 'Register as Github user',
-                'user'  => $user,
-            ]);
-        $app->render('registergithub.html');
+            $_SESSION['user'] = $user;
+            header('Location: /profile/');
+        }
         exit();
     });
 
