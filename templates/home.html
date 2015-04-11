@@ -37,32 +37,23 @@
             <h2>Trending packages</h2>
         </div>
 
-        <div class="col-lg-6">
-            <h4>hprose</h4>
-            <p>Hprose is a High Performance Remote Object Service Engine.</p>
-            <p><a href="/package/hprose">View package</a></p>
-
-            <h4>uuid</h4>
-            <p>A wrapper around libuuid from the ext2utils project.</p>
-            <p><a href="/package/uuid">View package</a></p>
-
-            <h4>pecl_http</h4>
-            <p>This HTTP extension aims to provide a convenient and powerful set of functionality for one of PHPs major applications.</p>
-            <p><a href="/package/pecl_http">View package</a></p>
-        </div>
-
-        <div class="col-lg-6">
-            <h4>libsodium</h4>
-            <p>A simple, low-level PHP extension for libsodium.</p>
-            <p><a href="/package/libsodium">View package</a></p>
-
-            <h4>APC</h4>
-            <p>APC is a free, open, and robust framework for caching and optimizing PHP intermediate code.</p>
-            <p><a href="/package/APC">View package</a></p>
-
-            <h4>xdebug</h4>
-            <p>The Xdebug extension helps you debugging your script by providing a lot of valuable debug information.</p>
-            <p><a href="/package/xdebug">View package</a></p>
+        <div class="col-lg-12">
+            {% include "partials/package/list.html" with {
+                packages: [
+                    {
+                        name: "xdebug",
+                        description: "The Xdebug extension helps you debugging your script by providing a lot of valuable debug information."
+                    },
+                    {
+                        name: "hprose",
+                        description: "Hprose is a High Performance Remote Object Service Engine."
+                    },
+                    {
+                        name: "uuid",
+                        description: "A wrapper around libuuid from the ext2utils project."
+                    }
+                ]
+            } %}
         </div>
     </div>
 {% endblock %}

@@ -26,23 +26,22 @@
         extensions
     </h2>
 
-    <ul class="list-group">
-        <li class="list-group-item">
-            <span class="badge"><a href="/package/hprose"><i class="fa fa-arrow-right"></i></a></span>
-            <h3>hprose</h3>
-            <p>Hprose is a High Performance Remote Object Service Engine.</p>
-        </li>
-        <li class="list-group-item">
-            <span class="badge"><a href="/package/uuid"><i class="fa fa-arrow-right"></i></a></span>
-            <h3>uuid</h3>
-            <p>A wrapper around libuuid from the ext2utils project.</p>
-        </li>
-        <li class="list-group-item">
-            <span class="badge"><a href="/package/xdebug"><i class="fa fa-arrow-right"></i></a></span>
-            <h3>xdebug</h3>
-            <p>The Xdebug extension helps you debugging your script by providing a lot of valuable debug information.</p>
-        </li>
-    </ul>
+    {% include "partials/package/list.html" with {
+        packages: [
+            {
+                name: "xdebug",
+                description: "The Xdebug extension helps you debugging your script by providing a lot of valuable debug information."
+            },
+            {
+                name: "hprose",
+                description: "Hprose is a High Performance Remote Object Service Engine."
+            },
+            {
+                name: "uuid",
+                description: "A wrapper around libuuid from the ext2utils project."
+            }
+        ]
+    } %}
 
     {% if account.uid == user.uid %}
         <a class="btn btn-lg btn-primary pull-right" href="/package/register">Register a new extension</a>
