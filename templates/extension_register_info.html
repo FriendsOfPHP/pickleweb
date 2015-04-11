@@ -1,10 +1,13 @@
 {% extends "index.html" %}
 
-{% block content %}
+{% set title = 'Register extension: ' ~ extension.name %}
 
-<h1>{{ title }}</h1>
+{% block content %}
+<h1>Register extension {{ extension.name }}</h1>
+
 <h2>Description</h2>
 <p>{{ extension.description }}</p>
+
 <h2>License</h2>
 <ul>	
 {% for license in extension.license %}
@@ -19,5 +22,4 @@
     <li>{{ author.name }} ({{ author.email}})</li>
 {% endfor %}
 </ul>
-
 {% endblock %}
