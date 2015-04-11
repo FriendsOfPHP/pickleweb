@@ -35,15 +35,19 @@ $app->get('/', function () use ($app, & $user) {
 );
 
 $app->get('/package/register', function () use ($app, & $user) {
-        $app
-            ->redirectUnless($user, '/login')
-            ->setViewData([
-                    'user' => $user,
-                ]
-            )
-            ->render('registerextension.html')
-        ;
-    }
+		if ($app->request->get('confirm')) {
+			/* create registration and package handler, json&co*/
+		} else {
+			$app
+				->redirectUnless($user, '/login')
+				->setViewData([
+						'user' => $user,
+					]
+				)
+				->render('registerextension.html')
+			;
+		}
+	}
 );
 
 $app->post('/package/register', function () use ($app, & $user) {
@@ -58,11 +62,11 @@ $app->post('/package/register', function () use ($app, & $user) {
             ->setViewData([
                     'extension' => ($driver),
                     'user' => $user,
+                    'confirm' => true
                 ]
             )
             ->render('extension_register_info.html')
         ;
-        var_dump($info);
     }
 );
 

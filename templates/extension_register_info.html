@@ -22,4 +22,7 @@
     <li>{{ author.name }} ({{ author.email}})</li>
 {% endfor %}
 </ul>
+{% if confirm %}
+        <a class="btn btn-lg btn-primary pull-right" href="/package/register?confirm=1">Confirm registration</a>
+{% endif %}
 {% endblock %}
