@@ -47,15 +47,22 @@ $app->get('/package/register', function () use ($app, & $user) {
 );
 
 $app->post('/package/register', function () use ($app, & $user) {
+		$driver = new PickleWeb\Repository\Github($app->request->post('package_repository'));
+		$info = $driver->getInformation();
+		if ($info['type'] != 'extension') {
+			$app->flash('error', $info['name'] . ' is not an extension package');
+			$app->redirect('/package/register');
+		}
         $app
             ->redirectUnless($user, '/login')
             ->setViewData([
-                    'extension' => (new PickleWeb\Repository\Github($app->request->post('package_repository')))->getInformation(),
+                    'extension' => ($driver),
                     'user' => $user,
                 ]
             )
             ->render('extension_register_info.html')
         ;
+        var_dump($info);
     }
 );
 
