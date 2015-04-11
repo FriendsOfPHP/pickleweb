@@ -3,6 +3,7 @@
 namespace PickleWeb\Action;
 
 use League\OAuth2\Client\Provider as Provider;
+use PickleWeb\Application;
 use PickleWeb\Auth\GithubProvider;
 
 class AuthAction
@@ -25,7 +26,7 @@ class AuthAction
         }
     }
 
-    public function getCode(\Slim\Slim $app)
+    public function getCode(Application $app)
     {
         // If we don't have an authorization code then get one
         $authUrl = $this->provider->getAuthorizationUrl();
@@ -55,7 +56,6 @@ class AuthAction
 
         // Optional: Now you have a token you can look up a users profile data
         try {
-
             // We got an access token, let's now get the user's details
             $userDetails = $this->provider->getUserDetails($token);
             $userDetails->exchangeArray([

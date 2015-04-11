@@ -4,25 +4,27 @@ namespace PickleWeb;
 
 use Slim\Slim;
 
-class Application extends Slim
+class Application
 {
-    public function __construct(array $userSettings = array())
+    /**
+     * @var \Slim\Slim
+     */
+    private $application;
+
+    public function __construct(Slim $application)
     {
-        return parent::__construct(
-            array_merge(
-                [
-                    'view' => new View\Twig($this),
-                    'json_path' => __DIR__.'/../web/json/',
-                ],
-                $userSettings
-            )
-        );
+        $this->application = $application;
+    }
+
+    public function __call($method, $arguments)
+    {
+        return call_user_func_array([$this->application, $method], $arguments);
     }
 
     public function redirectIf($condition, $url, $status = null)
     {
         if ((bool) $condition) {
-            $this->redirect($url, $status ?: 302);
+            $this->application->redirect($url, $status ?: 302);
         }
 
         return $this;
@@ -31,17 +33,8 @@ class Application extends Slim
     public function redirectUnless($condition, $url, $status = null)
     {
         if ((bool) $condition === false) {
-            $this->redirect($url, $status ?: 302);
+            $this->application->redirect($url, $status ?: 302);
         }
-
-        return $this;
-    }
-
-    public function renderError($code)
-    {
-        $this->render('errors/'.$code.'.html');
-        $this->response->status($code);
-        $this->stop($code);
 
         return $this;
     }
@@ -49,15 +42,24 @@ class Application extends Slim
     public function notFoundIf($condition)
     {
         if ((bool) $condition === true) {
-            $this->notFound();
+            $this->application->notFound();
         }
+
+        return $this;
+    }
+
+    public function renderError($code)
+    {
+        $this->application->render('errors/'.$code.'.html');
+        $this->application->response()->status($code);
+        $this->application->stop();
 
         return $this;
     }
 
     public function setViewData(array $data)
     {
-        $this->view()->setData($data);
+        $this->application->view()->setData($data);
 
         return $this;
     }
@@ -76,16 +78,18 @@ class Application extends Slim
 
     public function run()
     {
-        $this->error(function () {
+        $this->application->error(function () {
                 $this->renderError(500);
             }
         );
 
-        $this->notFound(function () {
+        $this->application->notFound(function () {
                 $this->renderError(404);
             }
         );
 
-        parent::run();
+        $this->application->run();
+
+        return $this;
     }
 }

@@ -15,7 +15,6 @@
 
 namespace PickleWeb\View;
 
-use PickleWeb\Application;
 
 /**
  * Twig view.
@@ -29,14 +28,10 @@ use PickleWeb\Application;
  */
 class Twig extends \Slim\View
 {
-    protected $application;
-
-    public function __construct(Application $application)
-    {
-        parent::__construct();
-
-        $this->application = $application;
-    }
+    /**
+     * @var array
+     */
+    protected $settings;
 
     /**
      * @var string The path to the Twig code directory WITHOUT the trailing slash
@@ -58,6 +53,16 @@ class Twig extends \Slim\View
      * @var \Twig_Environment The Twig environment for rendering templates.
      */
     private $parserInstance = null;
+
+    /**
+     * @param array $settings
+     */
+    public function __construct(array $settings = [])
+    {
+        parent::__construct();
+
+        $this->settings = $settings;
+    }
 
     /**
      * Render Twig Template.
@@ -87,15 +92,9 @@ class Twig extends \Slim\View
     public function getInstance()
     {
         if (!$this->parserInstance) {
-            $defaults = [];
-
-            if ($this->application->getMode() === 'production') {
-                $defaults['cache'] = sys_get_temp_dir().'/twig_cache';
-            }
-
             $this->parserInstance = new \Twig_Environment(
                 new \Twig_Loader_Filesystem(__DIR__.'/../../templates'),
-                array_merge($defaults, $this->parserOptions)
+                $this->settings
             );
         }
 

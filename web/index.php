@@ -13,7 +13,14 @@ function check_or_create_json_dir(\Slim\Slim $app)
 
 session_start();
 $user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
-$app = new \PickleWeb\Application();
+$app = new \PickleWeb\Application(
+    new \Slim\Slim(
+        [
+            'view' => new \PickleWeb\View\Twig(),
+            'json_path' => __DIR__ . '/../json/'
+        ]
+    )
+);
 
 $app->get('/logout', function () use ($app) {
         session_destroy();
@@ -34,7 +41,7 @@ $app->get('/', function () use ($app, & $user) {
 );
 
 $app->get('/package/register', function () use ($app, & $user) {
-        if ($app->request->get('confirm')) {
+        if ($app->request()->get('confirm')) {
             /* create registration and package handler, json&co*/
         } else {
             $app
@@ -50,12 +57,14 @@ $app->get('/package/register', function () use ($app, & $user) {
 );
 
 $app->post('/package/register', function () use ($app, & $user) {
-        $driver = new PickleWeb\Repository\Github($app->request->post('package_repository'));
+        $driver = new PickleWeb\Repository\Github($app->request()->post('package_repository'));
         $info = $driver->getInformation();
+
         if ($info['type'] != 'extension') {
             $app->flash('error', $info['name'].' is not an extension package');
             $app->redirect('/package/register');
         }
+
         $app
             ->redirectUnless($user, '/login')
             ->setViewData([
@@ -144,7 +153,7 @@ $app->get('/login/:provider', function ($provider) use ($app, & $user) {
         $app
             ->redirectIf($user, '/profile')
             ->otherwise(function (\PickleWeb\Application $app) use (& $code, & $auth, $provider) {
-                    $code = $app->request->get('code');
+                    $code = $app->request()->get('code');
 
                     try {
                         $auth = new PickleWeb\Action\AuthAction($provider);
@@ -158,7 +167,7 @@ $app->get('/login/:provider', function ($provider) use ($app, & $user) {
                 }
             )
             ->then(function (\PickleWeb\Application $app) use (& $user, & $code, & $auth) {
-                    $state = $app->request->get('state');
+                    $state = $app->request()->get('state');
                     $token = $auth->getToken($code, $state);
                     $user = $auth->getProvider()->getUserDetails($token);
                     $emails = array_filter(
