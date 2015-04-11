@@ -2,6 +2,16 @@
 
 require __DIR__.'/../vendor/autoload.php';
 
+function check_or_create_json_dir(\Slim\Slim $app)
+{
+	if (is_dir($app->config('json_path')) === false) {
+		mkdir($app->config('json_path'), 0777, true);
+		mkdir($app->config('json_path') . 'users/github', 0777, true);
+		mkdir($app->config('json_path') . 'extensions', 0777, true);
+	}
+
+}
+
 session_start();
 $user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $app = new \PickleWeb\Application();
@@ -151,7 +161,11 @@ $app->get('/login/:provider', function ($provider) use ($app, & $user) {
                     $user->exchangeArray(['email' => current($emails)->email]);
 
                     $jsonPath = $app->config('json_path') . 'users/github/' . $user->nickname . '.json';
-                    file_put_contents($jsonPath, json_encode($user->getArrayCopy(), JSON_PRETTY_PRINT));
+                    check_or_create_json_dir($app);
+                    if (!file_put_contents($jsonPath, json_encode($user->getArrayCopy(), JSON_PRETTY_PRINT))) {
+						$app->renderError(500);
+						exit();
+					}
 
                     $_SESSION['user'] = $user;
                 }
@@ -160,11 +174,5 @@ $app->get('/login/:provider', function ($provider) use ($app, & $user) {
         ;
     }
 );
-
-if (is_dir($app->config('json_path')) === false) {
-    mkdir($app->config('json_path'), 0777, true);
-    mkdir($app->config('json_path') . 'users/github', 0777, true);
-    mkdir($app->config('json_path') . 'extensions', 0777, true);
-}
 
 $app->run();

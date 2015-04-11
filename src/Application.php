@@ -12,7 +12,7 @@ class Application extends Slim
             array_merge(
                 [
                     'view' => new View\Twig($this),
-                    'json_path' => __DIR__ . '/../json/'
+                    'json_path' => __DIR__ . '/../web/json/'
                 ],
                 $userSettings
             )
