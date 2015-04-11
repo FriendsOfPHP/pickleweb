@@ -23,7 +23,7 @@ class GithubProvider extends Provider\Github
                 'imageurl' => $response->avatar_url,
                 'location' => $response->location,
                 'urls'  => [
-                    'GitHub' => $this->domain . '/' . $response->login,
+                    'GitHub' => $this->domain.'/'.$response->login,
                 ],
             ]
         );

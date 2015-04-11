@@ -90,7 +90,7 @@ class Twig extends \Slim\View
             $defaults = [];
 
             if ($this->application->getMode() === 'production') {
-                $defaults['cache'] = sys_get_temp_dir() . '/twig_cache';
+                $defaults['cache'] = sys_get_temp_dir().'/twig_cache';
             }
 
             $this->parserInstance = new \Twig_Environment(

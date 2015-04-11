@@ -12,14 +12,15 @@ class Application extends Slim
             array_merge(
                 [
                     'view' => new View\Twig($this),
-                    'json_path' => __DIR__ . '/../web/json/'
+                    'json_path' => __DIR__.'/../web/json/',
                 ],
                 $userSettings
             )
         );
     }
 
-    public function redirectIf($condition, $url, $status = null) {
+    public function redirectIf($condition, $url, $status = null)
+    {
         if ((bool) $condition) {
             $this->redirect($url, $status ?: 302);
         }
@@ -27,7 +28,8 @@ class Application extends Slim
         return $this;
     }
 
-    public function redirectUnless($condition, $url, $status = null) {
+    public function redirectUnless($condition, $url, $status = null)
+    {
         if ((bool) $condition === false) {
             $this->redirect($url, $status ?: 302);
         }
@@ -35,15 +37,17 @@ class Application extends Slim
         return $this;
     }
 
-    public function renderError($code) {
-        $this->render('errors/' . $code . '.html');
+    public function renderError($code)
+    {
+        $this->render('errors/'.$code.'.html');
         $this->response->status($code);
         $this->stop($code);
 
         return $this;
     }
 
-    public function notFoundIf($condition) {
+    public function notFoundIf($condition)
+    {
         if ((bool) $condition === true) {
             $this->notFound();
         }
@@ -51,19 +55,22 @@ class Application extends Slim
         return $this;
     }
 
-    public function setViewData(array $data) {
+    public function setViewData(array $data)
+    {
         $this->view()->setData($data);
 
         return $this;
     }
 
-    public function then(callable $callback) {
+    public function then(callable $callback)
+    {
         $callback($this);
 
         return $this;
     }
 
-    public function otherwise(callable $callback) {
+    public function otherwise(callable $callback)
+    {
         return $this->then($callback);
     }
 
@@ -81,4 +88,4 @@ class Application extends Slim
 
         parent::run();
     }
-} 
+}
