@@ -46,6 +46,7 @@ $app->get('/package/register', function () use ($app, $user) {
 );
 
 $app->post('/package/register', function () use ($app, $user) {
+
         if (!$user) {
             redirect_login();
         }
@@ -53,6 +54,7 @@ $app->post('/package/register', function () use ($app, $user) {
         $repository = new PickleWeb\Repository\Github($repositoryUri);
         $info = $repository->getInformation();
         $app->view()->setData([
+			'user'  => $user,
             'title' => 'Register extension ' . $info['name'],
             'extension' => $info,
         ]);
