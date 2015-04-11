@@ -3,10 +3,6 @@
 {% set title = 'New extension' %}
 
 {% block content %}
-{% if flash.error %}
-<div class="error">{{ flash.error }}</div>
-{% endif %}
-
 <h1>Register a new extension</h1>
 
 <form id="submit-extension-form" action="/package/register" data-check-url="/package/fetch-info" method="post">

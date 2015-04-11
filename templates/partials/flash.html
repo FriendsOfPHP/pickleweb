@@ -1,0 +1,7 @@
+{% if not class %}
+    {% set class = type %}
+{% endif %}
+
+{% if flash[type] %}
+    <div class="alert alert-{{ class }}">{{ flash[type] }}</div>
+{% endif %}

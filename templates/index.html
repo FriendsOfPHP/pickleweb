@@ -18,6 +18,11 @@
     </header>
 
     <div class="row">
+        {% include "partials/flash.html" with { "type": "info" } %}
+        {% include "partials/flash.html" with { "type": "success" } %}
+        {% include "partials/flash.html" with { "type": "warning" } %}
+        {% include "partials/flash.html" with { "type": "error", class: "danger" } %}
+
         {% block content %}{% endblock %}
     </div>
 
