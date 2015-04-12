@@ -22,7 +22,12 @@ class Github
         $this->io = $io;
         $config = Factory::createConfig();
         if ($cacheDir) {
-            $config->merge(['config' => ['cache-dir' => $cacheDir]]);
+            $config->merge([
+                    'config' => [
+                        'cache-dir' => $cacheDir,
+                        'github-oauth' => ['githb.com' => $token],
+                        ],
+                ]);
         }
 
         $io->loadConfiguration($config);

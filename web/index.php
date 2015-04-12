@@ -42,19 +42,23 @@ $app->get('/', function () use ($app, & $user) {
 );
 
 $app->get('/package/register', function () use ($app, & $user) {
-		$app
-			->redirectUnless($user, '/login')
-			->setViewData([
-					'user' => $user,
-				]
-			)
-			->render('registerextension.html')
-		;
+        $app
+            ->redirectUnless($user, '/login')
+            ->setViewData([
+                    'user' => $user,
+                ]
+            )
+            ->render('registerextension.html')
+        ;
     }
 );
 
 $app->post('/package/register', function () use ($app, & $user) {
-        $driver = new PickleWeb\Repository\Github($app->request()->post('package_repository'), $app->config('cache_dir'));
+        $app->redirectUnless($user, '/login');
+
+        $token = $_SESSION['token'];
+
+        $driver = new PickleWeb\Repository\Github($app->request()->post('package_repository'), $token->accessToken, $app->config('cache_dir'));
         $info = $driver->getInformation();
 
         if ($info['type'] != 'extension') {
@@ -62,9 +66,8 @@ $app->post('/package/register', function () use ($app, & $user) {
             $app->redirect('/package/register');
         }
         $tags = $driver->getReleaseTags();
-        $app
-            ->redirectUnless($user, '/login')
-            ->setViewData([
+
+        $app->setViewData([
                     'extension' => $info,
                     'tags'      => $tags,
                     'user'      => $user,
@@ -183,7 +186,7 @@ $app->get('/login/:provider', function ($provider) use ($app, & $user) {
                         $app->renderError(500);
                         exit();
                     }
-
+                    $_SESSION['token'] = $token;
                     $_SESSION['user'] = $user;
                 }
             )
