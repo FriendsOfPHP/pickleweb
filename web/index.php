@@ -193,5 +193,4 @@ $app->get('/login/:provider', function ($provider) use ($app, & $user) {
             ->redirect('/profile');
     }
 );
-
 $app->run();
