@@ -4,7 +4,6 @@ namespace PickleWeb\Repository;
 
 use Composer\Repository as Repository;
 use Composer\IO\NullIO;
-use Composer\IO\BufferIO;
 use Composer\Factory as Factory;
 
 class Github
@@ -20,7 +19,6 @@ class Github
     public function __construct($uri, $cacheDir = false)
     {
         $io = new NullIO();
-        $io = new BufferIO();
         $this->io = $io;
         $config = Factory::createConfig();
         if ($cacheDir) {
