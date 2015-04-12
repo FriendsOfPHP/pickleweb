@@ -1,5 +1,4 @@
 <?php
-
 require __DIR__.'/../vendor/autoload.php';
 
 function check_or_create_json_dir(\PickleWeb\Application $app)
@@ -68,7 +67,7 @@ $app->post('/package/register', function () use ($app, & $user) {
         $app
             ->redirectUnless($user, '/login')
             ->setViewData([
-                    'extension' => ($driver),
+                    'extension' => $info,
                     'user' => $user,
                     'confirm' => true,
                 ]
