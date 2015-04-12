@@ -2,7 +2,7 @@
 
 require __DIR__.'/../vendor/autoload.php';
 
-function check_or_create_json_dir(\Slim\Slim $app)
+function check_or_create_json_dir(\PickleWeb\Application $app)
 {
     if (is_dir($app->config('json_path')) === false) {
         mkdir($app->config('json_path'), 0777, true);
