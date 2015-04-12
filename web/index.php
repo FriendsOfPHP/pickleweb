@@ -42,18 +42,14 @@ $app->get('/', function () use ($app, & $user) {
 );
 
 $app->get('/package/register', function () use ($app, & $user) {
-        if ($app->request()->get('confirm')) {
-            /* create registration and package handler, json&co*/
-        } else {
-            $app
-                ->redirectUnless($user, '/login')
-                ->setViewData([
-                        'user' => $user,
-                    ]
-                )
-                ->render('registerextension.html')
-            ;
-        }
+		$app
+			->redirectUnless($user, '/login')
+			->setViewData([
+					'user' => $user,
+				]
+			)
+			->render('registerextension.html')
+		;
     }
 );
 

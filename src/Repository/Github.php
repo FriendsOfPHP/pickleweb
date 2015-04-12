@@ -16,7 +16,7 @@ class Github
 
     protected $io;
 
-    public function __construct($uri, $cacheDir = false)
+    public function __construct($uri, $token = '', $cacheDir = false)
     {
         $io = new NullIO();
         $this->io = $io;
