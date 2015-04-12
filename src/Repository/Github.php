@@ -4,6 +4,7 @@ namespace PickleWeb\Repository;
 
 use Composer\Repository as Repository;
 use Composer\IO\NullIO;
+use Composer\IO\BufferIO;
 use Composer\Factory as Factory;
 
 class Github
@@ -14,13 +15,22 @@ class Github
 
     protected $information;
 
-    public function __construct($uri)
+    protected $io;
+
+    public function __construct($uri, $cacheDir = false)
     {
         $io = new NullIO();
+        $io = new BufferIO();
+        $this->io = $io;
         $config = Factory::createConfig();
+        if ($cacheDir) {
+            $config->merge(['config' => ['cache-dir' => $cacheDir]]);
+        }
+
         $io->loadConfiguration($config);
 
-        $this->repository = new Repository\VcsRepository(['url' => $uri], $io, $config);
+        var_dump($config->get('cache-dir'));
+        $this->repository = new Repository\VcsRepository(['url' => $uri, 'no-api' => false], $io, $config);
         $driver = $this->vcsDriver = $this->repository->getDriver();
         if (!$driver) {
             throw new Exception('No driver found for <'.$uri.'>');
@@ -35,5 +45,8 @@ class Github
 
     public function getReleaseTags()
     {
+        $tags = $this->driver->getTags();
+
+        return $tags;
     }
 }

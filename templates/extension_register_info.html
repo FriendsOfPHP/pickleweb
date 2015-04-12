@@ -14,12 +14,18 @@
     <li>{{ license }}</li>
 {% endfor %}
 </ul>
-<p>VCS URL {{ extension.support.source }}</p>
-
+<h2>VCS URL</h2>
+<p>{{ extension.support.source }}</p>
 <h2>Author(s)</h2>
 <ul>	
 {% for author in extension.authors %}
     <li>{{ author.name }} ({{ author.email}})</li>
+{% endfor %}
+</ul>
+<h2>Release tag(s)</h2>
+<ul>	
+{% for version, id in tags %}
+    <li>{{ version }} ({{ id }})</li>
 {% endfor %}
 </ul>
 {% if confirm %}

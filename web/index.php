@@ -1,4 +1,5 @@
 <?php
+
 require __DIR__.'/../vendor/autoload.php';
 
 function check_or_create_json_dir(\PickleWeb\Application $app)
@@ -16,7 +17,8 @@ $app = new \PickleWeb\Application(
     new \Slim\Slim(
         [
             'view' => new \PickleWeb\View\Twig(),
-            'json_path' => __DIR__ . '/../json/'
+            'json_path' => __DIR__.'/json/',
+            'cache_dir' => __DIR__.'/../cache-dir/',
         ]
     )
 );
@@ -56,20 +58,21 @@ $app->get('/package/register', function () use ($app, & $user) {
 );
 
 $app->post('/package/register', function () use ($app, & $user) {
-        $driver = new PickleWeb\Repository\Github($app->request()->post('package_repository'));
+        $driver = new PickleWeb\Repository\Github($app->request()->post('package_repository'), $app->config('cache_dir'));
         $info = $driver->getInformation();
 
         if ($info['type'] != 'extension') {
             $app->flash('error', $info['name'].' is not an extension package');
             $app->redirect('/package/register');
         }
-
+        $tags = $driver->getReleaseTags();
         $app
             ->redirectUnless($user, '/login')
             ->setViewData([
                     'extension' => $info,
-                    'user' => $user,
-                    'confirm' => true,
+                    'tags'      => $tags,
+                    'user'      => $user,
+                    'confirm'   => true,
                 ]
             )
             ->render('extension_register_info.html')
