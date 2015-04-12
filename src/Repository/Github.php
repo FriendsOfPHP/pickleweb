@@ -29,7 +29,6 @@ class Github
 
         $io->loadConfiguration($config);
 
-        var_dump($config->get('cache-dir'));
         $this->repository = new Repository\VcsRepository(['url' => $uri, 'no-api' => false], $io, $config);
         $driver = $this->vcsDriver = $this->repository->getDriver();
         if (!$driver) {
