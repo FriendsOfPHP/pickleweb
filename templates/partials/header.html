@@ -7,9 +7,12 @@
             <li><a href="/login">Login</a></li>
         {% endif %}
     </ul>
-    <p class="navbar-btn pull-right">
-        <a href="/package/register" class="btn btn-primary">Register a new extension</a>
-    </p>
+
+    {% if user %}
+        <p class="navbar-btn pull-right">
+            <a href="/package/register" class="btn btn-primary">Register a new extension</a>
+        </p>
+    {% endif %}
 </nav>
 
 <h3 class="pull-left">

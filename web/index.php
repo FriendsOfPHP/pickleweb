@@ -34,8 +34,7 @@ $app->get('/', function () use ($app) {
 );
 
 $app->getSecured('/package/register', function () use ($app) {
-        $confirm = $app->request()->get('confirm');
-        if ($confirm) {
+        if ($app->request()->get('confirm')) {
             $transaction = $app->request()->get('id');
             $pathTransaction = $app->config('cache_dir').'/'.$transaction.'.json';
             if (!file_exists($pathTransaction)) {
@@ -55,45 +54,65 @@ $app->getSecured('/package/register', function () use ($app) {
             print_r($info);
             echo '</pre>';
         } else {
-            $app->setViewData()->render('registerextension.html');
+            $app
+                ->setViewData([
+                        'repository' => $app->request()->get('repository')
+                    ]
+                )
+                ->render('extension/register.html')
+            ;
         }
     }
 );
 
 $app->postSecured('/package/register', function () use ($app) {
         $token = $_SESSION['token'];
-        $repo = $app->request()->post('package_repository');
-        $driver = new PickleWeb\Repository\Github($repo, $token->accessToken, $app->config('cache_dir'));
+        $repo = $app->request()->post('repository');
 
-        $info = $driver->getInformation();
-        $info['vcs'] = $repo;
+        try {
+            $driver = new PickleWeb\Repository\Github($repo, $token->accessToken, $app->config('cache_dir'));
+            $info = $driver->getInformation();
 
-        if ($info['type'] != 'extension') {
-            $app->flash('error', $info['name'] . ' is not an extension package');
-            $app->redirect('/package/register');
+            if ($info === null) {
+                $app->flash('error', 'No valid composer.json found.');
+                $app->redirect('/package/register');
+            }
+
+            $info['vcs'] = $repo;
+
+            if ($info['type'] != 'extension') {
+                $app->flash('error', $info['name'] . ' is not an extension package');
+                $app->redirect('/package/register');
+            }
+
+            $tags = $driver->getReleaseTags();
+
+            $package = [
+                'extension' => $info,
+                'tags'      => $tags,
+                'user'      => $app->user()
+            ];
+
+            $jsonPackage = json_encode($package, JSON_PRETTY_PRINT);
+            $transaction = hash('sha256', $jsonPackage);
+
+            file_put_contents($app->config('cache_dir').'/'.$transaction.'.json', $jsonPackage);
+
+            $app
+                ->setViewData([
+                        'transaction' => $transaction,
+                        'extension' => $info,
+                        'tags'      => $tags
+                    ]
+                )
+                ->render('extension/confirm.html')
+            ;
+        } catch (\RuntimeException $exception) {
+            $app
+                ->flash('error', 'An error occurred while retrieving extension data. Please try again later.')
+                ->redirect('/package/register?repository=' . $repo)
+            ;
         }
-        $tags = $driver->getReleaseTags();
-
-        $package = [
-            'extension' => $info,
-            'tags'      => $tags,
-            'user'      => $app->user(),
-        ];
-
-        $jsonPackage = json_encode($package, JSON_PRETTY_PRINT);
-        $transaction = hash('sha256', $jsonPackage);
-
-        file_put_contents($app->config('cache_dir').'/'.$transaction.'.json', $jsonPackage);
-
-        $app->setViewData([
-                    'transaction' => $transaction,
-                    'extension' => $info,
-                    'tags'      => $tags,
-                    'confirm'   => true,
-                ]
-            )
-            ->render('extension_register_info.html')
-        ;
     }
 );
 
@@ -122,10 +141,10 @@ $app->get('/package/:package', function ($package) use ($app) {
                 ];
             })
             ->setViewData([
-                    'package' => $package,
+                    'extension' => $package,
                 ]
             )
-            ->render('package.html')
+            ->render('extension/info.html')
         ;
     }
 );

@@ -1,0 +1,76 @@
+{% extends "index.html" %}
+
+{% set title = 'Package: ' ~ extension.name %}
+
+{% block content %}
+    {% include "partials/search.html" %}
+
+    <h1>
+        {{ extension.name }}
+    </h1>
+
+    {% if extension.latest.description %}
+        <p class="lead">
+            {{ extension.latest.description }}
+        </p>
+    {% endif %}
+
+    <ul>
+        <li>
+            Author(s):
+            {% spaceless %}
+                {% for author in extension.authors %}
+                    {% if author.homepage %}
+                        <a href="{{ author.homepage }}">{{ author.name }}</a>
+                    {% elseif author.email %}
+                        <a href="mailto:{{ author.email }}">{{ author.name }}</a>
+                    {% else %}
+                        {{ author.name }}
+                    {% endif %}
+                    {% if not loop.last %},{% endif %}
+                {% endfor %}
+            {% endspaceless %}
+        </li>
+
+        {% if extension.license %}
+            <li>
+                License(s):
+                {% spaceless %}
+                    {% for license in extension.license %}
+                        {{ license }}
+                        {% if not loop.last %},{% endif %}
+                    {% endfor %}
+                {% endspaceless %}
+            </li>
+        {% endif %}
+
+        {% if extension.vcs %}
+            <li>Source: <a href="{{ extension.vcs }}">{{ extension.vcs }}</a></li>
+        {% endif %}
+    </ul>
+
+    <h2>Releases</h2>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Version</th>
+            <th>SHA1</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for tag in tags|reverse %}
+            <tr>
+                <td>{{ tag.version }} ({{ tag.tag }})</td>
+                <td>{{ tag.id[:7] }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if transaction %}
+        <p class="pull-right">
+            <a class="btn btn-lg btn-success" href="/package/register?confirm=1&id={{ transaction }}">Confirm registration</a>
+        </p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "index.html" %}
+
+{% set title = 'Package: ' ~ extension.name %}
+
+{% block content %}
+    {% include "partials/search.html" %}
+
+    <h1>
+        {{ extension.name }}
+        <span class="label label-primary">PHP</span>
+        <span class="label label-primary">HHVM</span>
+        <span class="label label-primary">Hippy</span>
+    </h1>
+
+    {% if extension.latest.description %}
+        <p class="lead">
+            {{ extension.latest.description }}
+        </p>
+    {% endif %}
+
+    <ul>
+        <li>
+            Maintainer:
+            {% if extension.maintainer.homepage %}
+                <a href="{{ extension.maintainer.homepage }}">{{ extension.maintainer.name }}</a>
+            {% elseif extension.maintainer.email %}
+                <a href="mailto:{{ extension.maintainer.email }}">{{ extension.maintainer.name }}</a>
+            {% else %}
+                {{ extension.maintainer.name }}
+            {% endif %}
+        </li>
+
+        {% if extension.latest.license %}
+            <li>License: {{ extension.latest.license }}</li>
+        {% endif %}
+
+        {% if extension.latest.homepage %}
+            <li>Homepage: <a href="{{ extension.latest.homepage }}">{{ extension.latest.homepage }}</a></li>
+        {% endif %}
+
+        {% if extension.latest.support.source %}
+            <li>Source: <a href="{{ extension.latest.support.source }}">{{ extension.latest.support.source }}</a></li>
+        {% endif %}
+
+        {% if extension.latest.support.issues %}
+            <li>Issues: <a href="{{ extension.latest.support.issues }}">{{ extension.latest.support.issues }}</a></li>
+        {% endif %}
+    </ul>
+
+    <h2>Versions</h2>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Version</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for version, info in extension.versions %}
+            <tr>
+                <td>{{ version }}</td>
+                <td>{{ info.time }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if transaction %}
+        <p class="pull-right">
+            <a class="btn btn-success" href="/package/register?confirm=1&id={{ transaction }}">Confirm registration</a>
+        </p>
+    {% endif %}
+{% endblock %}

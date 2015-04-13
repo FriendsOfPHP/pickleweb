@@ -1,6 +1,6 @@
 FROM php:5.6
 
-RUN apt-get update -y
+RUN apt-get update -y && apt-get install -y git-core
 RUN echo 'date.timezone = UTC' > /usr/local/etc/php/conf.d/date.ini
 
 VOLUME /app
