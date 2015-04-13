@@ -64,6 +64,8 @@ $app->get('/package/register', function () use ($app, & $user) {
                 ->render('registerextension.html')
             ;
         }
+    }
+);
 
 $app->getSecured('/package/register', function () use ($app) {
         $confirm = $app->request()->get('confirm');
@@ -237,6 +239,8 @@ $app->get('/login/:provider', function ($provider) use ($app) {
                 }
             )
             ->redirect('/profile');
+        ;
     }
 );
+
 $app->run();
