@@ -36,7 +36,7 @@ class Github
         $this->repository = new Repository\VcsRepository(['url' => $uri, 'no-api' => false], $io, $config);
         $driver = $this->vcsDriver = $this->repository->getDriver();
         if (!$driver) {
-            throw new Exception('No driver found for <'.$uri.'>');
+            throw new \Exception('No driver found for <'.$uri.'>');
         }
         $this->driver = $driver;
     }
