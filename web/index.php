@@ -11,8 +11,6 @@ function check_or_create_json_dir(\PickleWeb\Application $app)
     }
 }
 
-session_start();
-$user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $app = new \PickleWeb\Application(
     new \Slim\Slim(
         [
@@ -30,32 +28,17 @@ $app->get('/logout', function () use ($app) {
     }
 );
 
-$app->get('/', function () use ($app, & $user) {
-        $app
-            ->setViewData([
-                    'user'  => $user,
-                ]
-            )
-            ->render('home.html')
-        ;
+$app->get('/', function () use ($app) {
+        $app->render('home.html');
     }
 );
 
-$app->get('/package/register', function () use ($app, & $user) {
-        $app
-            ->redirectUnless($user, '/login')
-            ->setViewData([
-                    'user' => $user,
-                ]
-            )
-            ->render('registerextension.html')
-        ;
+$app->getSecured('/package/register', function () use ($app) {
+        $app->render('registerextension.html');
     }
 );
 
-$app->post('/package/register', function () use ($app, & $user) {
-        $app->redirectUnless($user, '/login');
-
+$app->postSecured('/package/register', function () use ($app) {
         $token = $_SESSION['token'];
 
         $driver = new PickleWeb\Repository\Github($app->request()->post('package_repository'), $token->accessToken, $app->config('cache_dir'));
@@ -70,7 +53,6 @@ print_r($tags);
         $app->setViewData([
                     'extension' => $info,
                     'tags'      => $tags,
-                    'user'      => $user,
                     'confirm'   => true,
                 ]
             )
@@ -79,7 +61,7 @@ print_r($tags);
     }
 );
 
-$app->get('/package/:package', function ($package) use ($app, & $user) {
+$app->get('/package/:package', function ($package) use ($app) {
         $jsonPath = $app->config('json_path').'extensions/'.$package.'.json';
 
         $app
@@ -105,7 +87,6 @@ $app->get('/package/:package', function ($package) use ($app, & $user) {
             })
             ->setViewData([
                     'package' => $package,
-                    'user' => $user,
                 ]
             )
             ->render('package.html')
@@ -113,12 +94,10 @@ $app->get('/package/:package', function ($package) use ($app, & $user) {
     }
 );
 
-$app->get('/profile', function () use ($app, & $user) {
+$app->getSecured('/profile', function () use ($app) {
         $app
-            ->redirectUnless($user, '/login')
             ->setViewData([
-                    'account' => $user,
-                    'user' => $user,
+                    'account' => $app->user()
                 ]
             )
             ->render('account.html')
@@ -126,15 +105,14 @@ $app->get('/profile', function () use ($app, & $user) {
     }
 );
 
-$app->get('/account(/:name)', function ($name = null) use ($app, & $user) {
+$app->get('/account(/:name)', function ($name = null) use ($app) {
         $jsonPath = $app->config('json_path').'users/github/'.$name.'.json';
 
         $app
             ->notFoundIf(file_exists($jsonPath) === false)
             ->redirectUnless($name, '/profile')
             ->setViewData([
-                    'account' => json_decode(file_get_contents($jsonPath), true),
-                    'user' => $user,
+                    'account' => json_decode(file_get_contents($jsonPath), true)
                 ]
             )
             ->render('account.html')
@@ -142,17 +120,17 @@ $app->get('/account(/:name)', function ($name = null) use ($app, & $user) {
     }
 );
 
-$app->get('/login', function () use ($app, & $user) {
+$app->get('/login', function () use ($app) {
         $app
-            ->redirectIf($user, '/profile')
+            ->redirectIf($app->user(), '/profile')
             ->render('register.html')
         ;
     }
 );
 
-$app->get('/login/:provider', function ($provider) use ($app, & $user) {
+$app->get('/login/:provider', function ($provider) use ($app) {
         $app
-            ->redirectIf($user, '/profile')
+            ->redirectIf($app->user(), '/profile')
             ->otherwise(function (\PickleWeb\Application $app) use (& $code, & $auth, $provider) {
                     $code = $app->request()->get('code');
 
