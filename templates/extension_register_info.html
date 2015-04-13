@@ -24,8 +24,8 @@
 </ul>
 <h2>Release tag(s)</h2>
 <ul>	
-{% for version, id in tags %}
-    <li>{{ version }} ({{ id }})</li>
+{% for tag in tags %}
+    <li>{{ tag.version }} ({{ tag.tag }}) ({{ tag.id }}) </li>
 {% endfor %}
 </ul>
 {% if confirm %}

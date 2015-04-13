@@ -66,7 +66,7 @@ $app->post('/package/register', function () use ($app, & $user) {
             $app->redirect('/package/register');
         }
         $tags = $driver->getReleaseTags();
-
+print_r($tags);
         $app->setViewData([
                     'extension' => $info,
                     'tags'      => $tags,
