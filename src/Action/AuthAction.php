@@ -8,10 +8,16 @@ use PickleWeb\Auth\GithubProvider;
 
 class AuthAction
 {
+    /**
+     * @var \League\OAuth2\Client\Provider\AbstractProvider
+     */
     protected $provider;
 
-    protected $app;
-
+    /**
+     * @param string $provider
+     *
+     * @throws \InvalidArgumentException
+     */
     public function __construct($provider = 'github')
     {
         if ($provider == 'github') {
@@ -26,6 +32,9 @@ class AuthAction
         }
     }
 
+    /**
+     * @param \PickleWeb\Application $app
+     */
     public function getCode(Application $app)
     {
         // If we don't have an authorization code then get one
@@ -45,11 +54,18 @@ class AuthAction
         }
     }
 
-    public function getToken($code, $state)
+    /**
+     * @param $code
+     *
+     * @throws \RuntimeException
+     *
+     * @return mixed
+     */
+    public function getToken($code)
     {
         $this->checkState();
 
-     // Try to get an access token (using the authorization code grant)
+        // Try to get an access token (using the authorization code grant)
         $token = $this->provider->getAccessToken('authorization_code', [
             'code' => $code,
         ]);
@@ -63,8 +79,9 @@ class AuthAction
                     'homepage' => $this->provider->domain.'/'.$userDetails->nickname,
                 ]);
         } catch (\Exception $e) {
-            throw new Exception('cannot fetch account details');
+            throw new \RuntimeException('cannot fetch account details');
         }
+
         /* TODOS: implement handling of:
          * $token->refreshToken;
          * $token->expires;
@@ -72,6 +89,9 @@ class AuthAction
         return $token;
     }
 
+    /**
+     * @return GithubProvider
+     */
     public function getProvider()
     {
         return $this->provider;

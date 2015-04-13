@@ -8,6 +8,12 @@ use League\OAuth2\Client\Token\AccessToken;
 
 class GithubProvider extends Provider\Github
 {
+    /**
+     * @param object                                  $response
+     * @param \League\OAuth2\Client\Token\AccessToken $token
+     *
+     * @return \League\OAuth2\Client\Entity\User
+     */
     public function userDetails($response, AccessToken $token)
     {
         $user = new User();
