@@ -40,3 +40,8 @@ img.avatar {
 .no-margin-top {
     margin-top: 0;
 }
+
+.navbar-btn.pull-right {
+    padding-top: 25px;
+    margin-right: 5px;
+}

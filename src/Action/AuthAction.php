@@ -49,7 +49,8 @@ class AuthAction
         if (session_status() === PHP_SESSION_ACTIVE) {
             if (empty($_GET['state']) || ($_GET['state'] !== $_SESSION['oauth2state'])) {
                 unset($_SESSION['oauth2state']);
-                exit('Invalid state');
+
+                throw new \RuntimeException('Invalid state');
             }
         }
     }

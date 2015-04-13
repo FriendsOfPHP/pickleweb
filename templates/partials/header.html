@@ -1,14 +1,15 @@
 <nav class="pull-right">
-    <ul class="nav nav-pills">
-        <li><a href="/">Home</a></li>
-
+    <ul class="nav nav-pills pull-right">
         {% if user %}
-        <li><a href="/profile">Account</a></li>
-        <li><a href="/logout">Logout</a></li>
+            <li><a href="/profile">Account</a></li>
+            <li><a href="/logout">Logout</a></li>
         {% else %}
-        <li><a href="/login">Login</a></li>
+            <li><a href="/login">Login</a></li>
         {% endif %}
     </ul>
+    <p class="navbar-btn pull-right">
+        <a href="/package/register" class="btn btn-primary">Register a new extension</a>
+    </p>
 </nav>
 
 <h3 class="pull-left">

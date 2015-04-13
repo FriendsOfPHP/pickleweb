@@ -29,41 +29,7 @@ $app->get('/logout', function () use ($app) {
 );
 
 $app->get('/', function () use ($app) {
-        $app->render('home.html');
-    }
-);
-
-$app->get('/package/register', function () use ($app, & $user) {
-        $app->redirectUnless($user, '/login');
-        $confirm = $app->request()->get('confirm');
-        if ($confirm) {
-            $transaction = $app->request()->get('id');
-            $pathTransaction = $app->config('cache_dir').'/'.$transaction.'.json';
-            if (!file_exists($pathTransaction)) {
-                $app->redirect('/package/register');
-                exit();
-            }
-
-            $token = $_SESSION['token'];
-            $transaction = json_decode(file_get_contents($pathTransaction));
-
-            $driver = new PickleWeb\Repository\Github($transaction->extension->vcs, $token->accessToken, $app->config('cache_dir'));
-            $info = $driver->getInformation();
-
-            echo '<pre>';
-            var_dump($transaction->extension->support->source);
-            print_r($transaction);
-            print_r($info);
-            echo '</pre>';
-        } else {
-            $app
-                ->setViewData([
-                        'user' => $user,
-                    ]
-                )
-                ->render('registerextension.html')
-            ;
-        }
+        $app->setViewData()->render('home.html');
     }
 );
 
@@ -89,8 +55,8 @@ $app->getSecured('/package/register', function () use ($app) {
             print_r($info);
             echo '</pre>';
         } else {
-			$app->render('registerextension.html');
-		}
+            $app->setViewData()->render('registerextension.html');
+        }
     }
 );
 
@@ -103,7 +69,7 @@ $app->postSecured('/package/register', function () use ($app) {
         $info['vcs'] = $repo;
 
         if ($info['type'] != 'extension') {
-            $app->flash('error', $info['name'].' is not an extension package');
+            $app->flash('error', $info['name'] . ' is not an extension package');
             $app->redirect('/package/register');
         }
         $tags = $driver->getReleaseTags();
@@ -111,7 +77,7 @@ $app->postSecured('/package/register', function () use ($app) {
         $package = [
             'extension' => $info,
             'tags'      => $tags,
-            'user'      => $user->nickname,
+            'user'      => $app->user(),
         ];
 
         $jsonPackage = json_encode($package, JSON_PRETTY_PRINT);
