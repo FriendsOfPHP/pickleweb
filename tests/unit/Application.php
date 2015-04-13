@@ -104,7 +104,7 @@ class Application extends atoum
             ->then
                 ->object($this->testedInstance->setViewData($data = ['foo' => 'bar']))->isTestedInstance
                 ->mock($view)
-                    ->call('setData')->withArguments($data)->once
+                    ->call('setData')->withArguments(array_merge(['user' => null], $data))->once
         ;
     }
 
