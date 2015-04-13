@@ -42,36 +42,36 @@ $app->get('/', function () use ($app, & $user) {
 );
 
 $app->get('/package/register', function () use ($app, & $user) {
-		$app->redirectUnless($user, '/login');
-		$confirm = $app->request()->get('confirm');
-		if ($confirm) {
-			$transaction = $app->request()->get('id');
-			$pathTransaction = $app->config('cache_dir') . '/' . $transaction . '.json';
-			if (!file_exists($pathTransaction)) {
-				$app->redirect('/package/register');
-				exit();
-			}
+        $app->redirectUnless($user, '/login');
+        $confirm = $app->request()->get('confirm');
+        if ($confirm) {
+            $transaction = $app->request()->get('id');
+            $pathTransaction = $app->config('cache_dir').'/'.$transaction.'.json';
+            if (!file_exists($pathTransaction)) {
+                $app->redirect('/package/register');
+                exit();
+            }
 
-			$token = $_SESSION['token'];
-			$transaction = json_decode(file_get_contents($pathTransaction));
+            $token = $_SESSION['token'];
+            $transaction = json_decode(file_get_contents($pathTransaction));
 
-			$driver = new PickleWeb\Repository\Github($transaction->extension->vcs, $token->accessToken, $app->config('cache_dir'));
-			$info = $driver->getInformation();
-			
-			echo '<pre>';
-			var_dump($transaction->extension->support->source);
-			print_r($transaction);
-			print_r($info);
-			echo '</pre>';
-		} else {
-			$app
-				->setViewData([
-						'user' => $user,
-					]
-				)
-				->render('registerextension.html')
-			;
-		}
+            $driver = new PickleWeb\Repository\Github($transaction->extension->vcs, $token->accessToken, $app->config('cache_dir'));
+            $info = $driver->getInformation();
+
+            echo '<pre>';
+            var_dump($transaction->extension->support->source);
+            print_r($transaction);
+            print_r($info);
+            echo '</pre>';
+        } else {
+            $app
+                ->setViewData([
+                        'user' => $user,
+                    ]
+                )
+                ->render('registerextension.html')
+            ;
+        }
     }
 );
 
@@ -79,7 +79,7 @@ $app->post('/package/register', function () use ($app, & $user) {
         $app->redirectUnless($user, '/login');
 
         $token = $_SESSION['token'];
-		$repo = $app->request()->post('package_repository');
+        $repo = $app->request()->post('package_repository');
         $driver = new PickleWeb\Repository\Github($repo, $token->accessToken, $app->config('cache_dir'));
 
         $info = $driver->getInformation();
@@ -91,19 +91,19 @@ $app->post('/package/register', function () use ($app, & $user) {
         }
         $tags = $driver->getReleaseTags();
 
-		$package = [
-			'extension' => $info,
-			'tags'      => $tags,
-			'user'      => $user->nickname,
-		];
+        $package = [
+            'extension' => $info,
+            'tags'      => $tags,
+            'user'      => $user->nickname,
+        ];
 
-		$jsonPackage = json_encode($package, JSON_PRETTY_PRINT);
-		$transaction = hash('sha256', $jsonPackage);
+        $jsonPackage = json_encode($package, JSON_PRETTY_PRINT);
+        $transaction = hash('sha256', $jsonPackage);
 
-		file_put_contents($app->config('cache_dir') . '/' . $transaction . '.json' , $jsonPackage);
+        file_put_contents($app->config('cache_dir').'/'.$transaction.'.json', $jsonPackage);
 
         $app->setViewData([
-					'transaction' => $transaction,
+                    'transaction' => $transaction,
                     'extension' => $info,
                     'tags'      => $tags,
                     'user'      => $user,
