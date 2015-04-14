@@ -11,7 +11,7 @@ Aims to index PHP, HHVM or other implementations' extensions, according to pickl
 
 Github authentification done, package registration&validation in progress, layout, logo and UI done for the general design. Best way to contribute and know what has to be done is to follow the issues and create a PR :)
 
-We will try to keep up-to-date as much as possible. For now only the skeleton has been created, open early :)
+We will try to keep up-to-date as much as possible :)
 
 ## Setup
 
