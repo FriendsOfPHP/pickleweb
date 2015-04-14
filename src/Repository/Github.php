@@ -26,7 +26,7 @@ class Github
             $config->merge([
                     'config' => [
                         'cache-dir' => $cacheDir,
-                        'github-oauth' => ['githb.com' => $token],
+                        'github-oauth' => ['github.com' => $token],
                         ],
                 ]);
         }
