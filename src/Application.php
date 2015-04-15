@@ -2,14 +2,15 @@
 
 namespace PickleWeb;
 
-use Slim\Slim;
+use RKA\Slim;
 
-class Application
+/**
+ * Class Application
+ *
+ * @package PickleWeb
+ */
+class Application extends Slim
 {
-    /**
-     * @var \Slim\Slim
-     */
-    private $application;
 
     /**
      * @var callable
@@ -17,17 +18,17 @@ class Application
     private $authentication;
 
     /**
-     * @param Slim $application
+     * @param array $userSettings
      */
-    public function __construct(Slim $application)
+    public function __construct(array $userSettings = array())
     {
+        parent::__construct($userSettings);
+
         session_start();
 
-        $this->application = $application;
-
-        $this->authentication = function() {
+        $this->authentication = function () {
             if ($this->user() === null) {
-                $this->application->redirect('/login');
+                $this->redirect('/login');
             }
         };
     }
@@ -38,42 +39,6 @@ class Application
     public function user()
     {
         return isset($_SESSION['user']) ? $_SESSION['user'] : null;
-    }
-
-    /**
-     * @param string $name
-     * @param mixed  $value
-     *
-     * @return mixed
-     */
-    public function config($name, $value = null)
-    {
-        if (func_num_args() == 1) {
-            return $this->application->config($name);
-        }
-
-        return $this->application->config($name, $value);
-    }
-
-    /**
-     * @return \Slim\Http\Request
-     */
-    public function request()
-    {
-        return $this->application->request();
-    }
-
-    /**
-     * @param string   $url
-     * @param int|null $status
-     *
-     * @return $this
-     */
-    public function redirect($url, $status = null)
-    {
-        $this->application->redirect($url, $status ?: 302);
-
-        return $this;
     }
 
     /**
@@ -109,18 +74,6 @@ class Application
     }
 
     /**
-     * @param callable|null $callable
-     *
-     * @return $this
-     */
-    public function notFound(callable $callable = null)
-    {
-        $this->application->notFound($callable);
-
-        return $this;
-    }
-
-    /**
      * @param mixed $condition
      *
      * @return $this
@@ -128,22 +81,8 @@ class Application
     public function notFoundIf($condition)
     {
         if ((bool) $condition === true) {
-            $this->application->notFound();
+            $this->notFound();
         }
-
-        return $this;
-    }
-
-    /**
-     * @param string   $template
-     * @param array    $data
-     * @param int|null $status
-     *
-     * @return $this
-     */
-    public function render($template, array $data = [], $status = null)
-    {
-        $this->application->render($template, $data, $status);
 
         return $this;
     }
@@ -155,9 +94,9 @@ class Application
      */
     public function renderError($code)
     {
-        $this->setViewData()->render('errors/'.$code.'.html');
-        $this->application->response()->status($code);
-        $this->application->stop();
+        $this->setViewData()->render('errors/' . $code . '.html');
+        $this->response()->status($code);
+        $this->stop();
 
         return $this;
     }
@@ -176,7 +115,7 @@ class Application
             $data ?: []
         );
 
-        $this->application->view()->setData($data);
+        $this->view()->setData($data);
 
         return $this;
     }
@@ -204,79 +143,44 @@ class Application
     }
 
     /**
-     * @return $this
+     * @return void
      */
     public function run()
     {
-        $this->application->error(function () {
+        $this->error(
+            function () {
                 $this->renderError(500);
             }
         );
 
-        $this->application->notFound(function () {
+        $this->notFound(
+            function () {
                 $this->renderError(404);
             }
         );
 
-        $this->application->run();
-
-        return $this;
+        parent::run();
     }
 
     /**
-     * @param string   $route
-     * @param callable $callable
+     * @param string          $route
+     * @param callable|string $callable
      *
      * @return \Slim\Route
      */
-    public function get($route, callable $callable)
+    public function getSecured($route, $callable)
     {
-        return $this->application->get($route, $callable);
+        return $this->get($route, $this->authentication, $callable);
     }
 
     /**
-     * @param string   $route
-     * @param callable $callable
+     * @param string          $route
+     * @param callable|string $callable
      *
      * @return \Slim\Route
      */
-    public function getSecured($route, callable $callable)
+    public function postSecured($route, $callable)
     {
-        return $this->application->get($route, $this->authentication, $callable);
-    }
-
-    /**
-     * @param string   $route
-     * @param callable $callable
-     *
-     * @return \Slim\Route
-     */
-    public function post($route, callable $callable)
-    {
-        return $this->application->get($route, $callable);
-    }
-
-    /**
-     * @param string   $route
-     * @param callable $callable
-     *
-     * @return \Slim\Route
-     */
-    public function postSecured($route, callable $callable)
-    {
-        return $this->application->post($route, $this->authentication, $callable);
-    }
-
-    /**
-     * @param string $key
-     * @param string $value
-     *
-     * @return $this
-     */
-    public function flash($key, $value)
-    {
-        $this->application->flash($key, $value);
-
-        return $this;
+        return $this->post($route, $this->authentication, $callable);
     }
 }
