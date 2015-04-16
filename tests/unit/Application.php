@@ -4,122 +4,105 @@ namespace PickleWeb\Tests\Unit;
 
 use atoum;
 
+/**
+ * Class Application
+ *
+ * @package PickleWeb\Tests\Unit
+ */
 class Application extends atoum
 {
+
     public function test__construct()
     {
-        $this
-            ->object($this->newTestedInstance(new \mock\Slim\Slim))->isInstanceOfTestedClass
-        ;
+        $this->object($this->newTestedInstance([]))
+            ->isInstanceOf('Slim\Slim')
+            ->isInstanceOf('RKA\Slim');
     }
 
     public function testRedirectIf()
     {
-        $this
-            ->given(
-                $application = new \mock\Slim\Slim,
-                $this->calling($application)->redirect = null
-            )
-            ->if($this->newTestedInstance($application))
+        $this->mockGenerator->shunt('redirect');
+        /* @var $applicationMock \PickleWeb\Application */
+
+        $this->given($applicationMock = new \mock\PickleWeb\Application([]))
+            ->if($applicationMock->redirectIf(false, uniqid()))
             ->then
-                ->object($this->testedInstance->redirectIf(false, uniqid()))->isTestedInstance
-                ->mock($application)
-                    ->call('redirect')->never
-                ->object($this->testedInstance->redirectIf(true, $url = uniqid()))->isTestedInstance
-                ->mock($application)
-                    ->call('redirect')->withArguments($url)->once
-        ;
+                ->mock($applicationMock)
+                ->call('redirect')->never
+            ->if($applicationMock->redirectIf(true, $url = uniqid()))
+            ->then
+                ->mock($applicationMock)
+                ->call('redirect')->withArguments($url)->once;
     }
 
     public function testRedirectUnless()
     {
-        $this
-            ->given(
-                $application = new \mock\Slim\Slim,
-                $this->calling($application)->redirect = null
-            )
-            ->if($this->newTestedInstance($application))
+        $this->mockGenerator->shunt('redirect');
+        /* @var $applicationMock \PickleWeb\Application */
+
+        $this->given($applicationMock = new \mock\PickleWeb\Application([]))
+            ->if($applicationMock->redirectUnless(true, uniqid()))
             ->then
-                ->object($this->testedInstance->redirectUnless(true, uniqid()))->isTestedInstance
-                ->mock($application)
-                    ->call('redirect')->never
-                ->object($this->testedInstance->redirectUnless(false, $url = uniqid()))->isTestedInstance
-                ->mock($application)
-                    ->call('redirect')->withArguments($url)->once
-        ;
+                ->mock($applicationMock)
+                ->call('redirect')->never
+            ->if($applicationMock->redirectUnless(false, $url = uniqid()))
+            ->then
+                ->mock($applicationMock)
+                ->call('redirect')->withArguments($url)->once;
     }
 
     public function testNotFoundIf()
     {
-        $this
-            ->given(
-                $application = new \mock\Slim\Slim,
-                $this->calling($application)->notFound = null
-            )
-            ->if($this->newTestedInstance($application))
+        $this->mockGenerator->shunt('notFound');
+        /* @var $applicationMock \PickleWeb\Application */
+
+        $this->given($applicationMock = new \mock\PickleWeb\Application([]))
+            ->if($applicationMock->notFoundIf(false))
             ->then
-                ->object($this->testedInstance->notFoundIf(false, uniqid()))->isTestedInstance
-                ->mock($application)
-                    ->call('notFound')->never
-                ->object($this->testedInstance->notFoundIf(true, $url = uniqid()))->isTestedInstance
-                ->mock($application)
-                    ->call('notFound')->once
-        ;
+                ->mock($applicationMock)
+                ->call('notFound')->never
+            ->if($applicationMock->notFoundIf(true))
+            ->then
+                ->mock($applicationMock)
+                ->call('notFound')->once;
     }
 
     public function testRenderError()
     {
-        $this
-            ->given(
-                $application = new \mock\Slim\Slim,
-                $response = new \mock\Slim\Http\Response,
-                $this->calling($application)->render = null,
-                $this->calling($application)->stop = null,
-                $this->calling($application)->response = $response,
-                $this->calling($response)->status = null
-            )
-            ->if($this->newTestedInstance($application))
+        /* @var $applicationMock \PickleWeb\Application */
+
+        $this->given(
+            $applicationMock = new \mock\PickleWeb\Application([]),
+            $responseMock = new \mock\Slim\Http\Response,
+            $this->calling($applicationMock)->render = null,
+            $this->calling($applicationMock)->stop = null,
+            $this->calling($applicationMock)->response = $responseMock,
+            $this->calling($responseMock)->status = null
+        )
+            ->if($applicationMock->renderError($code = rand(0, PHP_INT_MAX)))
             ->then
-                ->object($this->testedInstance->renderError($code = rand(0, PHP_INT_MAX)))->isTestedInstance
-                ->mock($application)
-                    ->call('render')->withArguments('errors/' . $code . '.html')
-                        ->before(
-                            $this->mock($response)->call('status')->withArguments($code)
-                                ->before($this->mock($application)->call('stop')->once)
-                            ->once
-                        )
-                    ->once
-        ;
+                ->mock($applicationMock)
+                ->call('render')->withArguments('errors/' . $code . '.html')
+                    ->before(
+                    $this->mock($responseMock)->call('status')->withArguments($code)
+                        ->before($this->mock($applicationMock)->call('stop')->once)
+                        ->once
+                    )
+                    ->once;
     }
 
     public function testSetViewData()
     {
-        $this
-            ->given(
-                $application = new \mock\Slim\Slim,
-                $view = new \mock\Slim\View,
-                $this->calling($application)->view = $view
-            )
-            ->if($this->newTestedInstance($application))
-            ->then
-                ->object($this->testedInstance->setViewData($data = ['foo' => 'bar']))->isTestedInstance
-                ->mock($view)
-                    ->call('setData')->withArguments(array_merge(['user' => null], $data))->once
-        ;
-    }
+        /* @var $applicationMock \PickleWeb\Application */
 
-    public function testRun()
-    {
-        $this
-            ->given(
-                $application = new \mock\Slim\Slim,
-                $this->calling($application)->run = null
-            )
-            ->if($this->newTestedInstance($application))
+        $this->given(
+            $applicationMock = new \mock\PickleWeb\Application([]),
+            $viewMock = new \mock\Slim\View,
+            $this->calling($applicationMock)->view = $viewMock
+        )
+            ->if($applicationMock->setViewData($data = ['foo' => 'bar']))
             ->then
-                ->object($this->testedInstance->run())->isTestedInstance
-                ->mock($application)
-                    ->call('run')->once
-        ;
+                ->mock($viewMock)
+                ->call('setData')->withArguments(array_merge(['user' => null], $data))->once;
     }
-} 
+}

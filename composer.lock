@@ -4,32 +4,75 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "473a2ac80b195654f592d7e0b9b0fcd3",
+    "hash": "c63218a75601ef2929a8b0a5c63acd2d",
     "packages": [
         {
-            "name": "composer/composer",
-            "version": "1.0.0-alpha9",
+            "name": "akrabat/rka-slim-controller",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/composer/composer.git",
-                "reference": "eb1ce550ca51134ee619ad3e37f5a0b7e980dd24"
+                "url": "https://github.com/akrabat/rka-slim-controller.git",
+                "reference": "7115f082a91af83fd22755e8d2d27e9fcffc636b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/eb1ce550ca51134ee619ad3e37f5a0b7e980dd24",
-                "reference": "eb1ce550ca51134ee619ad3e37f5a0b7e980dd24",
+                "url": "https://api.github.com/repos/akrabat/rka-slim-controller/zipball/7115f082a91af83fd22755e8d2d27e9fcffc636b",
+                "reference": "7115f082a91af83fd22755e8d2d27e9fcffc636b",
                 "shasum": ""
             },
             "require": {
-                "justinrainbow/json-schema": "~1.1",
+                "php": ">=5.4",
+                "slim/slim": "~2.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "RKA\\": "RKA"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Allen",
+                    "email": "rob@akrabat.com",
+                    "homepage": "http://akrabat.com"
+                }
+            ],
+            "description": "Dynamically instantiated controller classes for Slim Framework",
+            "homepage": "http://github.com/akrabat/rka-slim-controller",
+            "keywords": [
+                "controller",
+                "slim"
+            ],
+            "time": "2015-01-07 09:54:54"
+        },
+        {
+            "name": "composer/composer",
+            "version": "1.0.0-alpha10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/composer.git",
+                "reference": "775f6cd5c633facf2e7b99611fdcaa900b58ddb7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/composer/zipball/775f6cd5c633facf2e7b99611fdcaa900b58ddb7",
+                "reference": "775f6cd5c633facf2e7b99611fdcaa900b58ddb7",
+                "shasum": ""
+            },
+            "require": {
+                "justinrainbow/json-schema": "~1.4",
                 "php": ">=5.3.2",
                 "seld/jsonlint": "~1.0",
-                "symfony/console": "~2.3",
+                "symfony/console": "~2.5",
                 "symfony/finder": "~2.2",
                 "symfony/process": "~2.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0"
+                "phpunit/phpunit": "~4.5"
             },
             "suggest": {
                 "ext-openssl": "Enabling the openssl extension allows you to access https URLs for repositories and packages",
@@ -72,7 +115,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2014-12-07 17:15:20"
+            "time": "2015-04-14 21:18:51"
         },
         {
             "name": "guzzle/guzzle",

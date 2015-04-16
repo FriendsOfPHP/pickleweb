@@ -1,32 +1,33 @@
 {
-    "name": "friendsofphp/pickleweb",
-    "type": "application",
-    "description": "PickleWeb is the main Pickle repository. It aggregates extensions for all PHP implementations.",
-    "homepage": "https://github.com/FriendsOfPHP/pickleweb",
-    "license": "BSD",
-    "authors": [
+    "name"        : "friendsofphp/pickleweb",
+    "type"        : "application",
+    "description" : "PickleWeb is the main Pickle repository. It aggregates extensions for all PHP implementations.",
+    "homepage"    : "https://github.com/FriendsOfPHP/pickleweb",
+    "license"     : "BSD",
+    "authors"     : [
         {
-            "name": "Pierre Joye",
-            "email": "pierre.php@gmail.com",
+            "name"    : "Pierre Joye",
+            "email"   : "pierre.php@gmail.com",
             "homepage": "http://pecl.php.net/user/pajoye",
-            "role": "Developer"
+            "role"    : "Developer"
         },
         {
-            "name": "Community",
+            "name"    : "Community",
             "homepage": "https://github.com/FriendsOfPHP/pickleweb/graphs/contributors"
         }
     ],
-    "require": {
-        "php": ">=5.5.0",
-        "slim/slim": "2.*",
-        "twig/twig": "~1.0",
-        "composer/composer": "~1.0-alpha8",
-        "league/oauth2-client": "*"
+    "require"     : {
+        "php"                        : ">=5.5.0",
+        "slim/slim"                  : "2.*",
+        "twig/twig"                  : "~1.0",
+        "composer/composer"          : "~1.0-alpha8",
+        "league/oauth2-client"       : "*",
+        "akrabat/rka-slim-controller": "2.0.*"
     },
-    "require-dev": {
+    "require-dev" : {
         "atoum/atoum": "*"
     },
-    "autoload": {
+    "autoload"    : {
         "psr-4": {
             "PickleWeb\\": ["src/"]
         }
