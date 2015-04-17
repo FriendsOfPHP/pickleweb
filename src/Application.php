@@ -5,13 +5,10 @@ namespace PickleWeb;
 use RKA\Slim;
 
 /**
- * Class Application
- *
- * @package PickleWeb
+ * Class Application.
  */
 class Application extends Slim
 {
-
     /**
      * @var callable
      */
@@ -94,7 +91,7 @@ class Application extends Slim
      */
     public function renderError($code)
     {
-        $this->setViewData()->render('errors/' . $code . '.html');
+        $this->setViewData()->render('errors/'.$code.'.html');
         $this->response()->status($code);
         $this->stop();
 
@@ -110,7 +107,7 @@ class Application extends Slim
     {
         $data = array_merge(
             [
-                'user' => $this->user()
+                'user' => $this->user(),
             ],
             $data ?: []
         );
@@ -143,7 +140,6 @@ class Application extends Slim
     }
 
     /**
-     * @return void
      */
     public function run()
     {

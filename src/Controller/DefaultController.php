@@ -1,15 +1,14 @@
 <?php
+
 namespace PickleWeb\Controller;
 
 /**
- * Class DefaultController
- *
- * @package PickleWeb\Controller
+ * Class DefaultController.
  */
 class DefaultController extends ControllerAbstract
 {
     /**
-     * GET /
+     * GET /.
      */
     public function indexAction()
     {

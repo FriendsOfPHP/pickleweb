@@ -87,9 +87,9 @@ class Github
 
         return $normalizedTags;
     }
-    
-    function getComposerInformation($identifier=NULL)
+
+    public function getComposerInformation($identifier = null)
     {
-		return $this->driver->getComposerInformation($identifier);
-	}
+        return $this->driver->getComposerInformation($identifier);
+    }
 }
