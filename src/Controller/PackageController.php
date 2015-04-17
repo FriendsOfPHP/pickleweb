@@ -27,11 +27,36 @@ class PackageController extends ControllerAbstract
             $driver = new \PickleWeb\Repository\Github($transaction->extension->vcs, $token->accessToken, $this->app->config('cache_dir'));
             $info   = $driver->getInformation();
 
-            echo '<pre>';
-            var_dump($transaction->extension->support->source);
-            print_r($transaction);
-            print_r($info);
-            echo '</pre>';
+			$jsonPackages = [
+				'packages' => [],
+				'notify'   => '/downloads/%package%',
+				'notify-batch'   => '/downloads/',
+				'providers-url'  => '/p/%package%$%hash%.json',
+				'search'         => '/search.json?q=%query%',
+				'provider-includes' => []
+			];
+            $packages = ['packages' => [
+						$transaction->extension->name => []
+					]
+				];
+            $package = &$packages['packages'][$transaction->extension->name];
+			foreach ($transaction->tags as $tag) {	
+				$extra = [
+					'version_normalized' => $tag->version
+				];
+
+				$package[$tag->tag][] = array_merge($extra, $driver->getInformation($tag->id));
+			}
+			$json = json_encode($packages);
+			list($vendorName, $extensionName) = explode('/', $transaction->extension->name);
+			$vendorDir = $this->app->config('json_path') . '/' . $vendorName;
+			if (!is_dir($vendorDir)) {
+				mkdir($vendorDir);
+			}
+			$sha = hash('sha256', $json);
+			file_put_contents($vendorDir . '/' . $extensionName . '$' . $sha . '.json', $json);
+			$this->app->flash('warning', $transaction->extension->name . 'has been registred');
+			$this->app->redirect('/');
         } else {
             $this->app
                 ->setViewData(
@@ -69,11 +94,12 @@ class PackageController extends ControllerAbstract
             }
 
             $tags = $driver->getReleaseTags();
-
+			$information = $driver->getComposerInformation();
             $package = [
                 'extension' => $info,
                 'tags'      => $tags,
-                'user'      => $this->app->user()
+                'user'      => $this->app->user()->getArrayCopy()['nickname'],
+                'info'      => $information
             ];
 
             $jsonPackage = json_encode($package, JSON_PRETTY_PRINT);
