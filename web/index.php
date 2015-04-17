@@ -54,7 +54,7 @@ $app->get('/login/:provider', 'PickleWeb\Controller\AuthController:loginWithProv
 // Packages
 $app->getSecured('/package/register', 'PickleWeb\Controller\PackageController:registerAction');
 $app->postSecured('/package/register', 'PickleWeb\Controller\PackageController:registerPackageAction');
-$app->get('/package/:package', 'PickleWeb\Controller\PackageController:viewPackageAction');
+$app->get('/package/:vendor/:package', 'PickleWeb\Controller\PackageController:viewPackageAction');
 
 // Users
 $app->getSecured('/profile', 'PickleWeb\Controller\UserController:profileAction');

@@ -44,7 +44,7 @@ class PackageController extends ControllerAbstract
                     'version_normalized' => $tag->version,
                 ];
 
-                $package[$tag->tag][] = array_merge($extra, $driver->getInformation($tag->id));
+                $package[$tag->tag] = array_merge($extra, $driver->getInformation($tag->id));
             }
             $json = json_encode($packages);
             list($vendorName, $extensionName) = explode('/', $transaction->extension->name);
@@ -53,7 +53,12 @@ class PackageController extends ControllerAbstract
                 mkdir($vendorDir);
             }
             $sha = hash('sha256', $json);
-            file_put_contents($vendorDir.'/'.$extensionName.'$'.$sha.'.json', $json);
+
+            $jsonPathBase = $vendorDir.'/'. $extensionName;
+            $jsonPathSha = $jsonPathBase  . '$' . $sha . '.json';
+            file_put_contents($jsonPathSha, $json);
+            link($jsonPathSha, $jsonPathBase . '.json');
+
             $this->app->flash('warning', $transaction->extension->name.'has been registred');
             $this->app->redirect('/');
         } else {
@@ -80,7 +85,7 @@ class PackageController extends ControllerAbstract
             $info   = $driver->getInformation();
 
             if ($info === null) {
-                $this->app->flash('error', 'No valid composer.json found.');
+                $this->app->flash('Warning', 'No valid composer.json found.');
                 $this->app->redirect('/package/register');
             }
 
@@ -121,40 +126,27 @@ class PackageController extends ControllerAbstract
     }
 
     /**
-     * GET /package/:package.
+     * GET /package/:vendor/:package.
      *
      * @param string $package
      */
-    public function viewPackageAction($package)
+    public function viewPackageAction($vendor, $package)
     {
-        $jsonPath = $this->app->config('json_path').'extensions/'.$package.'.json';
+        $jsonPath = $this->app->config('json_path'). $vendor . '/' . $package .'.json';
 
-        $this->app
-            ->notFoundIf(file_exists($jsonPath) === false)
-            ->otherwise(
-                function () use (& $package, $jsonPath) {
-                    $json = json_decode(file_get_contents($jsonPath), true);
+        $this->app->notFoundIf(file_exists($jsonPath) === false);
+        
+		$name = $vendor . '/'. $package;
+		$json = json_decode(file_get_contents($jsonPath), true);
 
-                    array_map(
-                        function ($version) {
-                            $version['time'] = new \DateTime($version['time']);
-                        },
-                        $json['packages'][$package]
-                    );
+		reset($json['packages'][$name]);
+		$firstKey = key($json['packages'][$name]);
 
-                    $latest = reset($json['packages'][$package]);
-
-                    $package = [
-                        'name'       => key($json['packages']),
-                        'versions'   => $json['packages'][$package],
-                        'latest'     => $latest,
-                        'maintainer' => reset($latest['authors']),
-                    ];
-                }
-            )
-            ->setViewData(
+        $this->app->setViewData(
                 [
-                    'extension' => $package,
+					'name'      => $name,
+                    'extension' => $json['packages'][$name][$firstKey],
+                    'versions'  => $json['packages'][$vendor . '/' . $package]
                 ]
             )
             ->render('extension/info.html');

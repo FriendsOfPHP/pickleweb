@@ -8,45 +8,48 @@
     <h1>
         {{ extension.name }}
         <span class="label label-primary">PHP</span>
-        <span class="label label-primary">HHVM</span>
-        <span class="label label-primary">Hippy</span>
+        <!-- <span class="label label-primary">HHVM</span>
+        <span class="label label-primary">Hippy</span>-->
     </h1>
 
-    {% if extension.latest.description %}
+    {% if extension.description %}
         <p class="lead">
-            {{ extension.latest.description }}
+            {{ extension.description }}
         </p>
     {% endif %}
 
     <ul>
+{% for maintainer in extension.authors %}
         <li>
             Maintainer:
-            {% if extension.maintainer.homepage %}
-                <a href="{{ extension.maintainer.homepage }}">{{ extension.maintainer.name }}</a>
-            {% elseif extension.maintainer.email %}
-                <a href="mailto:{{ extension.maintainer.email }}">{{ extension.maintainer.name }}</a>
+            {% if maintainer.homepage %}
+                <a href="{{ extension.maintainer.homepage }}">{{ maintainer.name }}</a>
+            {% elseif maintainer.email %}
+                <a href="mailto:{{ maintainer.email }}">{{ maintainer.name }}</a>
             {% else %}
-                {{ extension.maintainer.name }}
+                {{ maintainer.name }}
             {% endif %}
         </li>
-
-        {% if extension.latest.license %}
-            <li>License: {{ extension.latest.license }}</li>
+{% endfor %}
+{% for license in extension.license %}
+        {% if extension.license %}
+            <li>License: {{ license }}</li>
+        {% endif %}
+{% endfor %}
+{% for version, info in extension.versions %}
+        {% if extension.homepage %}
+            <li>Homepage: <a href="{{ extension.homepage }}">{{ extension.homepage }}</a></li>
         {% endif %}
 
-        {% if extension.latest.homepage %}
-            <li>Homepage: <a href="{{ extension.latest.homepage }}">{{ extension.latest.homepage }}</a></li>
+        {% if extension.support.source %}
+            <li>Source: <a href="{{ extension.support.source }}">{{ extension.support.source }}</a></li>
         {% endif %}
 
-        {% if extension.latest.support.source %}
-            <li>Source: <a href="{{ extension.latest.support.source }}">{{ extension.latest.support.source }}</a></li>
-        {% endif %}
-
-        {% if extension.latest.support.issues %}
-            <li>Issues: <a href="{{ extension.latest.support.issues }}">{{ extension.latest.support.issues }}</a></li>
+        {% if extension.support.issues %}
+            <li>Issues: <a href="{{ extensionsupport.issues }}">{{ extension.support.issues }}</a></li>
         {% endif %}
     </ul>
-
+{% endfor %}
     <h2>Versions</h2>
 
     <table class="table table-striped">
@@ -57,7 +60,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for version, info in extension.versions %}
+        {% for version, info in versions %}
             <tr>
                 <td>{{ version }}</td>
                 <td>{{ info.time }}</td>
