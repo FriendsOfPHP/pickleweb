@@ -13,12 +13,12 @@ class UserController extends ControllerAbstract
     public function profileAction()
     {
         $this->app
-            ->setViewData(
+            ->render(
+                'account.html',
                 [
                     'account' => $this->app->user(),
                 ]
-            )
-            ->render('account.html');
+            );
     }
 
     /**
@@ -28,16 +28,16 @@ class UserController extends ControllerAbstract
      */
     public function viewAccountAction($name = null)
     {
-        $jsonPath = $this->app->config('json_path').'users/github/'.$name.'.json';
+        $jsonPath = $this->app->config('json_path') . 'users/github/' . $name . '.json';
 
         $this->app
             ->notFoundIf(file_exists($jsonPath) === false)
             ->redirectUnless($name, '/profile')
-            ->setViewData(
+            ->render(
+                'account.html',
                 [
                     'account' => json_decode(file_get_contents($jsonPath), true),
                 ]
-            )
-            ->render('account.html');
+            );
     }
 }

@@ -9,6 +9,7 @@ use RKA\Slim;
  */
 class Application extends Slim
 {
+
     /**
      * @var callable
      */
@@ -91,7 +92,7 @@ class Application extends Slim
      */
     public function renderError($code)
     {
-        $this->setViewData()->render('errors/'.$code.'.html');
+        $this->render('errors/' . $code . '.html');
         $this->response()->status($code);
         $this->stop();
 
@@ -99,12 +100,13 @@ class Application extends Slim
     }
 
     /**
-     * @param array|null $data
-     *
-     * @return $this
+     * @param string $template
+     * @param array  $data
+     * @param null   $status
      */
-    public function setViewData(array $data = null)
+    public function render($template, $data = array(), $status = null)
     {
+        // add user in template data
         $data = array_merge(
             [
                 'user' => $this->user(),
@@ -112,10 +114,9 @@ class Application extends Slim
             $data ?: []
         );
 
-        $this->view()->setData($data);
-
-        return $this;
+        parent::render($template, $data, $status);
     }
+
 
     /**
      * @param callable $callback

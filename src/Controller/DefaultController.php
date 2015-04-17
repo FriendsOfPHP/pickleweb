@@ -12,6 +12,6 @@ class DefaultController extends ControllerAbstract
      */
     public function indexAction()
     {
-        $this->app->setViewData()->render('home.html');
+        $this->app->render('home.html');
     }
 }

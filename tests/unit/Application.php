@@ -83,26 +83,26 @@ class Application extends atoum
             ->then
                 ->mock($applicationMock)
                 ->call('render')->withArguments('errors/' . $code . '.html')
-                    ->before(
+                ->before(
                     $this->mock($responseMock)->call('status')->withArguments($code)
                         ->before($this->mock($applicationMock)->call('stop')->once)
                         ->once
-                    )
-                    ->once;
+                )
+                ->once;
     }
 
-    public function testSetViewData()
+    public function testRender()
     {
         /* @var $applicationMock \PickleWeb\Application */
 
         $this->given(
-            $applicationMock = new \mock\PickleWeb\Application([]),
             $viewMock = new \mock\Slim\View,
-            $this->calling($applicationMock)->view = $viewMock
+            $applicationMock = new \mock\PickleWeb\Application(['view' => $viewMock]),
+            $this->calling($viewMock)->display = null
         )
-            ->if($applicationMock->setViewData($data = ['foo' => 'bar']))
+            ->if($applicationMock->render('index.html', $data = ['foo' => 'bar']))
             ->then
                 ->mock($viewMock)
-                ->call('setData')->withArguments(array_merge(['user' => null], $data))->once;
+                ->call('appendData')->withArguments(array_merge(['user' => null], $data))->once;
     }
 }

@@ -14,7 +14,7 @@ class PackageController extends ControllerAbstract
     {
         if ($this->app->request()->get('confirm')) {
             $transaction     = $this->app->request()->get('id');
-            $pathTransaction = $this->app->config('cache_dir').'/'.$transaction.'.json';
+            $pathTransaction = $this->app->config('cache_dir') . '/' . $transaction . '.json';
             if (!file_exists($pathTransaction)) {
                 $this->app->redirect('/package/register');
                 exit();
@@ -27,18 +27,19 @@ class PackageController extends ControllerAbstract
             $info   = $driver->getInformation();
 
             $jsonPackages = [
-                'packages' => [],
-                'notify'   => '/downloads/%package%',
-                'notify-batch'   => '/downloads/',
-                'providers-url'  => '/p/%package%$%hash%.json',
-                'search'         => '/search.json?q=%query%',
+                'packages'          => [],
+                'notify'            => '/downloads/%package%',
+                'notify-batch'      => '/downloads/',
+                'providers-url'     => '/p/%package%$%hash%.json',
+                'search'            => '/search.json?q=%query%',
                 'provider-includes' => [],
             ];
-            $packages = ['packages' => [
-                        $transaction->extension->name => [],
-                    ],
-                ];
-            $package = &$packages['packages'][$transaction->extension->name];
+            $packages     = [
+                'packages' => [
+                    $transaction->extension->name => [],
+                ],
+            ];
+            $package      = &$packages['packages'][$transaction->extension->name];
             foreach ($transaction->tags as $tag) {
                 $extra = [
                     'version_normalized' => $tag->version,
@@ -48,27 +49,27 @@ class PackageController extends ControllerAbstract
             }
             $json = json_encode($packages);
             list($vendorName, $extensionName) = explode('/', $transaction->extension->name);
-            $vendorDir = $this->app->config('json_path').'/'.$vendorName;
+            $vendorDir = $this->app->config('json_path') . '/' . $vendorName;
             if (!is_dir($vendorDir)) {
                 mkdir($vendorDir);
             }
             $sha = hash('sha256', $json);
 
-            $jsonPathBase = $vendorDir.'/'. $extensionName;
-            $jsonPathSha = $jsonPathBase  . '$' . $sha . '.json';
+            $jsonPathBase = $vendorDir . '/' . $extensionName;
+            $jsonPathSha  = $jsonPathBase . '$' . $sha . '.json';
             file_put_contents($jsonPathSha, $json);
             link($jsonPathSha, $jsonPathBase . '.json');
 
-            $this->app->flash('warning', $transaction->extension->name.'has been registred');
+            $this->app->flash('warning', $transaction->extension->name . 'has been registred');
             $this->app->redirect('/');
         } else {
             $this->app
-                ->setViewData(
+                ->render(
+                    'extension/register.html',
                     [
                         'repository' => $this->app->request()->get('repository'),
                     ]
-                )
-                ->render('extension/register.html');
+                );
         }
     }
 
@@ -92,13 +93,13 @@ class PackageController extends ControllerAbstract
             $info['vcs'] = $repo;
 
             if ($info['type'] != 'extension') {
-                $this->app->flash('error', $info['name'].' is not an extension package');
+                $this->app->flash('error', $info['name'] . ' is not an extension package');
                 $this->app->redirect('/package/register');
             }
 
-            $tags = $driver->getReleaseTags();
+            $tags        = $driver->getReleaseTags();
             $information = $driver->getComposerInformation();
-            $package = [
+            $package     = [
                 'extension' => $info,
                 'tags'      => $tags,
                 'user'      => $this->app->user()->getArrayCopy()['nickname'],
@@ -108,20 +109,20 @@ class PackageController extends ControllerAbstract
             $jsonPackage = json_encode($package, JSON_PRETTY_PRINT);
             $transaction = hash('sha256', $jsonPackage);
 
-            file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $jsonPackage);
+            file_put_contents($this->app->config('cache_dir') . '/' . $transaction . '.json', $jsonPackage);
 
             $this->app
-                ->setViewData(
+                ->render(
+                    'extension/confirm.html',
                     [
                         'transaction' => $transaction,
                         'extension'   => $info,
                         'tags'        => $tags,
                     ]
-                )
-                ->render('extension/confirm.html');
+                );
         } catch (\RuntimeException $exception) {
             $this->app->flash('error', 'An error occurred while retrieving extension data. Please try again later.');
-            $this->app->redirect('/package/register?repository='.$repo);
+            $this->app->redirect('/package/register?repository=' . $repo);
         }
     }
 
@@ -132,23 +133,23 @@ class PackageController extends ControllerAbstract
      */
     public function viewPackageAction($vendor, $package)
     {
-        $jsonPath = $this->app->config('json_path'). $vendor . '/' . $package .'.json';
+        $jsonPath = $this->app->config('json_path') . $vendor . '/' . $package . '.json';
 
         $this->app->notFoundIf(file_exists($jsonPath) === false);
-        
-		$name = $vendor . '/'. $package;
-		$json = json_decode(file_get_contents($jsonPath), true);
 
-		reset($json['packages'][$name]);
-		$firstKey = key($json['packages'][$name]);
+        $name = $vendor . '/' . $package;
+        $json = json_decode(file_get_contents($jsonPath), true);
 
-        $this->app->setViewData(
-                [
-					'name'      => $name,
-                    'extension' => $json['packages'][$name][$firstKey],
-                    'versions'  => $json['packages'][$vendor . '/' . $package]
-                ]
-            )
-            ->render('extension/info.html');
+        reset($json['packages'][$name]);
+        $firstKey = key($json['packages'][$name]);
+
+        $this->app->render(
+            'extension/info.html',
+            [
+                'name'      => $name,
+                'extension' => $json['packages'][$name][$firstKey],
+                'versions'  => $json['packages'][$vendor . '/' . $package]
+            ]
+        );
     }
 }
