@@ -28,7 +28,7 @@ class UserController extends ControllerAbstract
      */
     public function viewAccountAction($name = null)
     {
-        $jsonPath = $this->app->config('json_path') . 'users/github/' . $name . '.json';
+        $jsonPath = $this->app->config('json_path').'users/github/'.$name.'.json';
 
         $this->app
             ->notFoundIf(file_exists($jsonPath) === false)
