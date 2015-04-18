@@ -22,6 +22,7 @@ class PackageController extends ControllerAbstract
 
             $token       = $_SESSION['token'];
             $transaction = json_decode(file_get_contents($pathTransaction));
+			$package_name = $transaction->extension->name;
 
             $driver = new \PickleWeb\Repository\Github($transaction->extension->vcs, $token->accessToken, $this->app->config('cache_dir'));
             $info   = $driver->getInformation();
@@ -36,10 +37,10 @@ class PackageController extends ControllerAbstract
             ];
             $packages     = [
                 'packages' => [
-                    $transaction->extension->name => [],
+                    $package_name => [],
                 ],
             ];
-            $package      = &$packages['packages'][$transaction->extension->name];
+            $package      = &$packages['packages'][$package_name];
             foreach ($transaction->tags as $tag) {
                 $extra = [
                     'version_normalized' => $tag->version,
@@ -48,7 +49,7 @@ class PackageController extends ControllerAbstract
                 $package[$tag->tag] = array_merge($extra, $driver->getInformation($tag->id));
             }
             $json = json_encode($packages);
-            list($vendorName, $extensionName) = explode('/', $transaction->extension->name);
+            list($vendorName, $extensionName) = explode('/', $package_name);
             $vendorDir = $this->app->config('json_path') . '/' . $vendorName;
             if (!is_dir($vendorDir)) {
                 mkdir($vendorDir);
@@ -56,12 +57,12 @@ class PackageController extends ControllerAbstract
             $sha = hash('sha256', $json);
 
             $jsonPathBase = $vendorDir . '/' . $extensionName;
-            $jsonPathSha  = $jsonPathBase . '$' . $sha . '.json';
+            $jsonPathSha  = $jsonPathBase  . '$' . $sha . '.json';
             file_put_contents($jsonPathSha, $json);
             link($jsonPathSha, $jsonPathBase . '.json');
-
+			unlink($pathTransaction);
             $this->app->flash('warning', $transaction->extension->name . 'has been registred');
-            $this->app->redirect('/');
+            $this->app->redirect('/package/' . $package_name);
         } else {
             $this->app
                 ->render(
