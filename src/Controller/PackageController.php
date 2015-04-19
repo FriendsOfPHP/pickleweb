@@ -99,16 +99,22 @@ class PackageController extends ControllerAbstract
                 $this->app->redirect('/package/register');
             }
 
-            $package_name = $info['name'];
-            list($owner, $repository) = explode('/', $package_name);
+            $packageName = $info['name'];
+            list($owner, $repository) = explode('/', $packageName);
 
+            $vendorDir = $this->app->config('json_path').'/'.$vendorName;
+            $jsonPathBase = $vendorDir.'/'.$extensionName;
+			if (is_dir($jsonPathBase)) {
+                $this->app->flash('error', $packageName . ' is already registred');
+                $this->app->redirect('/package/' . $packageName);
+			}
             $packages     = [
                 'packages' => [
-                    $package_name => [],
+                    $packageName => [],
                 ],
             ];
 
-            $package = &$packages['packages'][$package_name];
+            $package = &$packages['packages'][$packageName];
             $tags    = $driver->getReleaseTags();
             $msg = [];
             foreach ($tags as $tag) {
