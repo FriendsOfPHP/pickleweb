@@ -5,7 +5,7 @@ namespace PickleWeb\Repository;
 use Composer\Repository as Repository;
 use Composer\IO\NullIO;
 use Composer\Factory as Factory;
-use Composer\Repository\Vcs\GitHubDriver as Github;
+use Composer\Repository\Vcs\GitHubDriver;
 use Composer\Package\Version\VersionParser as VersionParser;
 use Pickle\Package\JSON\Dumper;
 use Pickle\Package;
@@ -103,6 +103,7 @@ class Github
 		if (!$composerInfo) {
 			$composerInfo = $this->convertPackageXml($identifier);
 			if (!$composerInfo) {
+				var_dump($composerInfo);
 				return false;
 			}
 		}
@@ -122,8 +123,12 @@ class Github
 		try {
 			$contents = $this->client->api('repo')->contents()->download($owner, $repository, 'package.xml', $identifier);
 		} catch (\RuntimeException $e) {
-			if ($e->getCode() == 404) {
-				return false;
+			try {
+				$contents = $this->client->api('repo')->contents()->download($owner, $repository, 'package2.xml', $identifier);
+			} catch (\RuntimeException $e) {
+				if ($e->getCode() == 404) {
+					return false;
+				}
 			}
 		}
 

@@ -37,7 +37,7 @@ class PackageController extends ControllerAbstract
             $package_name = $transaction->extension->name;
 
             $driver = new \PickleWeb\Repository\Github($transaction->extension->vcs, $token->accessToken, $this->app->config('cache_dir'));
-            $info   = $driver->getInformation();
+            $info   = $driver->getComposerInformation();
             /* move all that to previous step, store final files, match properties order too */
 
             $packages     = [
@@ -52,7 +52,7 @@ class PackageController extends ControllerAbstract
                     'version_normalized' => $tag->version,
                 ];
 
-                $package[$tag->tag] = array_merge($extra, $driver->getInformation($tag->id));
+                $package[$tag->tag] = array_merge($extra, $driver->getComposerInformation($tag->id));
             }
             $json = json_encode($packages);
             list($vendorName, $extensionName) = explode('/', $package_name);
@@ -88,9 +88,8 @@ class PackageController extends ControllerAbstract
         $token = $_SESSION['token'];
         $repo  = $this->app->request()->post('repository');
 
-        //try {
-            //$driver = new \PickleWeb\Repository\Github($repo, $token->accessToken, $this->app->config('cache_dir'));
-            $driver = new \PickleWeb\Repository\Github2($repo, $token->accessToken, $this->app->config('cache_dir'));
+        try {
+            $driver = new \PickleWeb\Repository\Github($repo, $token->accessToken, $this->app->config('cache_dir'));
             $info   = $driver->getComposerInformation();
 
             if ($info === null) {
@@ -124,14 +123,7 @@ class PackageController extends ControllerAbstract
 				$package[$tag['tag']] = $information;
             }
 
-            $package     = [
-                'extension' => $info,
-                'tags'      => $tags,
-                'user'      => $this->app->user()->getArrayCopy()['nickname'],
-                'info'      => $information,
-            ];
-
-            $jsonPackage = json_encode($package, JSON_PRETTY_PRINT);
+            $jsonPackage = json_encode($packages, JSON_PRETTY_PRINT);
             $transaction = hash('sha256', $jsonPackage);
 
             file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $jsonPackage);
@@ -145,11 +137,11 @@ class PackageController extends ControllerAbstract
                         'tags'        => $tags,
                     ]
                 );
-                /*
         } catch (\RuntimeException $exception) {
+			/* todo: handle bad data in a better way =) */
             $this->app->flash('error', 'An error occurred while retrieving extension data. Please try again later.');
             $this->app->redirect('/package/register?repository='.$repo);
-        }*/
+        }
     }
 
     /**
