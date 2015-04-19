@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c63218a75601ef2929a8b0a5c63acd2d",
+    "hash": "20e1553ee898779251bd723a64e1c31a",
     "packages": [
         {
             "name": "akrabat/rka-slim-controller",
@@ -116,6 +116,66 @@
                 "package"
             ],
             "time": "2015-04-14 21:18:51"
+        },
+        {
+            "name": "friendsofphp/pickle",
+            "version": "v0.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FriendsOfPHP/pickle.git",
+                "reference": "85d94b257729eb141e52121dea2f2736823eff2c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FriendsOfPHP/pickle/zipball/85d94b257729eb141e52121dea2f2736823eff2c",
+                "reference": "85d94b257729eb141e52121dea2f2736823eff2c",
+                "shasum": ""
+            },
+            "require": {
+                "composer/composer": "~1.0-alpha8",
+                "ext-mbstring": "*",
+                "ext-zlib": "*",
+                "justinrainbow/json-schema": "~1.1",
+                "php": ">=5.4",
+                "symfony/console": "~2.5"
+            },
+            "require-dev": {
+                "atoum/atoum": "~1.0",
+                "atoum/praspel-extension": "~0.1",
+                "atoum/visibility-extension": "~1.0",
+                "behat/behat": "~3.0",
+                "symfony/process": "~2.5"
+            },
+            "bin": [
+                "bin/pickle"
+            ],
+            "type": "application",
+            "autoload": {
+                "psr-4": {
+                    "Pickle\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "PHP-3.01"
+            ],
+            "authors": [
+                {
+                    "name": "Pierre Joye",
+                    "email": "pierre.php@gmail.com",
+                    "homepage": "http://pecl.php.net/user/pajoye",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Community",
+                    "homepage": "https://github.com/FriendsOfPHP/pickle/graphs/contributors"
+                }
+            ],
+            "description": "Installer for PHP extension, supports pecl package or install from src tree directly",
+            "homepage": "https://github.com/FriendsOfPHP/pickle",
+            "time": "2015-02-23 10:10:39"
         },
         {
             "name": "guzzle/guzzle",
@@ -277,6 +337,67 @@
                 "schema"
             ],
             "time": "2015-03-27 16:41:39"
+        },
+        {
+            "name": "knplabs/github-api",
+            "version": "1.4.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/KnpLabs/php-github-api.git",
+                "reference": "d2729cf6b9d5b6fa340b1ff001dd89e319741baa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/KnpLabs/php-github-api/zipball/d2729cf6b9d5b6fa340b1ff001dd89e319741baa",
+                "reference": "d2729cf6b9d5b6fa340b1ff001dd89e319741baa",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "guzzle/guzzle": "~3.7",
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "suggest": {
+                "knplabs/gaufrette": "Needed for optional Gaufrette cache"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Github\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thibault Duplessis",
+                    "email": "thibault.duplessis@gmail.com",
+                    "homepage": "http://ornicar.github.com"
+                },
+                {
+                    "name": "KnpLabs Team",
+                    "homepage": "http://knplabs.com"
+                }
+            ],
+            "description": "GitHub API v3 client",
+            "homepage": "https://github.com/KnpLabs/php-github-api",
+            "keywords": [
+                "api",
+                "gh",
+                "gist",
+                "github"
+            ],
+            "time": "2015-04-07 20:24:33"
         },
         {
             "name": "league/oauth2-client",

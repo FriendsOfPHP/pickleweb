@@ -7,6 +7,18 @@ namespace PickleWeb\Controller;
  */
 class PackageController extends ControllerAbstract
 {
+	protected function updateRootPackageJson()
+	{
+		$jsonPackages = [
+			'packages'          => [],
+			'notify'            => '/downloads/%package%',
+			'notify-batch'      => '/downloads/',
+			'providers-url'     => '/p/%package%$%hash%.json',
+			'search'            => '/search.json?q=%query%',
+			'provider-includes' => [],
+		];
+	}
+
     /**
      * GET /package/register.
      */
@@ -26,15 +38,7 @@ class PackageController extends ControllerAbstract
 
             $driver = new \PickleWeb\Repository\Github($transaction->extension->vcs, $token->accessToken, $this->app->config('cache_dir'));
             $info   = $driver->getInformation();
-
-            $jsonPackages = [
-                'packages'          => [],
-                'notify'            => '/downloads/%package%',
-                'notify-batch'      => '/downloads/',
-                'providers-url'     => '/p/%package%$%hash%.json',
-                'search'            => '/search.json?q=%query%',
-                'provider-includes' => [],
-            ];
+            /* move all that to previous step, store final files, match properties order too */
 
             $packages     = [
                 'packages' => [
@@ -84,9 +88,10 @@ class PackageController extends ControllerAbstract
         $token = $_SESSION['token'];
         $repo  = $this->app->request()->post('repository');
 
-        try {
-            $driver = new \PickleWeb\Repository\Github($repo, $token->accessToken, $this->app->config('cache_dir'));
-            $info   = $driver->getInformation();
+        //try {
+            //$driver = new \PickleWeb\Repository\Github($repo, $token->accessToken, $this->app->config('cache_dir'));
+            $driver = new \PickleWeb\Repository\Github2($repo, $token->accessToken, $this->app->config('cache_dir'));
+            $info   = $driver->getComposerInformation();
 
             if ($info === null) {
                 $this->app->flash('Warning', 'No valid composer.json found.');
@@ -100,8 +105,25 @@ class PackageController extends ControllerAbstract
                 $this->app->redirect('/package/register');
             }
 
-            $tags        = $driver->getReleaseTags();
-            $information = $driver->getComposerInformation();
+			$package_name = $info['name'];
+			list($owner, $repository) = explode('/', $package_name);
+
+            $packages     = [
+                'packages' => [
+                    $package_name => [],
+                ],
+            ];
+
+            $package = &$packages['packages'][$package_name];
+            $tags    = $driver->getReleaseTags();
+
+            foreach ($tags as $tag) {
+				$information = $driver->getComposerInformation($tag['id']);
+				$information['version_normalized'] = $tag['version'];
+				$information['source'] = $tag['source'];
+				$package[$tag['tag']] = $information;
+            }
+
             $package     = [
                 'extension' => $info,
                 'tags'      => $tags,
@@ -123,10 +145,11 @@ class PackageController extends ControllerAbstract
                         'tags'        => $tags,
                     ]
                 );
+                /*
         } catch (\RuntimeException $exception) {
             $this->app->flash('error', 'An error occurred while retrieving extension data. Please try again later.');
             $this->app->redirect('/package/register?repository='.$repo);
-        }
+        }*/
     }
 
     /**
@@ -142,7 +165,7 @@ class PackageController extends ControllerAbstract
 
         $name = $vendor.'/'.$package;
         $json = json_decode(file_get_contents($jsonPath), true);
-
+echo file_get_contents($jsonPath);exit();
         reset($json['packages'][$name]);
         $firstKey = key($json['packages'][$name]);
 
