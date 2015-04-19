@@ -2,6 +2,8 @@
 
 namespace PickleWeb\Controller;
 
+use Composer\IO\BufferIO as BufferIO;
+
 /**
  * Class PackageController.
  */
@@ -87,13 +89,15 @@ class PackageController extends ControllerAbstract
     {
         $token = $_SESSION['token'];
         $repo  = $this->app->request()->post('repository');
+        $log = new BufferIO();
 
         try {
-            $driver = new \PickleWeb\Repository\Github($repo, $token->accessToken, $this->app->config('cache_dir'));
+            $driver = new \PickleWeb\Repository\Github($repo, $token->accessToken, $this->app->config('cache_dir'), $log);
             $info   = $driver->getComposerInformation();
 
-            if ($info === null) {
-                $this->app->flash('Warning', 'No valid composer.json found.');
+            if (!$info) {
+                $log->write('package: No composer.json or package.xml found for '.($identifier ? $identifier : 'master'));
+                $this->app->flash('Warning', 'No valid composer.json (or valid package.xml) found.');
                 $this->app->redirect('/package/register');
             }
 
@@ -115,23 +119,33 @@ class PackageController extends ControllerAbstract
 
             $package = &$packages['packages'][$package_name];
             $tags    = $driver->getReleaseTags();
-
+            $msg = [];
             foreach ($tags as $tag) {
+                $log->write('package: looking for composer.json for tag '.$tag['version']);
                 $information = $driver->getComposerInformation($tag['id']);
+                if (!$info) {
+                    $log->write('package: no composer.json found for tag '.$tag['version'].'ref: '.$tag['id']);
+                }
                 $information['version_normalized'] = $tag['version'];
                 $information['source'] = $tag['source'];
                 $package[$tag['tag']] = $information;
+            }
+
+            if (!empty($msg)) {
+                $this->app->flash(implode('<br />', $msg));
             }
 
             $jsonPackage = json_encode($packages, JSON_PRETTY_PRINT);
             $transaction = hash('sha256', $jsonPackage);
 
             file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $jsonPackage);
+            file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.log', $log->getOutput());
 
             $this->app
                 ->render(
                     'extension/confirm.html',
                     [
+                        'log'         => $log->getOutput(),
                         'transaction' => $transaction,
                         'extension'   => $info,
                         'tags'        => $tags,

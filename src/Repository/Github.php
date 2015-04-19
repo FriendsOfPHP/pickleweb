@@ -23,11 +23,15 @@ class Github
 
     protected $url;
 
-    public function __construct($url, $token = '', $cacheDir = false)
+    protected $log;
+
+    public function __construct($url, $token = '', $cacheDir = false, $bufferIO = null)
     {
         $this->url = $url;
         $io = new NullIO();
-        $this->io = $io;
+        $this->io = new NullIO();
+        $this->log = $bufferIO ? $bufferIO : new BufferIO();
+
         $config = Factory::createConfig();
         if ($cacheDir) {
             $config->merge([
@@ -99,9 +103,10 @@ class Github
     {
         $composerInfo = $this->driver->getComposerInformation($identifier ? $identifier : $this->driver->getRootIdentifier());
         if (!$composerInfo) {
+            $this->log->write('github driver: no composer.json found for '.($identifier ? $identifier : 'master'));
             $composerInfo = $this->convertPackageXml($identifier);
             if (!$composerInfo) {
-                var_dump($composerInfo);
+                $this->log->write('github driver: no package(2).xml found for '.($identifier ? $identifier : 'master'));
 
                 return false;
             }
@@ -126,6 +131,8 @@ class Github
                 $contents = $this->client->api('repo')->contents()->download($owner, $repository, 'package2.xml', $identifier);
             } catch (\RuntimeException $e) {
                 if ($e->getCode() == 404) {
+                    $this->log->write('github driver: no package.xml or package2.xml found for '.$identifier);
+
                     return false;
                 }
             }
