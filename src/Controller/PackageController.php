@@ -116,7 +116,7 @@ class PackageController extends ControllerAbstract
 
             $package = &$packages['packages'][$packageName];
             $tags    = $driver->getReleaseTags();
-            $msg = [];
+
             foreach ($tags as $tag) {
                 $log->write('package: looking for composer.json for tag '.$tag['version']);
                 $information = $driver->getComposerInformation($tag['id']);
@@ -126,10 +126,6 @@ class PackageController extends ControllerAbstract
                 $information['version_normalized'] = $tag['version'];
                 $information['source'] = $tag['source'];
                 $package[$tag['tag']] = $information;
-            }
-
-            if (!empty($msg)) {
-                $this->app->flash(implode('<br />', $msg));
             }
 
             $jsonPackage = json_encode($packages, JSON_PRETTY_PRINT);
