@@ -145,9 +145,15 @@ class Github
         $package = $loader->load($packagexmlPath);
         $package->setRootDir($this->cacheDir);
         $dumper = new \Pickle\Package\Dumper();
+        $xml = simplexml_load_file($packagexmlPath);
+
+        $date = $xml->date;
+        $time = $xml->time;
+
         $info = $dumper->dump($package);
         $info['name'] = $owner.'/'.$repository;
         $info['type'] = 'extension';
+        $info['time'] = date('Y-m-d H:i', strtotime($date));
 
         return $info;
     }

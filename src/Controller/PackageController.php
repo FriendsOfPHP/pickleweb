@@ -34,13 +34,12 @@ class PackageController extends ControllerAbstract
                 exit();
             }
 
-
             $transaction = file_get_contents($pathTransaction);
             $data = json_decode($transaction, true);
 
             $packageName = key($data['packages']);
 
-			list($vendorName, $extensionName) = explode('/', $packageName);
+            list($vendorName, $extensionName) = explode('/', $packageName);
 
             $vendorDir = $this->app->config('json_path').'/'.$vendorName;
             if (!is_dir($vendorDir)) {
@@ -55,14 +54,14 @@ class PackageController extends ControllerAbstract
             file_put_contents($jsonPathSha, $transaction);
             link($jsonPathSha, $jsonPathBase.'.json');
 
-            $pathTransactionLog = substr($pathTransaction, 0, -4) . 'log';
+            $pathTransactionLog = substr($pathTransaction, 0, -4).'log';
             if (file_exists($pathTransactionLog)) {
-				unlink($pathTransactionLog);
-			}
+                unlink($pathTransactionLog);
+            }
             unlink($pathTransaction);
 
-            $this->app->flash('warning', $packageName . 'has been registred');
-            $this->app->redirect('/package/' . $packageName);
+            $this->app->flash('warning', $packageName.'has been registred');
+            $this->app->redirect('/package/'.$packageName);
         } else {
             $this->app
                 ->render(
