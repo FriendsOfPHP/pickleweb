@@ -5,11 +5,9 @@ namespace PickleWeb\Repository;
 use Composer\Repository as Repository;
 use Composer\IO\NullIO;
 use Composer\Factory as Factory;
-use Composer\Repository\Vcs\GitHubDriver;
 use Composer\Package\Version\VersionParser as VersionParser;
 use Pickle\Package\JSON\Dumper;
 use Pickle\Package;
-use Pickle\Package\PHP\Util\ConvertChangelog;
 
 class Github
 {
@@ -20,14 +18,14 @@ class Github
     protected $information;
 
     protected $io;
-    
+
     protected $cacheDir;
 
-	protected $url;
+    protected $url;
 
     public function __construct($url, $token = '', $cacheDir = false)
     {
-		$this->url = $url;
+        $this->url = $url;
         $io = new NullIO();
         $this->io = $io;
         $config = Factory::createConfig();
@@ -39,19 +37,19 @@ class Github
                         ],
                 ]);
         }
-		$this->cacheDir = $cacheDir;
+        $this->cacheDir = $cacheDir;
         $io->loadConfiguration($config);
 
-		$this->repository = new Repository\VcsRepository(['url' => $url, 'no-api' => false], $io, $config);
-		$driver = $this->vcsDriver = $this->repository->getDriver();
-		if (!$driver) {
-			throw new \Exception('No driver found for <'.$url.'>');
-		}
-		$this->driver = $driver;
+        $this->repository = new Repository\VcsRepository(['url' => $url, 'no-api' => false], $io, $config);
+        $driver = $this->vcsDriver = $this->repository->getDriver();
+        if (!$driver) {
+            throw new \Exception('No driver found for <'.$url.'>');
+        }
+        $this->driver = $driver;
 
-		$client = new \Github\Client();
-		$client->authenticate($token, null, \GitHub\Client::AUTH_URL_TOKEN);
-		$this->client = $client;
+        $client = new \Github\Client();
+        $client->authenticate($token, null, \GitHub\Client::AUTH_URL_TOKEN);
+        $this->client = $client;
     }
 
     public function getReleaseTags()
@@ -87,7 +85,7 @@ class Github
                     'version' => $normalizedVersion,
                     'tag'     => $version,
                     'id'      => $id,
-                    'source'  => $this->driver->getSource($id)
+                    'source'  => $this->driver->getSource($id),
                 ];
             } catch (\Exception $e) {
                 continue;
@@ -99,49 +97,51 @@ class Github
 
     public function getComposerInformation($identifier = null)
     {
-		$composerInfo = $this->driver->getComposerInformation($identifier ? $identifier : $this->driver->getRootIdentifier());
-		if (!$composerInfo) {
-			$composerInfo = $this->convertPackageXml($identifier);
-			if (!$composerInfo) {
-				var_dump($composerInfo);
-				return false;
-			}
-		}
+        $composerInfo = $this->driver->getComposerInformation($identifier ? $identifier : $this->driver->getRootIdentifier());
+        if (!$composerInfo) {
+            $composerInfo = $this->convertPackageXml($identifier);
+            if (!$composerInfo) {
+                var_dump($composerInfo);
 
-		$composerInfo['source'] = $this->driver->getSource($identifier);
-		$composerInfo['dist']   = $this->driver->getDist($identifier);
+                return false;
+            }
+        }
+
+        $composerInfo['source'] = $this->driver->getSource($identifier);
+        $composerInfo['dist']   = $this->driver->getDist($identifier);
 
         return $composerInfo;
     }
-    
+
     protected function convertPackageXml($identifier)
     {
-		preg_match('#^(?:(?:https?|git)://([^/]+)/|git@([^:]+):)([^/]+)/(.+?)(?:\.git|/)?$#', $this->url, $match);
+        preg_match('#^(?:(?:https?|git)://([^/]+)/|git@([^:]+):)([^/]+)/(.+?)(?:\.git|/)?$#', $this->url, $match);
         $owner = $match[3];
         $repository = $match[4];
 
-		try {
-			$contents = $this->client->api('repo')->contents()->download($owner, $repository, 'package.xml', $identifier);
-		} catch (\RuntimeException $e) {
-			try {
-				$contents = $this->client->api('repo')->contents()->download($owner, $repository, 'package2.xml', $identifier);
-			} catch (\RuntimeException $e) {
-				if ($e->getCode() == 404) {
-					return false;
-				}
-			}
-		}
+        try {
+            $contents = $this->client->api('repo')->contents()->download($owner, $repository, 'package.xml', $identifier);
+        } catch (\RuntimeException $e) {
+            try {
+                $contents = $this->client->api('repo')->contents()->download($owner, $repository, 'package2.xml', $identifier);
+            } catch (\RuntimeException $e) {
+                if ($e->getCode() == 404) {
+                    return false;
+                }
+            }
+        }
 
-		$packagexmlPath = $this->cacheDir . DIRECTORY_SEPARATOR . 'package.xml';
-		file_put_contents($packagexmlPath, $contents);
+        $packagexmlPath = $this->cacheDir.DIRECTORY_SEPARATOR.'package.xml';
+        file_put_contents($packagexmlPath, $contents);
 
         $loader = new \Pickle\Package\XML\Loader(new Package\Loader());
         $package = $loader->load($packagexmlPath);
         $package->setRootDir($this->cacheDir);
-		$dumper = new \Pickle\Package\Dumper();
-		$info = $dumper->dump($package);
-		$info['name'] = $owner . '/' . $repository;
-		$info['type'] = 'extension';
-		return $info;
-	}
+        $dumper = new \Pickle\Package\Dumper();
+        $info = $dumper->dump($package);
+        $info['name'] = $owner.'/'.$repository;
+        $info['type'] = 'extension';
+
+        return $info;
+    }
 }

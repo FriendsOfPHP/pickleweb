@@ -7,17 +7,17 @@ namespace PickleWeb\Controller;
  */
 class PackageController extends ControllerAbstract
 {
-	protected function updateRootPackageJson()
-	{
-		$jsonPackages = [
-			'packages'          => [],
-			'notify'            => '/downloads/%package%',
-			'notify-batch'      => '/downloads/',
-			'providers-url'     => '/p/%package%$%hash%.json',
-			'search'            => '/search.json?q=%query%',
-			'provider-includes' => [],
-		];
-	}
+    protected function updateRootPackageJson()
+    {
+        $jsonPackages = [
+            'packages'          => [],
+            'notify'            => '/downloads/%package%',
+            'notify-batch'      => '/downloads/',
+            'providers-url'     => '/p/%package%$%hash%.json',
+            'search'            => '/search.json?q=%query%',
+            'provider-includes' => [],
+        ];
+    }
 
     /**
      * GET /package/register.
@@ -104,8 +104,8 @@ class PackageController extends ControllerAbstract
                 $this->app->redirect('/package/register');
             }
 
-			$package_name = $info['name'];
-			list($owner, $repository) = explode('/', $package_name);
+            $package_name = $info['name'];
+            list($owner, $repository) = explode('/', $package_name);
 
             $packages     = [
                 'packages' => [
@@ -117,10 +117,10 @@ class PackageController extends ControllerAbstract
             $tags    = $driver->getReleaseTags();
 
             foreach ($tags as $tag) {
-				$information = $driver->getComposerInformation($tag['id']);
-				$information['version_normalized'] = $tag['version'];
-				$information['source'] = $tag['source'];
-				$package[$tag['tag']] = $information;
+                $information = $driver->getComposerInformation($tag['id']);
+                $information['version_normalized'] = $tag['version'];
+                $information['source'] = $tag['source'];
+                $package[$tag['tag']] = $information;
             }
 
             $jsonPackage = json_encode($packages, JSON_PRETTY_PRINT);
@@ -138,7 +138,7 @@ class PackageController extends ControllerAbstract
                     ]
                 );
         } catch (\RuntimeException $exception) {
-			/* todo: handle bad data in a better way =) */
+            /* todo: handle bad data in a better way =) */
             $this->app->flash('error', 'An error occurred while retrieving extension data. Please try again later.');
             $this->app->redirect('/package/register?repository='.$repo);
         }
@@ -157,7 +157,8 @@ class PackageController extends ControllerAbstract
 
         $name = $vendor.'/'.$package;
         $json = json_decode(file_get_contents($jsonPath), true);
-echo file_get_contents($jsonPath);exit();
+        echo file_get_contents($jsonPath);
+        exit();
         reset($json['packages'][$name]);
         $firstKey = key($json['packages'][$name]);
 
