@@ -11,7 +11,7 @@ use Pickle\Package\JSON\Dumper;
 use Pickle\Package;
 use Pickle\Package\PHP\Util\ConvertChangelog;
 
-class Github2
+class Github
 {
     protected $repository;
 
