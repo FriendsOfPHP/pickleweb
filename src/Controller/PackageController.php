@@ -34,43 +34,35 @@ class PackageController extends ControllerAbstract
                 exit();
             }
 
-            $token       = $_SESSION['token'];
-            $transaction = json_decode(file_get_contents($pathTransaction));
-            $package_name = $transaction->extension->name;
 
-            $driver = new \PickleWeb\Repository\Github($transaction->extension->vcs, $token->accessToken, $this->app->config('cache_dir'));
-            $info   = $driver->getComposerInformation();
-            /* move all that to previous step, store final files, match properties order too */
+            $transaction = file_get_contents($pathTransaction);
+            $data = json_decode($transaction, true);
 
-            $packages     = [
-                'packages' => [
-                    $package_name => [],
-                ],
-            ];
+            $packageName = key($data['packages']);
 
-            $package      = &$packages['packages'][$package_name];
-            foreach ($transaction->tags as $tag) {
-                $extra = [
-                    'version_normalized' => $tag->version,
-                ];
+			list($vendorName, $extensionName) = explode('/', $packageName);
 
-                $package[$tag->tag] = array_merge($extra, $driver->getComposerInformation($tag->id));
-            }
-            $json = json_encode($packages);
-            list($vendorName, $extensionName) = explode('/', $package_name);
             $vendorDir = $this->app->config('json_path').'/'.$vendorName;
             if (!is_dir($vendorDir)) {
                 mkdir($vendorDir);
             }
-            $sha = hash('sha256', $json);
+
+            $sha = hash('sha256', $transaction);
 
             $jsonPathBase = $vendorDir.'/'.$extensionName;
             $jsonPathSha  = $jsonPathBase.'$'.$sha.'.json';
-            file_put_contents($jsonPathSha, $json);
+
+            file_put_contents($jsonPathSha, $transaction);
             link($jsonPathSha, $jsonPathBase.'.json');
+
+            $pathTransactionLog = substr($pathTransaction, 0, -4) . 'log';
+            if (file_exists($pathTransactionLog)) {
+				unlink($pathTransactionLog);
+			}
             unlink($pathTransaction);
-            $this->app->flash('warning', $transaction->extension->name.'has been registred');
-            $this->app->redirect('/package/'.$package_name);
+
+            $this->app->flash('warning', $packageName . 'has been registred');
+            $this->app->redirect('/package/' . $packageName);
         } else {
             $this->app
                 ->render(
@@ -171,8 +163,7 @@ class PackageController extends ControllerAbstract
 
         $name = $vendor.'/'.$package;
         $json = json_decode(file_get_contents($jsonPath), true);
-        echo file_get_contents($jsonPath);
-        exit();
+
         reset($json['packages'][$name]);
         $firstKey = key($json['packages'][$name]);
 
