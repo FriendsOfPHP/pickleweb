@@ -100,14 +100,14 @@ class PackageController extends ControllerAbstract
             }
 
             $packageName = $info['name'];
-            list($owner, $repository) = explode('/', $packageName);
+            list($vendorName, $repository) = explode('/', $packageName);
 
-            $vendorDir = $this->app->config('json_path').'/'.$vendorName;
-            $jsonPathBase = $vendorDir.'/'.$extensionName;
-			if (is_dir($jsonPathBase)) {
-                $this->app->flash('error', $packageName . ' is already registred');
-                $this->app->redirect('/package/' . $packageName);
-			}
+            $vendorDir = $this->app->config('json_path').$vendorName;
+            if (file_exists($vendorDir.'/'.$repository.'.json')) {
+                $this->app->flash('error', $packageName.' is already registred');
+                $this->app->redirect('/package/'.$packageName);
+                exit();
+            }
             $packages     = [
                 'packages' => [
                     $packageName => [],
@@ -154,6 +154,7 @@ class PackageController extends ControllerAbstract
     /**
      * GET /package/:vendor/:package.
      *
+     * @param string $vendor
      * @param string $package
      */
     public function viewPackageAction($vendor, $package)
