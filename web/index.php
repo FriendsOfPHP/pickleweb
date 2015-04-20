@@ -2,6 +2,7 @@
 
 use League\OAuth2\Client\Provider\Github;
 use PickleWeb\Auth\GithubProvider;
+use Slim\Helper\Set;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -32,15 +33,25 @@ $app = new \PickleWeb\Application(
  * });
  */
 
+// Config
+$app->container->singleton(
+    'app.config',
+    function (Set $container) {
+        return json_decode(file_get_contents(__DIR__ . '/../src/config.json'), true);
+    }
+);
+
 // Github Authorization provider
 $app->container->singleton(
     'authentication.provider.github',
-    function ($container) {
+    function (Set $container) {
+        $config = $container->get('app.config');
+
         return new GithubProvider(
             new Github(
                 [
-                    'clientId'     => getenv('GITHUB_CLIENT_ID'),
-                    'clientSecret' => getenv('GITHUB_CLIENT_SECRET'),
+                    'clientId'     => $config['oauth']['github']['clientId'],
+                    'clientSecret' => $config['oauth']['github']['clientSecret'],
                     'scopes'       => ['user:email', 'read:repo_hook'],
                 ]
             )

@@ -1,0 +1,21 @@
+{
+    "oauth": {
+        "github"   : {
+            "clientId"    : "4284ffa5beee08b9d07f",
+            "clientSecret": "0053ea4d41d554a09328c5ce1d4024124395c2c2"
+        },
+        "google"   : {
+            "clientId"    : "4284ffa5beee08b9d07f",
+            "clientSecret": "0053ea4d41d554a09328c5ce1d4024124395c2c2"
+        },
+        "bitbucket": {
+            "clientId"    : "4284ffa5beee08b9d07f",
+            "clientSecret": "0053ea4d41d554a09328c5ce1d4024124395c2c2"
+        }
+    },
+    "redis": {
+        "host": "127.0.0.1",
+        "port": "6379",
+        "db"  : "1"
+    }
+}

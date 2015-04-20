@@ -1,0 +1,21 @@
+{
+    "oauth": {
+        "github"   : {
+            "clientId"    : "<your-github-application-client-id>",
+            "clientSecret": "<your-github-application-client-secret>"
+        },
+        "google"   : {
+            "clientId"    : "<your-google-application-client-id>",
+            "clientSecret": "<your-google-application-client-secret>"
+        },
+        "bitbucket": {
+            "clientId"    : "<your-bitbucket-application-client-id>",
+            "clientSecret": "<your-bitbucket-application-client-secret>"
+        }
+    },
+    "redis": {
+        "host": "127.0.0.1",
+        "port": "6379",
+        "db"  : "1"
+    }
+}
