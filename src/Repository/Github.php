@@ -59,6 +59,7 @@ class Github
     public function getReleaseTags()
     {
         $tags = $this->driver->getTags();
+
         uksort($tags, function ($a, $b) {
                     $aVersion = $a;
                     $bVersion = $b;
@@ -79,7 +80,18 @@ class Github
                         return $a->getReleaseDate() > $b->getReleaseDate() ? 1 : -1;
                     }
                     // the rest is sorted by version
-                    return version_compare($aVersion, $bVersion);
+                    $res = version_compare($aVersion, $bVersion);
+                    if ($res == 1) {
+                        return -1;
+                    }
+                    if ($res == 0) {
+                        return 0;
+                    }
+                    if ($res == -1) {
+                        return 1;
+                    }
+
+                    return $res;
                 });
         $normalizedTags = [];
         foreach ($tags as $version => $id) {
