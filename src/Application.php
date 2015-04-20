@@ -2,6 +2,7 @@
 
 namespace PickleWeb;
 
+use PickleWeb\Entity\User;
 use RKA\Slim;
 
 /**
@@ -32,11 +33,11 @@ class Application extends Slim
     }
 
     /**
-     * @return array|null
+     * @return User|null
      */
     public function user()
     {
-        return isset($_SESSION['user']) ? $_SESSION['user'] : null;
+        return isset($_SESSION['user']) ? unserialize($_SESSION['user']) : null;
     }
 
     /**
