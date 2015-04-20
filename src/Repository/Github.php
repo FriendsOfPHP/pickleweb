@@ -123,15 +123,16 @@ class Github
         preg_match('#^(?:(?:https?|git)://([^/]+)/|git@([^:]+):)([^/]+)/(.+?)(?:\.git|/)?$#', $this->url, $match);
         $owner = $match[3];
         $repository = $match[4];
-
-        try {
-            $contents = $this->client->api('repo')->contents()->download($owner, $repository, 'package.xml', $identifier);
-        } catch (\RuntimeException $e) {
+        $packageXmlNames = [
+            'package.xml',
+            'package2.xml',
+        ];
+        foreach ($packageXmlNames as $path) {
             try {
-                $contents = $this->client->api('repo')->contents()->download($owner, $repository, 'package2.xml', $identifier);
+                $contents = $this->client->api('repo')->contents()->download($owner, $repository, $path, $identifier);
             } catch (\RuntimeException $e) {
                 if ($e->getCode() == 404) {
-                    $this->log->write('github driver: no package.xml or package2.xml found for '.$identifier);
+                    $this->log->write('github driver: no '.$path.' found for '.$identifier);
 
                     return false;
                 }
@@ -154,6 +155,8 @@ class Github
         $info['name'] = $owner.'/'.$repository;
         $info['type'] = 'extension';
         $info['time'] = date('Y-m-d H:i', strtotime($date));
+
+        unlink($packagexmlPath);
 
         return $info;
     }
