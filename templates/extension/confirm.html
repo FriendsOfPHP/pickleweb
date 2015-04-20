@@ -55,6 +55,7 @@
         <thead>
         <tr>
             <th>Version</th>
+            <th>Time</th>
             <th>SHA1</th>
         </tr>
         </thead>
@@ -62,6 +63,7 @@
         {% for tag in tags|reverse %}
             <tr>
                 <td>{{ tag.version }} ({{ tag.tag }})</td>
+                <td>{{ tagsInfo[tag.tag].time }}</td>
                 <td>{{ tag.id[:7] }}</td>
             </tr>
         {% endfor %}

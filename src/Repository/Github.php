@@ -106,7 +106,7 @@ class Github
             $this->log->write('github driver: no composer.json found for '.($identifier ? $identifier : 'master'));
             $composerInfo = $this->convertPackageXml($identifier);
             if (!$composerInfo) {
-                $this->log->write('github driver: no package(2).xml found for '.($identifier ? $identifier : 'master'));
+                $this->log->write('github driver: no package2.xml or package.xml found for '.($identifier ? $identifier : 'master'));
 
                 return false;
             }
@@ -127,16 +127,22 @@ class Github
             'package.xml',
             'package2.xml',
         ];
+        $found = false;
         foreach ($packageXmlNames as $path) {
             try {
                 $contents = $this->client->api('repo')->contents()->download($owner, $repository, $path, $identifier);
             } catch (\RuntimeException $e) {
                 if ($e->getCode() == 404) {
                     $this->log->write('github driver: no '.$path.' found for '.$identifier);
-
-                    return false;
+                    continue;
                 }
             }
+            $found = true;
+            break;
+        }
+
+        if (!$found) {
+            return false;
         }
 
         $packagexmlPath = $this->cacheDir.DIRECTORY_SEPARATOR.'package.xml';
@@ -154,7 +160,7 @@ class Github
         $info = $dumper->dump($package);
         $info['name'] = $owner.'/'.$repository;
         $info['type'] = 'extension';
-        $info['time'] = date('Y-m-d H:i', strtotime($date));
+        $info['time'] = date('Y-m-d H:i', strtotime($date.' '.$time));
 
         unlink($packagexmlPath);
 

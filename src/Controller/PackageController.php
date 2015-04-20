@@ -108,6 +108,7 @@ class PackageController extends ControllerAbstract
                 $this->app->redirect('/package/'.$packageName);
                 exit();
             }
+
             $packages     = [
                 'packages' => [
                     $packageName => [],
@@ -142,6 +143,7 @@ class PackageController extends ControllerAbstract
                         'transaction' => $transaction,
                         'extension'   => $info,
                         'tags'        => $tags,
+                        'tagsInfo'    => $package,
                     ]
                 );
         } catch (\RuntimeException $exception) {
