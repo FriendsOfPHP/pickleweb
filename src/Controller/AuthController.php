@@ -31,6 +31,8 @@ class AuthController extends ControllerAbstract
      * GET /login/:provider.
      *
      * @param string $provider
+     *
+     * @return void
      */
     public function loginWithProviderAction($provider)
     {
@@ -66,7 +68,7 @@ class AuthController extends ControllerAbstract
 
                     $user->exchangeArray(['email' => current($emails)->email]);
 
-                    $jsonPath = $app->config('json_path').'users/github/'.$user->nickname.'.json';
+                    $jsonPath = $app->config('json_path') . 'users/github/' . $user->nickname . '.json';
                     check_or_create_json_dir($app);
                     if (!file_put_contents($jsonPath, json_encode($user->getArrayCopy(), JSON_PRETTY_PRINT))) {
                         $app->renderError(500);

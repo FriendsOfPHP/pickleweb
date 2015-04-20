@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "20e1553ee898779251bd723a64e1c31a",
+    "hash": "cbcc6c3b7cae5003fa0c45b5803b3642",
     "packages": [
         {
             "name": "akrabat/rka-slim-controller",
@@ -906,6 +906,151 @@
                 "unit testing"
             ],
             "time": "2015-02-27 13:00:25"
+        },
+        {
+            "name": "m6web/coke",
+            "version": "v1.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/M6Web/Coke.git",
+                "reference": "dcc943b4da9a677911504cb0fb5cf4d8f0d962d0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/M6Web/Coke/zipball/dcc943b4da9a677911504cb0fb5cf4d8f0d962d0",
+                "reference": "dcc943b4da9a677911504cb0fb5cf4d8f0d962d0",
+                "shasum": ""
+            },
+            "require": {
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "suggest": {
+                "m6web/symfony2-coding-standard": "Symfony2 PHP CodeSniffer Coding Standard"
+            },
+            "bin": [
+                "coke"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP Code Sniffer configurator",
+            "time": "2014-11-02 18:26:32"
+        },
+        {
+            "name": "m6web/symfony2-coding-standard",
+            "version": "v1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/M6Web/Symfony2-coding-standard.git",
+                "reference": "51190f81cd40b86b204874b79761ddd5aa2b3023"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/M6Web/Symfony2-coding-standard/zipball/51190f81cd40b86b204874b79761ddd5aa2b3023",
+                "reference": "51190f81cd40b86b204874b79761ddd5aa2b3023",
+                "shasum": ""
+            },
+            "suggest": {
+                "m6web/coke": "PHP CodeSniffer configurator",
+                "squizlabs/php_codesniffer": "PHP CodeSniffer"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mikael Randy",
+                    "role": "maintainer"
+                }
+            ],
+            "description": "Symfony2 PHP CodeSniffer Coding Standard",
+            "keywords": [
+                "Symfony2",
+                "codesniffer",
+                "m6web",
+                "phpcs",
+                "standard"
+            ],
+            "time": "2014-10-07 08:21:43"
+        },
+        {
+            "name": "squizlabs/php_codesniffer",
+            "version": "1.5.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
+                "reference": "6f3e42d311b882b25b4d409d23a289f4d3b803d5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/6f3e42d311b882b25b4d409d23a289f4d3b803d5",
+                "reference": "6f3e42d311b882b25b4d409d23a289f4d3b803d5",
+                "shasum": ""
+            },
+            "require": {
+                "ext-tokenizer": "*",
+                "php": ">=5.1.2"
+            },
+            "suggest": {
+                "phpunit/php-timer": "dev-master"
+            },
+            "bin": [
+                "scripts/phpcs"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-phpcs-fixer": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "CodeSniffer.php",
+                    "CodeSniffer/CLI.php",
+                    "CodeSniffer/Exception.php",
+                    "CodeSniffer/File.php",
+                    "CodeSniffer/Report.php",
+                    "CodeSniffer/Reporting.php",
+                    "CodeSniffer/Sniff.php",
+                    "CodeSniffer/Tokens.php",
+                    "CodeSniffer/Reports/",
+                    "CodeSniffer/CommentParser/",
+                    "CodeSniffer/Tokenizers/",
+                    "CodeSniffer/DocGenerators/",
+                    "CodeSniffer/Standards/AbstractPatternSniff.php",
+                    "CodeSniffer/Standards/AbstractScopeSniff.php",
+                    "CodeSniffer/Standards/AbstractVariableSniff.php",
+                    "CodeSniffer/Standards/IncorrectPatternException.php",
+                    "CodeSniffer/Standards/Generic/Sniffs/",
+                    "CodeSniffer/Standards/MySource/Sniffs/",
+                    "CodeSniffer/Standards/PEAR/Sniffs/",
+                    "CodeSniffer/Standards/PSR1/Sniffs/",
+                    "CodeSniffer/Standards/PSR2/Sniffs/",
+                    "CodeSniffer/Standards/Squiz/Sniffs/",
+                    "CodeSniffer/Standards/Zend/Sniffs/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Greg Sherwood",
+                    "role": "lead"
+                }
+            ],
+            "description": "PHP_CodeSniffer tokenises PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
+            "homepage": "http://www.squizlabs.com/php-codesniffer",
+            "keywords": [
+                "phpcs",
+                "standards"
+            ],
+            "time": "2014-12-04 22:32:15"
         }
     ],
     "aliases": [],

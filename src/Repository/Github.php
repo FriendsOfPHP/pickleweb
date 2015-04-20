@@ -2,52 +2,84 @@
 
 namespace PickleWeb\Repository;
 
-use Composer\Repository as Repository;
-use Composer\IO\NullIO;
 use Composer\Factory as Factory;
+use Composer\IO\BufferIO;
+use Composer\IO\NullIO;
 use Composer\Package\Version\VersionParser as VersionParser;
-use Pickle\Package\JSON\Dumper;
+use Composer\Repository as Repository;
 use Pickle\Package;
 
+/**
+ * Class Github
+ *
+ * @package PickleWeb\Repository
+ */
 class Github
 {
+
+    /**
+     * @var Repository\VcsRepository
+     */
     protected $repository;
 
+    /**
+     * @var Repository\Vcs\GitHubDriver
+     */
     protected $driver;
 
-    protected $information;
-
+    /**
+     * @var NullIO
+     */
     protected $io;
 
+    /**
+     * @var bool
+     */
     protected $cacheDir;
 
+    /**
+     * @var string
+     */
     protected $url;
 
+    /**
+     * @var null|BufferIO
+     */
     protected $log;
 
+    /**
+     * @param string $url
+     * @param string $token
+     * @param bool   $cacheDir
+     * @param null   $bufferIO
+     *
+     * @throws \Exception
+     */
     public function __construct($url, $token = '', $cacheDir = false, $bufferIO = null)
     {
         $this->url = $url;
-        $io = new NullIO();
-        $this->io = new NullIO();
+        $io        = new NullIO();
+        $this->io  = new NullIO();
         $this->log = $bufferIO ? $bufferIO : new BufferIO();
 
         $config = Factory::createConfig();
         if ($cacheDir) {
-            $config->merge([
+            $config->merge(
+                [
                     'config' => [
-                        'cache-dir' => $cacheDir,
+                        'cache-dir'    => $cacheDir,
                         'github-oauth' => ['github.com' => $token],
-                        ],
-                ]);
+                    ],
+                ]
+            );
         }
         $this->cacheDir = $cacheDir;
         $io->loadConfiguration($config);
 
         $this->repository = new Repository\VcsRepository(['url' => $url, 'no-api' => false], $io, $config);
-        $driver = $this->vcsDriver = $this->repository->getDriver();
+        $driver           = $this->vcsDriver = $this->repository->getDriver();
         if (!$driver) {
-            throw new \Exception('No driver found for <'.$url.'>');
+            throw new \Exception('No driver found for <' . $url . '>');
         }
         $this->driver = $driver;
 
@@ -56,36 +88,43 @@ class Github
         $this->client = $client;
     }
 
+    /**
+     * @return array
+     */
     public function getReleaseTags()
     {
         $tags = $this->driver->getTags();
-        uksort($tags, function ($a, $b) {
-                    $aVersion = $a;
-                    $bVersion = $b;
-                    if ($aVersion === '9999999-dev' || 'dev-' === substr($aVersion, 0, 4)) {
-                        $aVersion = 'dev';
-                    }
-                    if ($bVersion === '9999999-dev' || 'dev-' === substr($bVersion, 0, 4)) {
-                        $bVersion = 'dev';
-                    }
-                    $aIsDev = $aVersion === 'dev' || substr($aVersion, -4) === '-dev';
-                    $bIsDev = $bVersion === 'dev' || substr($bVersion, -4) === '-dev';
-                    // push dev versions to the end
-                    if ($aIsDev !== $bIsDev) {
-                        return $aIsDev ? 1 : -1;
-                    }
-                    // equal versions are sorted by date
-                    if ($aVersion === $bVersion) {
-                        return $a->getReleaseDate() > $b->getReleaseDate() ? 1 : -1;
-                    }
-                    // the rest is sorted by version
-                    return version_compare($aVersion, $bVersion);
-                });
+        uksort(
+            $tags,
+            function ($a, $b) {
+                $aVersion = $a;
+                $bVersion = $b;
+                if ($aVersion === '9999999-dev' || 'dev-' === substr($aVersion, 0, 4)) {
+                    $aVersion = 'dev';
+                }
+                if ($bVersion === '9999999-dev' || 'dev-' === substr($bVersion, 0, 4)) {
+                    $bVersion = 'dev';
+                }
+                $aIsDev = $aVersion === 'dev' || substr($aVersion, -4) === '-dev';
+                $bIsDev = $bVersion === 'dev' || substr($bVersion, -4) === '-dev';
+                // push dev versions to the end
+                if ($aIsDev !== $bIsDev) {
+                    return $aIsDev ? 1 : -1;
+                }
+                // equal versions are sorted by date
+                if ($aVersion === $bVersion) {
+                    return $a->getReleaseDate() > $b->getReleaseDate() ? 1 : -1;
+                }
+
+                // the rest is sorted by version
+                return version_compare($aVersion, $bVersion);
+            }
+        );
         $normalizedTags = [];
         foreach ($tags as $version => $id) {
             try {
                 $normalizedVersion = VersionParser::Normalize($version);
-                $normalizedTags[] = [
+                $normalizedTags[]  = [
                     'version' => $normalizedVersion,
                     'tag'     => $version,
                     'id'      => $id,
@@ -99,14 +138,19 @@ class Github
         return $normalizedTags;
     }
 
+    /**
+     * @param string|null $identifier
+     *
+     * @return array|bool
+     */
     public function getComposerInformation($identifier = null)
     {
         $composerInfo = $this->driver->getComposerInformation($identifier ? $identifier : $this->driver->getRootIdentifier());
         if (!$composerInfo) {
-            $this->log->write('github driver: no composer.json found for '.($identifier ? $identifier : 'master'));
+            $this->log->write('github driver: no composer.json found for ' . ($identifier ? $identifier : 'master'));
             $composerInfo = $this->convertPackageXml($identifier);
             if (!$composerInfo) {
-                $this->log->write('github driver: no package2.xml or package.xml found for '.($identifier ? $identifier : 'master'));
+                $this->log->write('github driver: no package2.xml or package.xml found for ' . ($identifier ? $identifier : 'master'));
 
                 return false;
             }
@@ -118,22 +162,27 @@ class Github
         return $composerInfo;
     }
 
+    /**
+     * @param string $identifier
+     *
+     * @return array|bool
+     */
     protected function convertPackageXml($identifier)
     {
         preg_match('#^(?:(?:https?|git)://([^/]+)/|git@([^:]+):)([^/]+)/(.+?)(?:\.git|/)?$#', $this->url, $match);
-        $owner = $match[3];
-        $repository = $match[4];
+        $owner           = $match[3];
+        $repository      = $match[4];
         $packageXmlNames = [
             'package.xml',
             'package2.xml',
         ];
-        $found = false;
+        $found           = false;
         foreach ($packageXmlNames as $path) {
             try {
                 $contents = $this->client->api('repo')->contents()->download($owner, $repository, $path, $identifier);
             } catch (\RuntimeException $e) {
                 if ($e->getCode() == 404) {
-                    $this->log->write('github driver: no '.$path.' found for '.$identifier);
+                    $this->log->write('github driver: no ' . $path . ' found for ' . $identifier);
                     continue;
                 }
             }
@@ -145,22 +194,22 @@ class Github
             return false;
         }
 
-        $packagexmlPath = $this->cacheDir.DIRECTORY_SEPARATOR.'package.xml';
+        $packagexmlPath = $this->cacheDir . DIRECTORY_SEPARATOR . 'package.xml';
         file_put_contents($packagexmlPath, $contents);
 
-        $loader = new \Pickle\Package\XML\Loader(new Package\Loader());
+        $loader  = new \Pickle\Package\XML\Loader(new Package\Loader());
         $package = $loader->load($packagexmlPath);
         $package->setRootDir($this->cacheDir);
         $dumper = new \Pickle\Package\Dumper();
-        $xml = simplexml_load_file($packagexmlPath);
+        $xml    = simplexml_load_file($packagexmlPath);
 
         $date = $xml->date;
         $time = $xml->time;
 
-        $info = $dumper->dump($package);
-        $info['name'] = $owner.'/'.$repository;
+        $info         = $dumper->dump($package);
+        $info['name'] = $owner . '/' . $repository;
         $info['type'] = 'extension';
-        $info['time'] = date('Y-m-d H:i', strtotime($date.' '.$time));
+        $info['time'] = date('Y-m-d H:i', strtotime($date . ' ' . $time));
 
         unlink($packagexmlPath);
 

@@ -9,6 +9,7 @@ use RKA\Slim;
  */
 class Application extends Slim
 {
+
     /**
      * @var callable
      */
@@ -91,7 +92,7 @@ class Application extends Slim
      */
     public function renderError($code)
     {
-        $this->render('errors/'.$code.'.html');
+        $this->render('errors/' . $code . '.html');
         $this->response()->status($code);
         $this->stop();
 
@@ -139,6 +140,7 @@ class Application extends Slim
     }
 
     /**
+     * Run application
      */
     public function run()
     {
