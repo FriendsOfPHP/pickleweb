@@ -2,7 +2,7 @@
 
 namespace PickleWeb\Controller;
 
-use PickleWeb\Auth\ProviderFactory;
+use PickleWeb\Auth\ProviderInterface;
 use PickleWeb\Entity\User;
 
 /**
@@ -39,10 +39,15 @@ class AuthController extends ControllerAbstract
      */
     public function loginWithProviderAction($provider)
     {
-        /* @var $providerFactory ProviderFactory */
-        $providerFactory = $this->app->container->get('authentication.provider.factory');
+        $providerKey = 'authentication.provider.' . $provider;
 
-        $authorizationProvider = $providerFactory->get($provider);
+        // Check if provider exist
+        if (!$this->app->container->has($providerKey)) {
+            $this->app->notFound();
+        }
+
+        /* @var $authorizationProvider ProviderInterface */
+        $authorizationProvider = $this->app->container->get($providerKey);
 
         $token             = $authorizationProvider->handleAuth($this->app);
         $_SESSION['token'] = $token;
