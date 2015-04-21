@@ -38,6 +38,24 @@ class User implements \Serializable
     protected $githubHomepage;
 
     /**
+     * @var string
+     */
+    protected $googleId;
+
+    /**
+     * @var string
+     */
+    protected $googleHomepage;
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return strtolower(trim($this->email));
+    }
+
+    /**
      * @return string
      */
     public function getEmail()
@@ -153,6 +171,46 @@ class User implements \Serializable
     public function setGithubHomepage($githubHomepage)
     {
         $this->githubHomepage = $githubHomepage;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGoogleId()
+    {
+        return $this->googleId;
+    }
+
+    /**
+     * @param string $googleId
+     *
+     * @return User
+     */
+    public function setGoogleId($googleId)
+    {
+        $this->googleId = $googleId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGoogleHomepage()
+    {
+        return $this->googleHomepage;
+    }
+
+    /**
+     * @param string $googleHomepage
+     *
+     * @return User
+     */
+    public function setGoogleHomepage($googleHomepage)
+    {
+        $this->googleHomepage = $googleHomepage;
 
         return $this;
     }

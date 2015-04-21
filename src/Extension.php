@@ -80,8 +80,8 @@ class Extension
             if (!$information) {
                 $io->write('package: no composer.json found for tag '.$tag['version'].'ref: '.$tag['id']);
             } else {
-				$io->write('...found');
-			}
+                $io->write('...found');
+            }
 
             $information['version_normalized'] = $tag['version'];
             $information['source'] = $tag['source'];
@@ -95,8 +95,8 @@ class Extension
     }
 
     /**
-     * return extension name (vendor/repo)
-     * 
+     * return extension name (vendor/repo).
+     *
      * @return string
      */
     public function getName()
@@ -123,13 +123,13 @@ class Extension
     /**
      * @return array
      */
-    public function getPackages($tag=false)
+    public function getPackages($tag = false)
     {
-		if ($tag) {
-			return $this->data[$tag];
-		} else {
-			return $this->data;
-		}
+        if ($tag) {
+            return $this->data[$tag];
+        } else {
+            return $this->data;
+        }
     }
 
     /**

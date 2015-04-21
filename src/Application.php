@@ -180,13 +180,18 @@ class Application extends Slim
     {
         return $this->post($route, $this->authentication, $callable);
     }
-    
+
+    /**
+     * @param string $body
+     * @param int    $code
+     */
     public function jsonResponse($body, $code)
     {
-		$response = $this->response();
-		$response['Content-Type'] = 'application/json';
-		$response->status($code);
-		$response->body(json_encode($body));
-		return $this;
-	}
+        $response = $this->response();
+        $response['Content-Type'] = 'application/json';
+        $response->status($code);
+        $response->body(json_encode($body));
+
+        return $this;
+    }
 }

@@ -78,7 +78,7 @@ class PackageController extends ControllerAbstract
      */
     public function registerPackageAction()
     {
-        $token = $_SESSION['token'];
+        $token = $_SESSION['github.token'];
         $repo  = $this->app->request()->post('repository');
         $log = new BufferIO();
 

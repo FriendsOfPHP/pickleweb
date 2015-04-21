@@ -43,9 +43,8 @@ class Package implements \Serializable
      */
     protected $values = [];
 
-
     /**
-     * initalize public values
+     * initalize public values.
      */
     public function __construct()
     {
