@@ -5,8 +5,14 @@ namespace PickleWeb;
 class Extension
 {
 	protected $name;
+	
+	protected $vendor;
+	
+	protected $repositoryName;
 
 	protected $data;
+	
+	protected $repositoryUrl;
 
     public function setFromRepository($driver, $io)
     {
@@ -27,6 +33,8 @@ class Extension
         $this->name = $packageName = $informationRoot['name'];
 
         list($vendorName, $repository) = explode('/', $packageName);
+		$this->vendor = $vendorName;
+		$this->repositoryName = $repository;
 
         if (empty($vendorName) || empty($repository)) {
             throw new \RuntimeException($info['name'].' is not a valid name. vendor/repository required as name');
@@ -34,6 +42,7 @@ class Extension
 
 		$packages = [];
 		$tmpPackage = new \PickleWeb\Package();
+
 		$tmpPackage->setName($packageName);
 		$tmpPackage->setTag('dev-master');
 		$tmpPackage->setFromArray($informationRoot);
@@ -61,6 +70,26 @@ class Extension
         $this->data = $packages;
 
     }
+
+    public function getName()
+    {
+		return $this->name;
+	}
+
+    public function getVendor()
+    {
+		return $this->vendor;
+	}
+	
+	public function getRepositoryName()
+	{
+		return $this->repositoryName;
+	}
+
+	public function getPackages()
+	{
+		return $this->data;
+	}
 
 	public function serialize()
 	{

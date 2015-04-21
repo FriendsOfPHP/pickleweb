@@ -11,6 +11,7 @@ class Package implements \Serializable
 	protected $keysExport = [
 		'name',
 		'version',
+		'version_normalized',
 		'type',
 		'stability',
 		'license',
@@ -63,6 +64,42 @@ class Package implements \Serializable
 	public function getTag()
 	{
 		return $this->tag;
+	}
+	
+	public function getDescription()
+	{
+		return $this->values['description'];
+	}
+	
+	public function getLicense()
+	{
+		return $this->values['license'];
+	}
+
+	public function getAuthors()
+	{
+		return $this->values['authors'];
+	}
+	
+	public function getVersion()
+	{
+		return $this->values['version'];
+	}
+
+	public function getVersionNormalized()
+	{
+		return $this->values['version_normalized'];
+	}
+
+	public function getTime()
+	{
+		return $this->values['time'];
+	}
+
+
+	public function getId()
+	{
+		return $this->values['source']['reference'];
 	}
 
 	public function serialize()

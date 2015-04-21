@@ -84,73 +84,46 @@ class PackageController extends ControllerAbstract
 
         try {
             $driver = new \PickleWeb\Repository\Github($repo, $token->accessToken, $this->app->config('cache_dir'), $log);
-            $info   = $driver->getComposerInformation();
 
-            if (!$info) {
-                $log->write('package: No composer.json or package.xml found for '.($identifier ? $identifier : 'master'));
-                $this->app->flash('Warning', 'No valid composer.json (or valid package.xml) found.');
-                $this->app->redirect('/package/register');
-            }
+            $extension = new \PickleWeb\Extension;
+            $extension->setFromRepository($driver, $log);
 
-            $info['vcs'] = $repo;
+            $vendorName = $extension->getVendor();
+            $repository = $extension->getRepositoryName();
+			$extensionName = $extension->getName();
 
-            if ($info['type'] != 'extension') {
-                $this->app->flash('error', $info['name'].' is not an extension package');
-                $this->app->redirect('/package/register');
-            }
+            $extension->unserialize($extension->serialize());
+            $jsonPackage = $extension->serialize();
+        } catch (\RuntimeException $exception) {
+            /* todo: handle bad data in a better way =) */
+            $this->app->flash('error', 'An error occurred while retrieving extension data. Please try again later.' . $exception->getMessage());
+            $this->app->redirect('/package/register?repository='.$repo);
+        }
 
-            $packageName = $info['name'];
-            list($vendorName, $repository) = explode('/', $packageName);
+		$vendorDir = $this->app->config('json_path').$vendorName;
+		if (file_exists($vendorDir.'/'.$repository.'.json')) {
+			$this->app->flash('error', $packageName.' is already registred');
+			$this->app->redirect('/package/'.$packageName);
+			exit();
+		}
 
-            $vendorDir = $this->app->config('json_path').$vendorName;
-            if (file_exists($vendorDir.'/'.$repository.'.json')) {
-                $this->app->flash('error', $packageName.' is already registred');
-                $this->app->redirect('/package/'.$packageName);
-                exit();
-            }
+		$transaction = hash('sha256', $jsonPackage);
 
-            $packages     = [
-                'packages' => [
-                    $packageName => [],
-                ],
-            ];
+		file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $jsonPackage);
+		file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.log', $log->getOutput());
+		$latest = $extension->getPackages()['dev-master'];
 
-            $package = &$packages['packages'][$packageName];
-            $tags    = $driver->getReleaseTags();
-
-            foreach ($tags as $tag) {
-                $log->write('package: looking for composer.json for tag '.$tag['version']);
-                $information = $driver->getComposerInformation($tag['id']);
-                if (!$info) {
-                    $log->write('package: no composer.json found for tag '.$tag['version'].'ref: '.$tag['id']);
-                }
-                $information['version_normalized'] = $tag['version'];
-                $information['source'] = $tag['source'];
-                $package[$tag['tag']] = $information;
-            }
-
-            $jsonPackage = json_encode($packages, JSON_PRETTY_PRINT);
-            $transaction = hash('sha256', $jsonPackage);
-
-            file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $jsonPackage);
-            file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.log', $log->getOutput());
-
-            $this->app
+		$this->app
                 ->render(
                     'extension/confirm.html',
                     [
                         'log'         => $log->getOutput(),
                         'transaction' => $transaction,
-                        'extension'   => $info,
-                        'tags'        => $tags,
-                        'tagsInfo'    => $package,
+                        'latest'      => $latest,
+                        'tags'        => $extension->getPackages(),
+                        'vcs'         => $repo
                     ]
                 );
-        } catch (\RuntimeException $exception) {
-            /* todo: handle bad data in a better way =) */
-            $this->app->flash('error', 'An error occurred while retrieving extension data. Please try again later.');
-            $this->app->redirect('/package/register?repository='.$repo);
-        }
     }
 
     /**
