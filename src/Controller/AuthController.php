@@ -2,6 +2,9 @@
 
 namespace PickleWeb\Controller;
 
+use PickleWeb\Auth\ProviderInterface;
+use PickleWeb\Entity\User;
+
 /**
  * Class AuthController.
  */
@@ -31,51 +34,37 @@ class AuthController extends ControllerAbstract
      * GET /login/:provider.
      *
      * @param string $provider
+     *
+     * @return void
      */
     public function loginWithProviderAction($provider)
     {
-        $this->app
-            ->redirectIf($this->app->user(), '/profile')
-            ->otherwise(
-                function (\PickleWeb\Application $app) use (& $code, & $auth, $provider) {
-                    $code = $app->request()->get('code');
+        $providerKey = 'authentication.provider.' . $provider;
 
-                    try {
-                        $auth = new \PickleWeb\Action\AuthAction($provider);
+        // Check if provider exist
+        if (!$this->app->container->has($providerKey)) {
+            $this->app->notFound();
+        }
 
-                        if (!$code) {
-                            $auth->GetCode($app);
-                        }
-                    } catch (\InvalidArgumentException $exception) {
-                        $app->notFound();
-                    }
-                }
-            )
-            ->then(
-                function (\PickleWeb\Application $app) use (& $user, & $code, & $auth) {
-                    /* @var $auth \PickleWeb\Action\AuthAction */
-                    $state  = $app->request()->get('state');
-                    $token  = $auth->getToken($code, $state);
-                    $user   = $auth->getProvider()->getUserDetails($token);
-                    $emails = array_filter(
-                        $auth->getProvider()->getUserEmails($token),
-                        function ($email) {
-                            return $email->primary;
-                        }
-                    );
+        /* @var $authorizationProvider ProviderInterface */
+        $authorizationProvider = $this->app->container->get($providerKey);
 
-                    $user->exchangeArray(['email' => current($emails)->email]);
+        $token             = $authorizationProvider->handleAuth($this->app);
+        $_SESSION['token'] = $token;
 
-                    $jsonPath = $app->config('json_path').'users/github/'.$user->nickname.'.json';
-                    check_or_create_json_dir($app);
-                    if (!file_put_contents($jsonPath, json_encode($user->getArrayCopy(), JSON_PRETTY_PRINT))) {
-                        $app->renderError(500);
-                        exit();
-                    }
-                    $_SESSION['token'] = $token;
-                    $_SESSION['user']  = $user;
-                }
-            )
-            ->redirect('/profile');
+        $userDetails = $authorizationProvider->getUserDetails($token);
+
+        // Create each time a new user while a proper persister is done
+        $user = new User();
+        $user->setEmail($userDetails['email']);
+        $user->setNickname($userDetails['nickname']);
+        $user->setName($userDetails['realname']);
+        $user->setPicture($userDetails['profilepicture']);
+        $user->setGithubId($userDetails['uid']);
+        $user->setGithubHomepage($userDetails['homepage']);
+
+        $_SESSION['user'] = serialize($user);
+
+        $this->app->redirect('/profile');
     }
 }

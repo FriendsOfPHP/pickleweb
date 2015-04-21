@@ -4,16 +4,15 @@
 
 {% block content %}
 <div class="col-lg-3">
-    <img class="image-responsive img-rounded avatar" src="{{ account.imageUrl }}">
+    <img class="image-responsive img-rounded avatar" src="{{ account.picture }}">
     <h2>
         {{ account.name }}<br/>
         <small>{{ account.nickname }}</small>
     </h2>
     <p><span class="text-muted"><i class="fa fa-envelope-o"></i></span> <a href="mailto:{{ account.email }}">{{ account.email }}</a></p>
-    <p><span class="text-muted"><i class="fa fa-crosshairs"></i></span> {{ account.location }}</p>
-    {% for url in account.urls %}
-        <p><span class="text-muted"><i class="fa fa-link"></i></span> <a href="{{ url }}">{{ url }}</a></p>
-    {% endfor %}
+    {% if account.githubHomepage %}
+    <p><span class="text-muted"><i class="fa fa-github"></i></span> <a href="{{ account.githubHomepage }}">{{ account.githubHomepage }}</a></p>
+    {% endif %}
 </div>
 
 <div class="col-lg-9">

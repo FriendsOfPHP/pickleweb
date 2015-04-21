@@ -23,11 +23,13 @@
         "composer/composer"          : "~1.0-alpha8",
         "league/oauth2-client"       : "*",
         "akrabat/rka-slim-controller": "2.0.*",
-		"FriendsOfPhp/pickle"        : ">=0.4.0",
-		"knplabs/github-api": "~1.2"
+        "FriendsOfPhp/pickle"        : ">=0.4.0",
+        "knplabs/github-api"         : "~1.2"
     },
     "require-dev" : {
-        "atoum/atoum": "*"
+        "atoum/atoum"                   : "*",
+        "m6web/Symfony2-coding-standard": "~1.1",
+        "m6web/coke"                    : "~1.0"
     },
     "autoload"    : {
         "psr-4": {

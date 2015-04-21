@@ -2,6 +2,7 @@
 
 namespace PickleWeb;
 
+use PickleWeb\Entity\User;
 use RKA\Slim;
 
 /**
@@ -9,6 +10,7 @@ use RKA\Slim;
  */
 class Application extends Slim
 {
+
     /**
      * @var callable
      */
@@ -31,11 +33,11 @@ class Application extends Slim
     }
 
     /**
-     * @return array|null
+     * @return User|null
      */
     public function user()
     {
-        return isset($_SESSION['user']) ? $_SESSION['user'] : null;
+        return isset($_SESSION['user']) ? unserialize($_SESSION['user']) : null;
     }
 
     /**
@@ -91,7 +93,7 @@ class Application extends Slim
      */
     public function renderError($code)
     {
-        $this->render('errors/'.$code.'.html');
+        $this->render('errors/' . $code . '.html');
         $this->response()->status($code);
         $this->stop();
 
@@ -139,6 +141,7 @@ class Application extends Slim
     }
 
     /**
+     * Run application
      */
     public function run()
     {

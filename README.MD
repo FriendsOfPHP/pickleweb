@@ -30,12 +30,9 @@ you will have to create a test application. For example, on Github:
 * Set the "Homepage URL" to `http://localhost:8080` (this URL depends on the method you chose to run the application, [PHP](#php-built-in-server) or [Docker](#docker))
 * Set the "Authorization callback URL" to `http://localhost:8080/login/github` (this URL depends on the method you chose to run the application, [PHP](#php-built-in-server) or [Docker](#docker))
 
-Once done, click on the "Register Application" button to get the client ID and secret for your application. Then, export those values:
+Once done, click on the "Register Application" button to get the client ID and secret for your application.
 
-```
-export GITHUB_CLIENT_ID=<your-application-client-id>
-export GITHUB_CLIENT_SECRET=<your-application-client-secret>
-```
+Then, copy `src/config.json.example` to `src/config.json` and fill you ID and secret in the proper section.
 
 You are now ready to [run](#running) the Pickle Web application and use authentication.
 
