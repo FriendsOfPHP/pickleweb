@@ -42,6 +42,7 @@
         }
     },
     "scripts": {
-        "cs": "vendor/bin/php-cs-fixer --ansi fix --config=sf23"
+        "cs": "vendor/bin/php-cs-fixer --ansi fix --config=sf23",
+        "test": "vendor/bin/atoum -ft"
     }
 }

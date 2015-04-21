@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7701d921ddd609ca0491662c77c44cd5",
+    "hash": "9af8beef2a3c4966f63bb284aab5fa01",
     "packages": [
         {
             "name": "akrabat/rka-slim-controller",
