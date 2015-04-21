@@ -28,7 +28,9 @@ class GithubController extends ControllerAbstract
     }
 
     /**
-     * @param array $string
+     * @param string $username
+     * 
+     * @return string
      */
     protected function findUser($username)
     {
@@ -64,6 +66,8 @@ class GithubController extends ControllerAbstract
     }
 
     /**
+     * @param string $username
+     * 
      * Hook for github hooks. Only release and tag are supported.
      */
     public function hookAction($username)
@@ -92,11 +96,13 @@ class GithubController extends ControllerAbstract
         $path = $this->app->config('cache_dir').'/payload.json';
 
         if (!($payload->ref_type == 'tag' || $payload->ref_type == 'release')) {
-            $this->app->jsonResponse([
+            $this->app->jsonResponse(
+            [
                 'status' => 'error',
                 'message' => 'Only tag/release hooks are supported',
             ],
-            200);
+            200
+            );
         }
 
         $extensionName = $payload->repository->full_name;

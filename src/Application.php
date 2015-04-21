@@ -184,6 +184,8 @@ class Application extends Slim
     /**
      * @param string $body
      * @param int    $code
+     * 
+     * @return \Slim\Route
      */
     public function jsonResponse($body, $code)
     {
