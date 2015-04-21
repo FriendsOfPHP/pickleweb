@@ -1,14 +1,12 @@
 <?php
+
 namespace PickleWeb\Entity;
 
 /**
- * Class User
- *
- * @package PickleWeb\Entity
+ * Class User.
  */
 class User implements \Serializable
 {
-
     /**
      * @var string
      */
