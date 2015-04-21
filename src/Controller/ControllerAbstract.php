@@ -1,16 +1,14 @@
 <?php
+
 namespace PickleWeb\Controller;
 
 use PickleWeb\Application;
 
 /**
- * Class ControllerAbstract
- *
- * @package PickleWeb\Controller
+ * Class ControllerAbstract.
  */
 abstract class ControllerAbstract
 {
-
     /**
      * @var Application
      */

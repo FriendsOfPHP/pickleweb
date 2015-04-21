@@ -85,35 +85,35 @@ class PackageController extends ControllerAbstract
         try {
             $driver = new \PickleWeb\Repository\Github($repo, $token->accessToken, $this->app->config('cache_dir'), $log);
 
-            $extension = new \PickleWeb\Extension;
+            $extension = new \PickleWeb\Extension();
             $extension->setFromRepository($driver, $log);
 
             $vendorName = $extension->getVendor();
             $repository = $extension->getRepositoryName();
-			$extensionName = $extension->getName();
+            $extensionName = $extension->getName();
 
             $extension->unserialize($extension->serialize());
             $jsonPackage = $extension->serialize();
         } catch (\RuntimeException $exception) {
             /* todo: handle bad data in a better way =) */
-            $this->app->flash('error', 'An error occurred while retrieving extension data. Please try again later.' . $exception->getMessage());
+            $this->app->flash('error', 'An error occurred while retrieving extension data. Please try again later.'.$exception->getMessage());
             $this->app->redirect('/package/register?repository='.$repo);
         }
 
-		$vendorDir = $this->app->config('json_path').$vendorName;
-		if (file_exists($vendorDir.'/'.$repository.'.json')) {
-			$this->app->flash('error', $packageName.' is already registred');
-			$this->app->redirect('/package/'.$packageName);
-			exit();
-		}
+        $vendorDir = $this->app->config('json_path').$vendorName;
+        if (file_exists($vendorDir.'/'.$repository.'.json')) {
+            $this->app->flash('error', $packageName.' is already registred');
+            $this->app->redirect('/package/'.$packageName);
+            exit();
+        }
 
-		$transaction = hash('sha256', $jsonPackage);
+        $transaction = hash('sha256', $jsonPackage);
 
-		file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $jsonPackage);
-		file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.log', $log->getOutput());
-		$latest = $extension->getPackages()['dev-master'];
+        file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $jsonPackage);
+        file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.log', $log->getOutput());
+        $latest = $extension->getPackages()['dev-master'];
 
-		$this->app
+        $this->app
                 ->render(
                     'extension/confirm.html',
                     [
@@ -121,7 +121,7 @@ class PackageController extends ControllerAbstract
                         'transaction' => $transaction,
                         'latest'      => $latest,
                         'tags'        => $extension->getPackages(),
-                        'vcs'         => $repo
+                        'vcs'         => $repo,
                     ]
                 );
     }

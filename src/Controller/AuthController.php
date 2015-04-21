@@ -34,12 +34,10 @@ class AuthController extends ControllerAbstract
      * GET /login/:provider.
      *
      * @param string $provider
-     *
-     * @return void
      */
     public function loginWithProviderAction($provider)
     {
-        $providerKey = 'authentication.provider.' . $provider;
+        $providerKey = 'authentication.provider.'.$provider;
 
         // Check if provider exist
         if (!$this->app->container->has($providerKey)) {
