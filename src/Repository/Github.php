@@ -60,16 +60,15 @@ class Github
         $this->log = $bufferIO ? $bufferIO : new BufferIO();
 
         $config = Factory::createConfig();
+        $cfg = ['config'=> []];
         if ($cacheDir) {
-            $config->merge(
-                [
-                    'config' => [
-                        'cache-dir'    => $cacheDir,
-                        'github-oauth' => ['github.com' => $token],
-                    ],
-                ]
-            );
+			$cfg['config']['cache-dir'] = $cacheDir;
         }
+        if ($token) {
+			$cfg['config']['github-oauth'] = ['github.com' => $token];
+        }
+
+		$config->merge($cfg);
         $this->cacheDir = $cacheDir;
         $io->loadConfiguration($config);
 
@@ -196,7 +195,7 @@ class Github
             break;
         }
 
-        if (!$found) {
+        if (!$found || !isset($contents)) {
             return false;
         }
 
