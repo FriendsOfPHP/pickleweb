@@ -28,9 +28,8 @@
         "predis/predis"              : "1.0.*"
     },
     "require-dev" : {
-        "atoum/atoum"                   : "*",
-        "m6web/Symfony2-coding-standard": "~1.1",
-        "m6web/coke"                    : "~1.0"
+        "atoum/atoum"        : "*",
+        "fabpot/php-cs-fixer": "~1.7"
     },
     "autoload"    : {
         "psr-4": {
@@ -41,5 +40,9 @@
         "psr-4": {
             "PickleWeb\\Tests\\": ["tests/"]
         }
+    },
+    "scripts": {
+        "cs": "vendor/bin/php-cs-fixer --ansi fix --config=sf23",
+        "test": "vendor/bin/atoum -ft"
     }
 }
