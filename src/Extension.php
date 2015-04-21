@@ -2,18 +2,42 @@
 
 namespace PickleWeb;
 
+/**
+ * Class Extension.
+ */
 class Extension
 {
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var string
+     */
     protected $vendor;
 
+    /**
+     * @var string
+     */
     protected $repositoryName;
 
+    /**
+     * @var array
+     */
     protected $data;
 
+    /**
+     * @var string
+     */
     protected $repositoryUrl;
 
+    /**
+     * @param Repository\Vcs\GitHubDriver $driver
+     * @param BufferIO                    $io
+     *
+     * @throws \Exception
+     */
     public function setFromRepository($driver, $io)
     {
         if (!($driver instanceof \PickleWeb\Repository\Github)) {
@@ -70,26 +94,43 @@ class Extension
         $this->data = $packages;
     }
 
+    /**
+     * return extension name (vendor/repo)
+     * 
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * @return string
+     */
     public function getVendor()
     {
         return $this->vendor;
     }
 
+    /**
+     * @return string
+     */
     public function getRepositoryName()
     {
         return $this->repositoryName;
     }
 
+    /**
+     * @return array
+     */
     public function getPackages()
     {
         return $this->data;
     }
 
+    /**
+     * @return string
+     */
     public function serialize()
     {
         $exportData =  [
@@ -105,6 +146,9 @@ class Extension
         return json_encode($exportData);
     }
 
+    /**
+     * @param array $data
+     */
     public function unserialize($data)
     {
         $data = json_decode($data, true);
