@@ -4,15 +4,15 @@ namespace PickleWeb;
 
 class Extension
 {
-	protected $name;
-	
-	protected $vendor;
-	
-	protected $repositoryName;
+    protected $name;
 
-	protected $data;
-	
-	protected $repositoryUrl;
+    protected $vendor;
+
+    protected $repositoryName;
+
+    protected $data;
+
+    protected $repositoryUrl;
 
     public function setFromRepository($driver, $io)
     {
@@ -33,20 +33,20 @@ class Extension
         $this->name = $packageName = $informationRoot['name'];
 
         list($vendorName, $repository) = explode('/', $packageName);
-		$this->vendor = $vendorName;
-		$this->repositoryName = $repository;
+        $this->vendor = $vendorName;
+        $this->repositoryName = $repository;
 
         if (empty($vendorName) || empty($repository)) {
             throw new \RuntimeException($info['name'].' is not a valid name. vendor/repository required as name');
         }
 
-		$packages = [];
-		$tmpPackage = new \PickleWeb\Package();
+        $packages = [];
+        $tmpPackage = new \PickleWeb\Package();
 
-		$tmpPackage->setName($packageName);
-		$tmpPackage->setTag('dev-master');
-		$tmpPackage->setFromArray($informationRoot);
-		$packages['dev-master'] = $tmpPackage;
+        $tmpPackage->setName($packageName);
+        $tmpPackage->setTag('dev-master');
+        $tmpPackage->setFromArray($informationRoot);
+        $packages['dev-master'] = $tmpPackage;
 
         $tags    = $driver->getReleaseTags();
         foreach ($tags as $tag) {
@@ -60,64 +60,64 @@ class Extension
             $information['version_normalized'] = $tag['version'];
             $information['source'] = $tag['source'];
 
-			$tmpPackage = new \PickleWeb\Package();
-			$tmpPackage->setName($packageName);
-			$tmpPackage->setTag($tag['id']);
-			$tmpPackage->setFromArray($information);
+            $tmpPackage = new \PickleWeb\Package();
+            $tmpPackage->setName($packageName);
+            $tmpPackage->setTag($tag['id']);
+            $tmpPackage->setFromArray($information);
 
             $packages[$tag['tag']] = $tmpPackage;
         }
         $this->data = $packages;
-
     }
 
     public function getName()
     {
-		return $this->name;
-	}
+        return $this->name;
+    }
 
     public function getVendor()
     {
-		return $this->vendor;
-	}
-	
-	public function getRepositoryName()
-	{
-		return $this->repositoryName;
-	}
+        return $this->vendor;
+    }
 
-	public function getPackages()
-	{
-		return $this->data;
-	}
+    public function getRepositoryName()
+    {
+        return $this->repositoryName;
+    }
 
-	public function serialize()
-	{
-		$exportData =  [
-			'packages' => [ $this->name => [] ]
-		];
+    public function getPackages()
+    {
+        return $this->data;
+    }
 
-		$extension = &$exportData['packages'][$this->name];
+    public function serialize()
+    {
+        $exportData =  [
+            'packages' => [$this->name => []],
+        ];
 
-		foreach ($this->data as $version => $info) {
-			$extension[$version] = $info->getAsArray();
-		}
-		return json_encode($exportData);
-	}
-	
-	public function unserialize($data)
-	{
-		$data = json_decode($data, true);
-		$packageName = key($data['packages']);
-		$packages = &$data['packages'][$packageName];
+        $extension = &$exportData['packages'][$this->name];
 
-		foreach ($packages as $version => $info) {
-			$tmpPackage = new \PickleWeb\Package();
-			$tmpPackage->setName($packageName);
-			$tmpPackage->setTag($version);
-			$tmpPackage->setFromArray($info);
-			$this->data[$version] = $tmpPackage;
-		}
-		$this->name = $packageName;
-	}
+        foreach ($this->data as $version => $info) {
+            $extension[$version] = $info->getAsArray();
+        }
+
+        return json_encode($exportData);
+    }
+
+    public function unserialize($data)
+    {
+        $data = json_decode($data, true);
+        $packageName = key($data['packages']);
+        $packages = &$data['packages'][$packageName];
+
+        foreach ($packages as $version => $info) {
+            $tmpPackage = new \PickleWeb\Package();
+            $tmpPackage->setName($packageName);
+            $tmpPackage->setTag($version);
+            $tmpPackage->setFromArray($info);
+            $this->data[$version] = $tmpPackage;
+        }
+        $this->name = $packageName;
+    }
 }
