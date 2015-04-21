@@ -47,11 +47,11 @@ class Extension
 
         if (!$informationRoot) {
             $io->write('package: No composer.json or package.xml found for '.($identifier ? $identifier : 'master'));
-            throw \RuntimeException('Master or default branch must have composer.json');
+            throw new \RuntimeException('Master or default branch must have composer.json');
         }
 
         if ($informationRoot['type'] != 'extension') {
-            throw \RuntimeException($info['name'].' is not an extension package');
+            throw new \RuntimeException($info['name'].' is not an extension package');
         }
 
         $this->name = $packageName = $informationRoot['name'];
