@@ -1,20 +1,19 @@
 <?php
+
 namespace PickleWeb\Auth;
 
 use League\OAuth2\Client\Token\AccessToken;
 use PickleWeb\Application;
 
 /**
- * Interface ProviderInterface
- *
- * @package PickleWeb\Auth
+ * Interface ProviderInterface.
  */
 interface ProviderInterface
 {
     /**
      * @param Application $app
      *
-     * @return AccessToken  token
+     * @return AccessToken token
      */
     public function handleAuth(Application $app);
 

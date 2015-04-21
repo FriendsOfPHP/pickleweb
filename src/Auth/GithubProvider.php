@@ -8,13 +8,10 @@ use League\OAuth2\Client\Token\AccessToken;
 use PickleWeb\Application;
 
 /**
- * Class GithubProvider
- *
- * @package PickleWeb\Auth
+ * Class GithubProvider.
  */
 class GithubProvider implements ProviderInterface
 {
-
     const STATE_SESSION_NAME = 'github.oauth2state';
 
     /**
@@ -46,12 +43,11 @@ class GithubProvider implements ProviderInterface
             $url                                = $this->oauth2Provider->getAuthorizationUrl();
             $_SESSION[self::STATE_SESSION_NAME] = $this->oauth2Provider->state;
             $app->redirect($url);
-
-        } else if (empty($state) || $state !== $_SESSION[self::STATE_SESSION_NAME]) {
+        } elseif (empty($state) || $state !== $_SESSION[self::STATE_SESSION_NAME]) {
             // Check given state against previously stored one to mitigate CSRF attack
 
             unset($_SESSION[self::STATE_SESSION_NAME]);
-            throw new \RuntimeException('Invalid state ' . $_SESSION[self::STATE_SESSION_NAME]);
+            throw new \RuntimeException('Invalid state '.$_SESSION[self::STATE_SESSION_NAME]);
         }
 
         // clean session
@@ -61,7 +57,7 @@ class GithubProvider implements ProviderInterface
         return $this->oauth2Provider->getAccessToken(
             'authorization_code',
             [
-                'code' => $code
+                'code' => $code,
             ]
         );
     }
@@ -95,9 +91,8 @@ class GithubProvider implements ProviderInterface
                 'realname'       => (isset($user->name)) ? $user->name : null,
                 'email'          => (isset($user->email)) ? $user->email : null,
                 'profilepicture' => $user->imageUrl,
-                'homepage'       => $this->oauth2Provider->domain . '/' . $user->nickname
+                'homepage'       => $this->oauth2Provider->domain.'/'.$user->nickname,
             ];
-
         } catch (\Exception $e) {
             throw new \RuntimeException('cannot fetch account details', 0, $e);
         }
