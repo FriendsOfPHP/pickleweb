@@ -4,22 +4,22 @@ use League\OAuth2\Client\Provider\Github;
 use PickleWeb\Auth\GithubProvider;
 use Slim\Helper\Set;
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
 function check_or_create_json_dir(\PickleWeb\Application $app)
 {
     if (is_dir($app->config('json_path')) === false) {
         mkdir($app->config('json_path'), 0777, true);
-        mkdir($app->config('json_path') . 'users/github', 0777, true);
-        mkdir($app->config('json_path') . 'extensions', 0777, true);
+        mkdir($app->config('json_path').'users/github', 0777, true);
+        mkdir($app->config('json_path').'extensions', 0777, true);
     }
 }
 
 $app = new \PickleWeb\Application(
     [
         'view'      => new \PickleWeb\View\Twig(),
-        'json_path' => __DIR__ . '/json/',
-        'cache_dir' => __DIR__ . '/../cache-dir/',
+        'json_path' => __DIR__.'/json/',
+        'cache_dir' => __DIR__.'/../cache-dir/',
     ]
 );
 
@@ -37,7 +37,7 @@ $app = new \PickleWeb\Application(
 $app->container->singleton(
     'app.config',
     function (Set $container) {
-        return json_decode(file_get_contents(__DIR__ . '/../src/config.json'), true);
+        return json_decode(file_get_contents(__DIR__.'/../src/config.json'), true);
     }
 );
 
