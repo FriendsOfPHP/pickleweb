@@ -6,12 +6,12 @@
     {% include "partials/search.html" %}
 
     <h1>
-        Register extension: {{ extension.name }}
+        Register extension: {{ extension.getName() }}
     </h1>
 <p><pre>{{ log }}</pre></p>
-    {% if extension.latest.description %}
+    {% if latest.getDescription() %}
         <p class="lead">
-            {{ extension.latest.description }}
+            {{ latest.getDescription() }}
         </p>
     {% endif %}
 
@@ -19,7 +19,7 @@
         <li>
             Author(s):
             {% spaceless %}
-                {% for author in extension.authors %}
+                {% for author in latest.authors %}
                     {% if author.homepage %}
                         <a href="{{ author.homepage }}">{{ author.name }}</a>
                     {% elseif author.email %}
@@ -32,11 +32,11 @@
             {% endspaceless %}
         </li>
 
-        {% if extension.license %}
+        {% if latest.getLicense() %}
             <li>
                 License(s):
                 {% spaceless %}
-                    {% for license in extension.license %}
+                    {% for license in latest.getLicense() %}
                         {{ license }}
                         {% if not loop.last %},{% endif %}
                     {% endfor %}
@@ -44,8 +44,8 @@
             </li>
         {% endif %}
 
-        {% if extension.vcs %}
-            <li>Source: <a href="{{ extension.vcs }}">{{ extension.vcs }}</a></li>
+        {% if vcs %}
+            <li>Source: <a href="{{ vcs }}">{{ vcs }}</a></li>
         {% endif %}
     </ul>
 
@@ -62,9 +62,9 @@
         <tbody>
         {% for tag in tags|reverse %}
             <tr>
-                <td>{{ tag.version }} ({{ tag.tag }})</td>
-                <td>{{ tagsInfo[tag.tag].time }}</td>
-                <td>{{ tag.id[:7] }}</td>
+                <td>{{ tag.getVersion() }} ({{ tag.getVersionNormalized() }})</td>
+                <td>{{ tag.getTime() }}</td>
+                <td>{{ tag.getId()[:7] }}</td>
             </tr>
         {% endfor %}
         </tbody>
