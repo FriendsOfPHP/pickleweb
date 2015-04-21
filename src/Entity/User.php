@@ -7,6 +7,7 @@ namespace PickleWeb\Entity;
  */
 class User implements \Serializable
 {
+
     /**
      * @var string
      */
@@ -36,6 +37,14 @@ class User implements \Serializable
      * @var string
      */
     protected $githubHomepage;
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return strtolower(trim($this->email));
+    }
 
     /**
      * @return string

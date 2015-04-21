@@ -4,6 +4,7 @@ namespace PickleWeb\Controller;
 
 use PickleWeb\Auth\ProviderInterface;
 use PickleWeb\Entity\User;
+use PickleWeb\Entity\UserRepository;
 
 /**
  * Class AuthController.
@@ -31,13 +32,13 @@ class AuthController extends ControllerAbstract
     }
 
     /**
-     * GET /login/:provider.
-     *
      * @param string $provider
+     *
+     * @throws \ErrorException
      */
     public function loginWithProviderAction($provider)
     {
-        $providerKey = 'authentication.provider.'.$provider;
+        $providerKey = 'authentication.provider.' . $provider;
 
         // Check if provider exist
         if (!$this->app->container->has($providerKey)) {
@@ -47,20 +48,37 @@ class AuthController extends ControllerAbstract
         /* @var $authorizationProvider ProviderInterface */
         $authorizationProvider = $this->app->container->get($providerKey);
 
-        $token             = $authorizationProvider->handleAuth($this->app);
-        $_SESSION['token'] = $token;
+        $token                          = $authorizationProvider->handleAuth($this->app);
+        $_SESSION[$provider . '.token'] = $token;
 
         $userDetails = $authorizationProvider->getUserDetails($token);
 
-        // Create each time a new user while a proper persister is done
-        $user = new User();
-        $user->setEmail($userDetails['email']);
-        $user->setNickname($userDetails['nickname']);
-        $user->setName($userDetails['realname']);
-        $user->setPicture($userDetails['profilepicture']);
-        $user->setGithubId($userDetails['uid']);
-        $user->setGithubHomepage($userDetails['homepage']);
+        if (empty($userDetails['email']) || empty($userDetails['uid'])) {
+            throw new \ErrorException('User details incomplete. Unable to fetch user');
+        }
 
+        // Fetch or persist user from repository
+        /* @var $userRepository UserRepository */
+        $userRepository = $this->app->container->get('user.repository');
+        $user           = $userRepository->find($userDetails['email']);
+        if (is_null($user)) {
+            $user = $userRepository->findByProviderId($provider, $userDetails['uid']);
+            if (is_null($user)) {
+                $user = new User();
+                $user->setEmail($userDetails['email']);
+                $user->setNickname($userDetails['nickname']);
+                $user->setName($userDetails['realname']);
+                $user->setPicture($userDetails['profilepicture']);
+                if ('github' == $provider) {
+                    $user->setGithubId($userDetails['uid']);
+                    $user->setGithubHomepage($userDetails['homepage']);
+                }
+
+                $userRepository->persist($user);
+            }
+        }
+
+        // persist user in session
         $_SESSION['user'] = serialize($user);
 
         $this->app->redirect('/profile');

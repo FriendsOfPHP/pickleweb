@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+
+{% set title = 'Profile: ' ~ account.name %}
+
+{% block content %}
+<div class="col-lg-6 col-lg-offset-3 alert alert-danger">
+    <form action="/profile/remove" method="post">
+        <strong>Account deletion</strong><br/><br/>
+        <div class="text-center">
+            Are you sure you want to remove your account ?<br/><br/>
+            <button type="submit" class="btn btn-danger" href="/profile/remove">Remove account</button> <a class="btn btn-primary" href="/profile">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

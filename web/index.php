@@ -2,24 +2,25 @@
 
 use League\OAuth2\Client\Provider\Github;
 use PickleWeb\Auth\GithubProvider;
+use PickleWeb\Entity\UserRepository;
 use Slim\Helper\Set;
 
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 function check_or_create_json_dir(\PickleWeb\Application $app)
 {
     if (is_dir($app->config('json_path')) === false) {
         mkdir($app->config('json_path'), 0777, true);
-        mkdir($app->config('json_path').'users/github', 0777, true);
-        mkdir($app->config('json_path').'extensions', 0777, true);
+        mkdir($app->config('json_path') . 'users/github', 0777, true);
+        mkdir($app->config('json_path') . 'extensions', 0777, true);
     }
 }
 
 $app = new \PickleWeb\Application(
     [
         'view'      => new \PickleWeb\View\Twig(),
-        'json_path' => __DIR__.'/json/',
-        'cache_dir' => __DIR__.'/../cache-dir/',
+        'json_path' => __DIR__ . '/json/',
+        'cache_dir' => __DIR__ . '/../cache-dir/',
     ]
 );
 
@@ -37,7 +38,28 @@ $app = new \PickleWeb\Application(
 $app->container->singleton(
     'app.config',
     function (Set $container) {
-        return json_decode(file_get_contents(__DIR__.'/../src/config.json'), true);
+        return json_decode(file_get_contents(__DIR__ . '/../src/config.json'), true);
+    }
+);
+
+// Redis client
+$app->container->singleton(
+    'redis.client',
+    function (Set $container) {
+        $config = $container->get('app.config');
+
+        $client = new Predis\Client(sprintf('tcp://%s:%s', $config['redis']['host'], $config['redis']['port']));
+        $client->select($config['redis']['db']);
+
+        return ($client);
+    }
+);
+
+// User repository
+$app->container->singleton(
+    'user.repository',
+    function (Set $container) {
+        return new UserRepository($container->get('redis.client'));
     }
 );
 
@@ -88,6 +110,8 @@ $app->get('/package/:vendor/:package', 'PickleWeb\Controller\PackageController:v
 
 // Users
 $app->getSecured('/profile', 'PickleWeb\Controller\UserController:profileAction');
+$app->getSecured('/profile/remove', 'PickleWeb\Controller\UserController:removeConfirmAction');
+$app->postSecured('/profile/remove', 'PickleWeb\Controller\UserController:removeAction');
 $app->get('/account(/:name)', 'PickleWeb\Controller\UserController:viewAccountAction');
 
 /*

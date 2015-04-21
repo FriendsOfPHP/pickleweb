@@ -4,7 +4,9 @@
 
 {% block content %}
 <div class="col-lg-3">
+    {% if account.picture %}
     <img class="image-responsive img-rounded avatar" src="{{ account.picture }}">
+    {% endif %}
     <h2>
         {{ account.name }}<br/>
         <small>{{ account.nickname }}</small>
@@ -12,6 +14,9 @@
     <p><span class="text-muted"><i class="fa fa-envelope-o"></i></span> <a href="mailto:{{ account.email }}">{{ account.email }}</a></p>
     {% if account.githubHomepage %}
     <p><span class="text-muted"><i class="fa fa-github"></i></span> <a href="{{ account.githubHomepage }}">{{ account.githubHomepage }}</a></p>
+    {% endif %}
+    {% if user.id == account.id %}
+    <a class="btn btn-danger" href="/profile/remove">Remove account</a>
     {% endif %}
 </div>
 

@@ -8,7 +8,7 @@ namespace PickleWeb\Controller;
 class UserController extends ControllerAbstract
 {
     /**
-     * GET /profile.
+     * GET /profile
      */
     public function profileAction()
     {
@@ -22,13 +22,34 @@ class UserController extends ControllerAbstract
     }
 
     /**
-     * GET /account(/:name).
+     * GET /profile/remove
+     */
+    public function removeConfirmAction()
+    {
+        $this->app->render('removeAccount.html');
+    }
+
+    /**
+     * POST /profile/remove
+     */
+    public function removeAction()
+    {
+        $user = $this->app->user();
+        $this->app->container->get('user.repository')->remove($user);
+        session_destroy();
+        $this->app->flash('info', sprintf('The account %s was successfully removed', $user->getId()));
+
+        $this->app->redirect('/');
+    }
+
+    /**
+     * GET /account(/:name)
      *
      * @param null|string $name
      */
     public function viewAccountAction($name = null)
     {
-        $jsonPath = $this->app->config('json_path').'users/github/'.$name.'.json';
+        $jsonPath = $this->app->config('json_path') . 'users/github/' . $name . '.json';
 
         $this->app
             ->notFoundIf(file_exists($jsonPath) === false)
