@@ -40,6 +40,10 @@ class UserRepository
                 if (!empty($user->getGithubId())) {
                     $tx->hset('github_' . self::USER_HASH_STORE, $user->getGithubId(), $id);
                 }
+
+                if (!empty($user->getGoogleId())) {
+                    $tx->hset('google_' . self::USER_HASH_STORE, $user->getGoogleId(), $id);
+                }
             }
         );
     }
@@ -56,6 +60,10 @@ class UserRepository
 
                 if (!empty($user->getGithubId())) {
                     $tx->hdel('github_' . self::USER_HASH_STORE, $user->getGithubId());
+                }
+
+                if (!empty($user->getGoogleId())) {
+                    $tx->hdel('google_' . self::USER_HASH_STORE, $user->getGoogleId());
                 }
             }
         );

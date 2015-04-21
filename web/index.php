@@ -1,7 +1,9 @@
 <?php
 
 use League\OAuth2\Client\Provider\Github;
+use League\OAuth2\Client\Provider\Google;
 use PickleWeb\Auth\GithubProvider;
+use PickleWeb\Auth\GoogleProvider;
 use PickleWeb\Entity\UserRepository;
 use Slim\Helper\Set;
 
@@ -75,6 +77,24 @@ $app->container->singleton(
                     'clientId'     => $config['oauth']['github']['clientId'],
                     'clientSecret' => $config['oauth']['github']['clientSecret'],
                     'scopes'       => ['user:email', 'read:repo_hook'],
+                ]
+            )
+        );
+    }
+);
+
+// Google Authorization provider
+$app->container->singleton(
+    'authentication.provider.google',
+    function (Set $container) {
+        $config = $container->get('app.config');
+
+        return new GoogleProvider(
+            new Google(
+                [
+                    'clientId'     => $config['oauth']['google']['clientId'],
+                    'clientSecret' => $config['oauth']['google']['clientSecret'],
+                    'redirectUri'   => 'http://127.0.0.1:8080/login/google'
                 ]
             )
         );

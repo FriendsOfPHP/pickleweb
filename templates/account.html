@@ -15,6 +15,9 @@
     {% if account.githubHomepage %}
     <p><span class="text-muted"><i class="fa fa-github"></i></span> <a href="{{ account.githubHomepage }}">{{ account.githubHomepage }}</a></p>
     {% endif %}
+    {% if account.googleHomepage %}
+    <p><span class="text-muted"><i class="fa fa-google-plus"></i></span> <a href="{{ account.googleHomepage }}">{{ account.googleHomepage }}</a></p>
+    {% endif %}
     {% if user.id == account.id %}
     <a class="btn btn-danger" href="/profile/remove">Remove account</a>
     {% endif %}

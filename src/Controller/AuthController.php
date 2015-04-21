@@ -69,13 +69,28 @@ class AuthController extends ControllerAbstract
                 $user->setNickname($userDetails['nickname']);
                 $user->setName($userDetails['realname']);
                 $user->setPicture($userDetails['profilepicture']);
-                if ('github' == $provider) {
-                    $user->setGithubId($userDetails['uid']);
-                    $user->setGithubHomepage($userDetails['homepage']);
-                }
 
                 $userRepository->persist($user);
             }
+        }
+
+        // Complete information if needed
+        if ('github' == $provider && empty($user->getGithubId())) {
+            $user->setGithubId($userDetails['uid']);
+            $user->setGithubHomepage($userDetails['homepage']);
+            if (empty($user->getPicture())) {
+                $user->setPicture($userDetails['profilepicture']);
+            }
+
+            $userRepository->persist($user);
+        } else if ('google' == $provider && empty($user->getGoogleId())) {
+            $user->setGoogleId($userDetails['uid']);
+            $user->setGoogleHomepage($userDetails['homepage']);
+            if (empty($user->getPicture())) {
+                $user->setPicture($userDetails['profilepicture']);
+            }
+
+            $userRepository->persist($user);
         }
 
         // persist user in session
