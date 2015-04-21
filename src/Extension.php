@@ -64,22 +64,24 @@ class Extension
             throw new \RuntimeException($info['name'].' is not a valid name. vendor/repository required as name');
         }
 
-        $packages = [];
-        $tmpPackage = new \PickleWeb\Package();
+        $this->data = [];
 
+        $tmpPackage = new \PickleWeb\Package();
         $tmpPackage->setName($packageName);
         $tmpPackage->setTag('dev-master');
         $tmpPackage->setFromArray($informationRoot);
-        $packages['dev-master'] = $tmpPackage;
+        $this->data['dev-master'] = $tmpPackage;
 
         $tags    = $driver->getReleaseTags();
-        foreach ($tags as $tag) {
-            $io->write('package: looking for composer.json for tag '.$tag['version']);
 
+        foreach ($tags as $tag) {
+            $io->write('package: looking for composer.json for tag '.$tag['version'].'/'.$tag['tag']);
             $information = $driver->getComposerInformation($tag['id']);
             if (!$information) {
                 $io->write('package: no composer.json found for tag '.$tag['version'].'ref: '.$tag['id']);
-            }
+            } else {
+				$io->write('...found');
+			}
 
             $information['version_normalized'] = $tag['version'];
             $information['source'] = $tag['source'];
@@ -88,10 +90,8 @@ class Extension
             $tmpPackage->setName($packageName);
             $tmpPackage->setTag($tag['id']);
             $tmpPackage->setFromArray($information);
-
-            $packages[$tag['tag']] = $tmpPackage;
+            $this->data[$tag['tag']] = $tmpPackage;
         }
-        $this->data = $packages;
     }
 
     /**
@@ -123,9 +123,13 @@ class Extension
     /**
      * @return array
      */
-    public function getPackages()
+    public function getPackages($tag=false)
     {
-        return $this->data;
+		if ($tag) {
+			return $this->data[$tag];
+		} else {
+			return $this->data;
+		}
     }
 
     /**
