@@ -1,17 +1,14 @@
 <?php
 
-namespace PickleWeb\Tests\Unit;
+namespace PickleWeb\tests\unit;
 
 use atoum;
 
 /**
- * Class Application
- *
- * @package PickleWeb\Tests\Unit
+ * Class Application.
  */
 class Application extends atoum
 {
-
     public function test__construct()
     {
         $this->object($this->newTestedInstance([]))
@@ -73,7 +70,7 @@ class Application extends atoum
 
         $this->given(
             $applicationMock = new \mock\PickleWeb\Application([]),
-            $responseMock = new \mock\Slim\Http\Response,
+            $responseMock = new \mock\Slim\Http\Response(),
             $this->calling($applicationMock)->render = null,
             $this->calling($applicationMock)->stop = null,
             $this->calling($applicationMock)->response = $responseMock,
@@ -82,7 +79,7 @@ class Application extends atoum
             ->if($applicationMock->renderError($code = rand(0, PHP_INT_MAX)))
             ->then
                 ->mock($applicationMock)
-                ->call('render')->withArguments('errors/' . $code . '.html')
+                ->call('render')->withArguments('errors/'.$code.'.html')
                 ->before(
                     $this->mock($responseMock)->call('status')->withArguments($code)
                         ->before($this->mock($applicationMock)->call('stop')->once)
@@ -96,7 +93,7 @@ class Application extends atoum
         /* @var $applicationMock \PickleWeb\Application */
 
         $this->given(
-            $viewMock = new \mock\Slim\View,
+            $viewMock = new \mock\Slim\View(),
             $applicationMock = new \mock\PickleWeb\Application(['view' => $viewMock]),
             $this->calling($viewMock)->display = null
         )
