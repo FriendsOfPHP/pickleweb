@@ -29,7 +29,7 @@ class GithubController extends ControllerAbstract
 
     /**
      * @param string $username
-     * 
+     *
      * @return string
      */
     protected function findUser($username)
@@ -67,7 +67,7 @@ class GithubController extends ControllerAbstract
 
     /**
      * @param string $username
-     * 
+     *
      * Hook for github hooks. Only release and tag are supported.
      */
     public function hookAction($username)
