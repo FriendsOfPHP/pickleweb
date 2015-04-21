@@ -90,6 +90,9 @@ $app->get('/package/:vendor/:package', 'PickleWeb\Controller\PackageController:v
 $app->getSecured('/profile', 'PickleWeb\Controller\UserController:profileAction');
 $app->get('/account(/:name)', 'PickleWeb\Controller\UserController:viewAccountAction');
 
+// Hooks
+$app->post('/github/hooks/:username', 'PickleWeb\Controller\GithubController:hookAction');
+
 /*
  * Run application
  */
