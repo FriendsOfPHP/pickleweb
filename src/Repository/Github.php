@@ -10,13 +10,10 @@ use Composer\Repository as Repository;
 use Pickle\Package;
 
 /**
- * Class Github
- *
- * @package PickleWeb\Repository
+ * Class Github.
  */
 class Github
 {
-
     /**
      * @var Repository\VcsRepository
      */
@@ -79,7 +76,7 @@ class Github
         $this->repository = new Repository\VcsRepository(['url' => $url, 'no-api' => false], $io, $config);
         $driver           = $this->vcsDriver = $this->repository->getDriver();
         if (!$driver) {
-            throw new \Exception('No driver found for <' . $url . '>');
+            throw new \Exception('No driver found for <'.$url.'>');
         }
         $this->driver = $driver;
 
@@ -156,10 +153,10 @@ class Github
     {
         $composerInfo = $this->driver->getComposerInformation($identifier ? $identifier : $this->driver->getRootIdentifier());
         if (!$composerInfo) {
-            $this->log->write('github driver: no composer.json found for ' . ($identifier ? $identifier : 'master'));
+            $this->log->write('github driver: no composer.json found for '.($identifier ? $identifier : 'master'));
             $composerInfo = $this->convertPackageXml($identifier);
             if (!$composerInfo) {
-                $this->log->write('github driver: no package2.xml or package.xml found for ' . ($identifier ? $identifier : 'master'));
+                $this->log->write('github driver: no package2.xml or package.xml found for '.($identifier ? $identifier : 'master'));
 
                 return false;
             }
@@ -191,7 +188,7 @@ class Github
                 $contents = $this->client->api('repo')->contents()->download($owner, $repository, $path, $identifier);
             } catch (\RuntimeException $e) {
                 if ($e->getCode() == 404) {
-                    $this->log->write('github driver: no ' . $path . ' found for ' . $identifier);
+                    $this->log->write('github driver: no '.$path.' found for '.$identifier);
                     continue;
                 }
             }
@@ -203,7 +200,7 @@ class Github
             return false;
         }
 
-        $packagexmlPath = $this->cacheDir . DIRECTORY_SEPARATOR . 'package.xml';
+        $packagexmlPath = $this->cacheDir.DIRECTORY_SEPARATOR.'package.xml';
         file_put_contents($packagexmlPath, $contents);
 
         $loader  = new \Pickle\Package\XML\Loader(new Package\Loader());
@@ -216,9 +213,9 @@ class Github
         $time = $xml->time;
 
         $info         = $dumper->dump($package);
-        $info['name'] = $owner . '/' . $repository;
+        $info['name'] = $owner.'/'.$repository;
         $info['type'] = 'extension';
-        $info['time'] = date('Y-m-d H:i', strtotime($date . ' ' . $time));
+        $info['time'] = date('Y-m-d H:i', strtotime($date.' '.$time));
 
         unlink($packagexmlPath);
 
