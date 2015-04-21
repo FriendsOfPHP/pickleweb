@@ -187,6 +187,6 @@ class Application extends Slim
 		$response['Content-Type'] = 'application/json';
 		$response->status($code);
 		$response->body(json_encode($body));
-		return;
+		return $this;
 	}
 }
