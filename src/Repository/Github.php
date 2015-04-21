@@ -124,7 +124,7 @@ class Github
                     }
 
                     return $res;
-                });
+        });
 
         $normalizedTags = [];
         foreach ($tags as $version => $id) {
