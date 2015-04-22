@@ -40,6 +40,21 @@ class Github
     protected $url;
 
     /**
+     * @var string
+     */
+    protected $vendorName;
+
+    /**
+     * @var string
+     */
+    protected $repositoryName;
+
+    /**
+     * @var string
+     */
+    protected $repositoryMeta = false;
+
+    /**
      * @var null|BufferIO
      */
     protected $log;
@@ -82,6 +97,21 @@ class Github
         $client = new \Github\Client();
         $client->authenticate($token, null, \GitHub\Client::AUTH_URL_TOKEN);
         $this->client = $client;
+
+        preg_match('#^(?:(?:https?|git)://([^/]+)/|git@([^:]+):)([^/]+)/(.+?)(?:\.git|/)?$#', $url, $match);
+        $this->vendorName     = $match[3];
+        $this->repositoryName = $match[4];
+    }
+
+    public function getOwnerId()
+    {
+        if (!$this->repositoryMeta) {
+            $client = new \Github\Client();
+            $meta = $client->api('repo')->show($this->vendorName, $this->repositoryName);
+            $this->repositoryMeta = $meta;
+        }
+
+        return $this->repositoryMeta['owner']['id'];
     }
 
     /**
@@ -174,9 +204,6 @@ class Github
      */
     protected function convertPackageXml($identifier)
     {
-        preg_match('#^(?:(?:https?|git)://([^/]+)/|git@([^:]+):)([^/]+)/(.+?)(?:\.git|/)?$#', $this->url, $match);
-        $owner           = $match[3];
-        $repository      = $match[4];
         $packageXmlNames = [
             'package.xml',
             'package2.xml',
@@ -184,7 +211,7 @@ class Github
         $found           = false;
         foreach ($packageXmlNames as $path) {
             try {
-                $contents = $this->client->api('repo')->contents()->download($owner, $repository, $path, $identifier);
+                $contents = $this->client->api('repo')->contents()->download($this->vendorName, $this->repositoryName, $path, $identifier);
             } catch (\RuntimeException $e) {
                 if ($e->getCode() == 404) {
                     $this->log->write('github driver: no '.$path.' found for '.$identifier);
@@ -212,12 +239,24 @@ class Github
         $time = $xml->time;
 
         $info         = $dumper->dump($package);
-        $info['name'] = $owner.'/'.$repository;
+        $info['name'] = $this->vendorName.'/'.$this->repositoryName;
         $info['type'] = 'extension';
         $info['time'] = date('Y-m-d H:i', strtotime($date.' '.$time));
 
         unlink($packagexmlPath);
 
         return $info;
+    }
+
+    protected function getRepositoryNameAndVendorName($url)
+    {
+        preg_match('#^(?:(?:https?|git)://([^/]+)/|git@([^:]+):)([^/]+)/(.+?)(?:\.git|/)?$#', $url, $match);
+        $owner           = $match[3];
+        $repository      = $match[4];
+
+        return [
+            'vendor' => $owner,
+            '$repository' => $repository,
+            ];
     }
 }
