@@ -34,11 +34,17 @@ class GithubController extends ControllerAbstract
      */
     protected function findUser($username)
     {
-        if (!$username) {
+        return true;
+        $userRepository = $this->app->container->get('user.repository');
+        $user = $userRepository->findByProviderId('github', 'pierre.php@gmail.com');
+
+        if (!$user) {
             return false;
         }
 
-        return $username;
+        return true;
+
+        return $user;
     }
 
     /**
@@ -78,7 +84,7 @@ class GithubController extends ControllerAbstract
             /* not from github, no need to be nice */
             die('Who are you?');
         }
-
+        print_r($user);
         $this->validPayload($username);
 
         $payloadPost = $this->app->request->getBody();
@@ -91,6 +97,8 @@ class GithubController extends ControllerAbstract
                 'message' => 'invalid Payload',
             ],
             200);
+
+            return;
         }
 
         if (!($payload->ref_type == 'tag' || $payload->ref_type == 'release')) {
@@ -101,11 +109,26 @@ class GithubController extends ControllerAbstract
             ],
             200
             );
+
+            return;
         }
 
         $extensionName = $payload->repository->full_name;
         $tag = $payload->ref;
         $repository = $payload->repository->git_url;
+
+        $normalizedVersion = VersionParser::Normalize($version);
+        if (!$$normalizedVersion) {
+            $this->app->jsonResponse(
+            [
+                'status' => 'error',
+                'message' => 'This tag does not look like a release tag',
+            ],
+            200
+            );
+
+            return;
+        }
 
         if (!$this->findRegisteredExension($extensionName)) {
             $this->app->jsonResponse([
@@ -129,6 +152,8 @@ class GithubController extends ControllerAbstract
                 'message' => $extensionName.'-'.$tag.' error on import:'.$e->getMessage(),
             ],
             500);
+
+            return;
         }
         $vendorName = $extension->getVendor();
         $repositoryName = $extension->getRepositoryName();
@@ -141,6 +166,8 @@ class GithubController extends ControllerAbstract
                 'message' => $extensionName.'-'.$tag.' error on import:'.$e->getMessage(),
             ],
             500);
+
+            return;
         }
 
         file_put_contents($path, $json);
