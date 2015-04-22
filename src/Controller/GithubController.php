@@ -93,8 +93,6 @@ class GithubController extends ControllerAbstract
             200);
         }
 
-        $path = $this->app->config('cache_dir').'/payload.json';
-
         if (!($payload->ref_type == 'tag' || $payload->ref_type == 'release')) {
             $this->app->jsonResponse(
             [
@@ -120,13 +118,7 @@ class GithubController extends ControllerAbstract
         }
 
         $log = new BufferIO();
-/*
-        // create a oauth session from user
-        $token = $_SESSION['token'];
 
-        try {
-            $driver = new \PickleWeb\Repository\Github($repository, $token->accessToken, $this->app->config('cache_dir'), $log);
-*/
         try {
             $driver = new \PickleWeb\Repository\Github($repository, false, $this->app->config('cache_dir'), $log);
             $extension = new \PickleWeb\Extension();
@@ -138,9 +130,20 @@ class GithubController extends ControllerAbstract
             ],
             500);
         }
+        $vendorName = $extension->getVendor();
+        $repositoryName = $extension->getRepositoryName();
 
-        $path = $this->app->config('cache_dir').'/new.json';
-        file_put_contents($path, $extension->serialize());
+        $path = $this->app->config('json-dir').'/'.$vendorDir.'/'.$repositoryName.'.json';
+        $json = $extension->serialize();
+        if (!$json) {
+            $this->app->jsonResponse([
+                'status' => 'error',
+                'message' => $extensionName.'-'.$tag.' error on import:'.$e->getMessage(),
+            ],
+            500);
+		}
+
+        file_put_contents($path, $json);
         $this->app->jsonResponse([
             'status' => 'success',
             'message' => $extensionName.'-'.$tag.' imported',
