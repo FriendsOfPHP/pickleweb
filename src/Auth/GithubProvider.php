@@ -43,8 +43,8 @@ class GithubProvider implements ProviderInterface
             $url                                = $this->oauth2Provider->getAuthorizationUrl();
             $_SESSION[self::STATE_SESSION_NAME] = $this->oauth2Provider->state;
             $app->redirect($url);
-        } elseif (empty($state) || 
-        (isset($_SESSION[self::STATE_SESSION_NAME]) &&$state !== $_SESSION[self::STATE_SESSION_NAME])) {
+        } elseif (empty($state) ||
+        (isset($_SESSION[self::STATE_SESSION_NAME]) && $state !== $_SESSION[self::STATE_SESSION_NAME])) {
             // Check given state against previously stored one to mitigate CSRF attack
 
             unset($_SESSION[self::STATE_SESSION_NAME]);
