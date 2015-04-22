@@ -7,6 +7,7 @@ namespace PickleWeb\Entity;
  */
 class User implements \Serializable
 {
+
     /**
      * @var string
      */
@@ -46,6 +47,16 @@ class User implements \Serializable
      * @var string
      */
     protected $googleHomepage;
+
+    /**
+     * @var string
+     */
+    protected $bitbucketId;
+
+    /**
+     * @var string
+     */
+    protected $bitbucketHomepage;
 
     /**
      * @return string
@@ -221,6 +232,46 @@ class User implements \Serializable
     public function serialize()
     {
         return json_encode(get_object_vars($this));
+    }
+
+    /**
+     * @return string
+     */
+    public function getBitbucketId()
+    {
+        return $this->bitbucketId;
+    }
+
+    /**
+     * @param string $bitbucketId
+     *
+     * @return User
+     */
+    public function setBitbucketId($bitbucketId)
+    {
+        $this->bitbucketId = $bitbucketId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBitbucketHomepage()
+    {
+        return $this->bitbucketHomepage;
+    }
+
+    /**
+     * @param string $bitbucketHomepage
+     *
+     * @return User
+     */
+    public function setBitbucketHomepage($bitbucketHomepage)
+    {
+        $this->bitbucketHomepage = $bitbucketHomepage;
+
+        return $this;
     }
 
     /**

@@ -18,6 +18,9 @@
     {% if account.googleHomepage %}
     <p><span class="text-muted"><i class="fa fa-google-plus"></i></span> <a href="{{ account.googleHomepage }}">{{ account.googleHomepage }}</a></p>
     {% endif %}
+    {% if account.bitbucketHomepage %}
+    <p><span class="text-muted"><i class="fa fa-bitbucket"></i></span> <a href="{{ account.bitbucketHomepage }}">{{ account.bitbucketHomepage }}</a></p>
+    {% endif %}
     {% if user.id == account.id %}
     <a class="btn btn-danger" href="/profile/remove">Remove account</a>
     {% endif %}

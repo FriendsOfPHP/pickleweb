@@ -38,7 +38,7 @@ class AuthController extends ControllerAbstract
      */
     public function loginWithProviderAction($provider)
     {
-        $providerKey = 'authentication.provider.'.$provider;
+        $providerKey = 'authentication.provider.' . $provider;
 
         // Check if provider exist
         if (!$this->app->container->has($providerKey)) {
@@ -49,7 +49,7 @@ class AuthController extends ControllerAbstract
         $authorizationProvider = $this->app->container->get($providerKey);
 
         $token                          = $authorizationProvider->handleAuth($this->app);
-        $_SESSION[$provider.'.token'] = $token;
+        $_SESSION[$provider . '.token'] = $token;
 
         $userDetails = $authorizationProvider->getUserDetails($token);
 
@@ -86,6 +86,14 @@ class AuthController extends ControllerAbstract
         } elseif ('google' == $provider && empty($user->getGoogleId())) {
             $user->setGoogleId($userDetails['uid']);
             $user->setGoogleHomepage($userDetails['homepage']);
+            if (empty($user->getPicture())) {
+                $user->setPicture($userDetails['profilepicture']);
+            }
+
+            $userRepository->persist($user);
+        } elseif ('bitbucket' == $provider && empty($user->getBitbucketId())) {
+            $user->setBitbucketId($userDetails['uid']);
+            $user->setBitbucketHomepage($userDetails['homepage']);
             if (empty($user->getPicture())) {
                 $user->setPicture($userDetails['profilepicture']);
             }

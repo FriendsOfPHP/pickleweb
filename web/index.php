@@ -1,28 +1,31 @@
 <?php
 
+use Buzz\Browser;
+use League\OAuth1\Client\Server\Bitbucket;
 use League\OAuth2\Client\Provider\Github;
 use League\OAuth2\Client\Provider\Google;
+use PickleWeb\Auth\BitbucketProvider;
 use PickleWeb\Auth\GithubProvider;
 use PickleWeb\Auth\GoogleProvider;
 use PickleWeb\Entity\UserRepository;
 use Slim\Helper\Set;
 
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 function check_or_create_json_dir(\PickleWeb\Application $app)
 {
     if (is_dir($app->config('json_path')) === false) {
         mkdir($app->config('json_path'), 0777, true);
-        mkdir($app->config('json_path').'users/github', 0777, true);
-        mkdir($app->config('json_path').'extensions', 0777, true);
+        mkdir($app->config('json_path') . 'users/github', 0777, true);
+        mkdir($app->config('json_path') . 'extensions', 0777, true);
     }
 }
 
 $app = new \PickleWeb\Application(
     [
         'view'      => new \PickleWeb\View\Twig(),
-        'json_path' => __DIR__.'/json/',
-        'cache_dir' => __DIR__.'/../cache-dir/',
+        'json_path' => __DIR__ . '/json/',
+        'cache_dir' => __DIR__ . '/../cache-dir/',
     ]
 );
 
@@ -40,7 +43,7 @@ $app = new \PickleWeb\Application(
 $app->container->singleton(
     'app.config',
     function (Set $container) {
-        return json_decode(file_get_contents(__DIR__.'/../src/config.json'), true);
+        return json_decode(file_get_contents(__DIR__ . '/../src/config.json'), true);
     }
 );
 
@@ -53,7 +56,15 @@ $app->container->singleton(
         $client = new Predis\Client(sprintf('tcp://%s:%s', $config['redis']['host'], $config['redis']['port']));
         $client->select($config['redis']['db']);
 
-        return ($client);
+        return $client;
+    }
+);
+
+// Http client
+$app->container->singleton(
+    'http.client',
+    function (Set $container) {
+        return new Browser();
     }
 );
 
@@ -78,7 +89,9 @@ $app->container->singleton(
                     'clientSecret' => $config['oauth']['github']['clientSecret'],
                     'scopes'       => ['user:email', 'read:repo_hook'],
                 ]
-            )
+            ),
+            $container->get('redis.client'),
+            $container->get('http.client')
         );
     }
 );
@@ -94,9 +107,31 @@ $app->container->singleton(
                 [
                     'clientId'     => $config['oauth']['google']['clientId'],
                     'clientSecret' => $config['oauth']['google']['clientSecret'],
-                    'redirectUri'   => 'http://127.0.0.1:8080/login/google',
+                    'redirectUri'  => 'http://127.0.0.1:8080/login/google',
                 ]
-            )
+            ),
+            $container->get('redis.client'),
+            $container->get('http.client')
+        );
+    }
+);
+
+// Bitbucket Authorization provider
+$app->container->singleton(
+    'authentication.provider.bitbucket',
+    function (Set $container) {
+        $config = $container->get('app.config');
+
+        return new BitbucketProvider(
+            new Bitbucket(
+                [
+                    'identifier'   => $config['oauth']['bitbucket']['clientId'],
+                    'secret'       => $config['oauth']['bitbucket']['clientSecret'],
+                    'callback_uri' => 'http://127.0.0.1:8080/login/bitbucket',
+                ]
+            ),
+            $container->get('redis.client'),
+            $container->get('http.client')
         );
     }
 );

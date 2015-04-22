@@ -18,9 +18,9 @@ interface ProviderInterface
     public function handleAuth(Application $app);
 
     /**
-     * @param AccessToken $token
+     * @param string $token
      *
      * @return array
      */
-    public function getUserDetails(AccessToken $token);
+    public function getUserDetails($token);
 }

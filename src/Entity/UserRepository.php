@@ -36,11 +36,15 @@ class UserRepository
                 $tx->hset(self::USER_HASH_STORE, $id, serialize($user));
 
                 if (!empty($user->getGithubId())) {
-                    $tx->hset('github_'.self::USER_HASH_STORE, $user->getGithubId(), $id);
+                    $tx->hset('github_' . self::USER_HASH_STORE, $user->getGithubId(), $id);
                 }
 
                 if (!empty($user->getGoogleId())) {
-                    $tx->hset('google_'.self::USER_HASH_STORE, $user->getGoogleId(), $id);
+                    $tx->hset('google_' . self::USER_HASH_STORE, $user->getGoogleId(), $id);
+                }
+
+                if (!empty($user->getBitbucketId())) {
+                    $tx->hset('bitbucket_' . self::USER_HASH_STORE, $user->getBitbucketId(), $id);
                 }
             }
         );
@@ -57,11 +61,15 @@ class UserRepository
                 $tx->hdel(self::USER_HASH_STORE, $id);
 
                 if (!empty($user->getGithubId())) {
-                    $tx->hdel('github_'.self::USER_HASH_STORE, $user->getGithubId());
+                    $tx->hdel('github_' . self::USER_HASH_STORE, $user->getGithubId());
                 }
 
                 if (!empty($user->getGoogleId())) {
-                    $tx->hdel('google_'.self::USER_HASH_STORE, $user->getGoogleId());
+                    $tx->hdel('google_' . self::USER_HASH_STORE, $user->getGoogleId());
+                }
+
+                if (!empty($user->getBitbucketId())) {
+                    $tx->hdel('bitbucket_' . self::USER_HASH_STORE, $user->getBitbucketId());
                 }
             }
         );
@@ -87,7 +95,7 @@ class UserRepository
      */
     public function findByProviderId($provider, $id)
     {
-        $email = $this->redicClient->hget($provider.'_'.self::USER_HASH_STORE, $id);
+        $email = $this->redicClient->hget($provider . '_' . self::USER_HASH_STORE, $id);
 
         return empty($email) ? null : $this->find($email);
     }
