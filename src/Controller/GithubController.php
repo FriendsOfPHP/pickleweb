@@ -133,7 +133,7 @@ class GithubController extends ControllerAbstract
         $vendorName = $extension->getVendor();
         $repositoryName = $extension->getRepositoryName();
 
-        $path = $this->app->config('json-dir').'/'.$vendorDir.'/'.$repositoryName.'.json';
+        $path = $this->app->config('json_path').'/'.$vendorName.'/'.$repositoryName.'.json';
         $json = $extension->serialize();
         if (!$json) {
             $this->app->jsonResponse([
@@ -141,7 +141,7 @@ class GithubController extends ControllerAbstract
                 'message' => $extensionName.'-'.$tag.' error on import:'.$e->getMessage(),
             ],
             500);
-		}
+        }
 
         file_put_contents($path, $json);
         $this->app->jsonResponse([
