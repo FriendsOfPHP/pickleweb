@@ -1,10 +1,10 @@
 <?php
 
-namespace PickleWeb\tests\atoum\report\fields\runner;
+namespace PickleWeb\Tests\Atoum\Report\Fields\Runner;
 
 use mageekguy\atoum\report\fields\runner\atoum\cli;
 
-class pickle extends cli
+class Pickle extends cli
 {
     public function __toString()
     {
