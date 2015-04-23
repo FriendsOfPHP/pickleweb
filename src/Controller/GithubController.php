@@ -76,15 +76,8 @@ class GithubController extends ControllerAbstract
      *
      * Hook for github hooks. Only release and tag are supported.
      */
-    public function hookAction($username)
+    public function hookAction()
     {
-        $username = $this->findUser($username);
-
-        if (!$username) {
-            /* not from github, no need to be nice */
-            die('Who are you?');
-        }
-        print_r($user);
         $this->validPayload($username);
 
         $payloadPost = $this->app->request->getBody();
@@ -116,6 +109,7 @@ class GithubController extends ControllerAbstract
         $extensionName = $payload->repository->full_name;
         $tag = $payload->ref;
         $repository = $payload->repository->git_url;
+        $ownerId    = $payload->owner->id;
 
         $normalizedVersion = VersionParser::Normalize($version);
         if (!$$normalizedVersion) {
