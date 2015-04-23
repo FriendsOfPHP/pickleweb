@@ -61,6 +61,8 @@ class PackageController extends ControllerAbstract
             unlink($pathTransaction);
 
             $this->app->flash('warning', $packageName.'has been registred');
+            $redis = $this->app->container->get('redis.client');
+            $redis->hset('extension2owner', $packageName, $this->app->user()->getId());
             $this->app->redirect('/package/'.$packageName);
         } else {
             $this->app
@@ -97,7 +99,6 @@ class PackageController extends ControllerAbstract
             $repository = $extension->getRepositoryName();
             $extensionName = $extension->getName();
 
-            $extension->unserialize($extension->serialize());
             $jsonPackage = $extension->serialize();
         } catch (\RuntimeException $exception) {
             /* todo: handle bad data in a better way =) */
@@ -107,8 +108,8 @@ class PackageController extends ControllerAbstract
 
         $vendorDir = $this->app->config('json_path').$vendorName;
         if (file_exists($vendorDir.'/'.$repository.'.json')) {
-            $this->app->flash('error', $packageName.' is already registred');
-            $this->app->redirect('/package/'.$packageName);
+            $this->app->flash('error', $vendorName.'/'.$repository.' is already registred');
+            $this->app->redirect('/package/'.$vendorName.'/'.$repository);
             exit();
         }
 
@@ -118,6 +119,7 @@ class PackageController extends ControllerAbstract
         file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.log', $log->getOutput());
         $latest = $extension->getPackages()['dev-master'];
         $extension->getApiKey($this->app);
+
         $this->app
                 ->render(
                     'extension/confirm.html',
