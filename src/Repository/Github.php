@@ -70,7 +70,6 @@ class Github
     public function __construct($url, $token = '', $cacheDir = false, $bufferIO = null)
     {
         $this->url = $url;
-        $io        = new NullIO();
         $this->io  = new NullIO();
         $this->log = $bufferIO ? $bufferIO : new BufferIO();
 
@@ -87,7 +86,7 @@ class Github
         $this->cacheDir = $cacheDir;
         $io->loadConfiguration($config);
 
-        $this->repository = new Repository\VcsRepository(['url' => $url, 'no-api' => false], $io, $config);
+        $this->repository = new Repository\VcsRepository(['url' => $url, 'no-api' => false], $this->io, $config);
         $driver           = $this->vcsDriver = $this->repository->getDriver();
         if (!$driver) {
             throw new \Exception('No driver found for <'.$url.'>');
