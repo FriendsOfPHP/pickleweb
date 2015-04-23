@@ -99,4 +99,17 @@ class UserRepository
 
         return empty($email) ? null : $this->find($email);
     }
+
+    /**
+     * @param string $provider
+     * @param string $id
+     *
+     * @return null|User
+     */
+    public function findByProviderApiKey($provider, $key)
+    {
+        $email = $this->redicClient->hget($provider.'_API_'.self::USER_HASH_STORE, $id);
+
+        return empty($email) ? null : $this->find($email);
+    }
 }

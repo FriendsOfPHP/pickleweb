@@ -80,11 +80,10 @@ class PackageController extends ControllerAbstract
     {
         $token = $_SESSION['github.token'];
         $repo  = $this->app->request()->post('repository');
-
         $log = new BufferIO();
 
         try {
-            $driver = new \PickleWeb\Repository\Github($repo, $token->accessToken, $this->app->config('cache_dir'), $log);
+            $driver = new \PickleWeb\Repository\Github($repo, $token, $this->app->config('cache_dir'), $log);
 
             if ($driver->getOwnerId() != $this->app->user()->getGithubId()) {
                 $this->app->flash('error', 'You are not the owner of this repository. Please request the owner to register.');
@@ -118,7 +117,7 @@ class PackageController extends ControllerAbstract
         file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $jsonPackage);
         file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.log', $log->getOutput());
         $latest = $extension->getPackages()['dev-master'];
-
+        $extension->getApiKey($this->app);
         $this->app
                 ->render(
                     'extension/confirm.html',

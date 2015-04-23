@@ -170,7 +170,7 @@ $app->postSecured('/profile/remove', 'PickleWeb\Controller\UserController:remove
 $app->get('/account(/:name)', 'PickleWeb\Controller\UserController:viewAccountAction');
 
 // Hooks
-$app->post('/github/hooks', 'PickleWeb\Controller\GithubController:hookAction');
+$app->post('/github/hooks/:vendor/:repository', 'PickleWeb\Controller\GithubController:hookAction');
 
 /*
  * Run application

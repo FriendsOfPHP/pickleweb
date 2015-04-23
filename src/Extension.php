@@ -15,7 +15,7 @@ class Extension
     /**
      * @var string
      */
-    protected $vendor;
+    protected $vendorName;
 
     /**
      * @var string
@@ -57,7 +57,7 @@ class Extension
         $this->name = $packageName = $informationRoot['name'];
 
         list($vendorName, $repository) = explode('/', $packageName);
-        $this->vendor = $vendorName;
+        $this->vendorName = $vendorName;
         $this->repositoryName = $repository;
 
         if (empty($vendorName) || empty($repository)) {
@@ -109,7 +109,7 @@ class Extension
      */
     public function getVendor()
     {
-        return $this->vendor;
+        return $this->vendorName;
     }
 
     /**
@@ -167,5 +167,19 @@ class Extension
             $this->data[$version] = $tmpPackage;
         }
         $this->name = $packageName;
+    }
+
+    public function getApiKey($app)
+    {
+        $redis = $app->container->get('redis.client');
+        $key = $redis->hget('extension_apikey', $this->vendorName.'_'.$this->repositoryName);
+        if (!$key) {
+            $key = bin2hex(openssl_random_pseudo_bytes(32));
+            $key .= $app->config('apiSecret');
+            $key = hash('sha256', $key);
+            $redis->hset('extension_apikey', $this->vendorName.'_'.$this->repositoryName, $key);
+        }
+
+        return $key;
     }
 }

@@ -3,6 +3,7 @@
 namespace PickleWeb\Controller;
 
 use Composer\IO\BufferIO as BufferIO;
+use Composer\Package\Version\VersionParser as VersionParser;
 
 /**
  * Class GithubController.
@@ -50,20 +51,22 @@ class GithubController extends ControllerAbstract
     /**
      * valid Payload using API key.
      */
-    protected function validPayload()
+    protected function validPayload($vendor, $repository)
     {
-        /* will be user specific later */
-        $secret = getenv('GITHUB_HOOK_KEY');
         $hubSignature = $this->app->request()->headers()->get('X-Hub-Signature');
 
         if (!$hubSignature) {
             die('come back with what I need');
         }
 
+        $redis = $this->app->container->get('redis.client');
+        $userRepository = new \PickleWeb\Entity\UserRepository($redis);
+        $key = $redis->hget('extension_apikey', $vendor.'_'.$repository);
+
         list($algo, $hash) = explode('=', $hubSignature, 2);
 
         $payload = file_get_contents('php://input');
-        $payloadHash = hash_hmac($algo, $payload, $secret);
+        $payloadHash = hash_hmac($algo, $payload, $key);
 
         /* not from github, no need to be nice */
         if ($hash !== $payloadHash) {
@@ -76,9 +79,9 @@ class GithubController extends ControllerAbstract
      *
      * Hook for github hooks. Only release and tag are supported.
      */
-    public function hookAction()
+    public function hookAction($vendor, $repository)
     {
-        $this->validPayload($username);
+        $this->validPayload($vendor, $repository);
 
         $payloadPost = $this->app->request->getBody();
 
@@ -109,10 +112,10 @@ class GithubController extends ControllerAbstract
         $extensionName = $payload->repository->full_name;
         $tag = $payload->ref;
         $repository = $payload->repository->git_url;
-        $ownerId    = $payload->owner->id;
+        $ownerId    = $payload->repository->owner->id;
 
-        $normalizedVersion = VersionParser::Normalize($version);
-        if (!$$normalizedVersion) {
+        $normalizedVersion = VersionParser::Normalize($tag);
+        if (!$normalizedVersion) {
             $this->app->jsonResponse(
             [
                 'status' => 'error',
