@@ -62,7 +62,7 @@ class GithubController extends ControllerAbstract
         $redis = $this->app->container->get('redis.client');
         $userRepository = new \PickleWeb\Entity\UserRepository($redis);
         $key = $redis->hget('extension_apikey', $vendor.'_'.$repository);
-
+var_dump($key);
         list($algo, $hash) = explode('=', $hubSignature, 2);
 
         $payload = file_get_contents('php://input');

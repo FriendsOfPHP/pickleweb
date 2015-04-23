@@ -84,7 +84,7 @@ class Github
 
         $config->merge($cfg);
         $this->cacheDir = $cacheDir;
-        $io->loadConfiguration($config);
+        $this->io->loadConfiguration($config);
 
         $this->repository = new Repository\VcsRepository(['url' => $url, 'no-api' => false], $this->io, $config);
         $driver           = $this->vcsDriver = $this->repository->getDriver();
