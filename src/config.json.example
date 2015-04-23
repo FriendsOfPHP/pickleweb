@@ -13,6 +13,7 @@
             "clientSecret": "<your-bitbucket-application-client-secret>"
         }
     },
+	"apiSecret": "<thisismysecretkey>",
     "redis": {
         "host": "127.0.0.1",
         "port": "6379",
