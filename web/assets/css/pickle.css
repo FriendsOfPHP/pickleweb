@@ -1,8 +1,16 @@
-body {
-    padding-top: 20px;
-    padding-bottom: 20px;
+a {
+    color: #08382D;
 }
-
+a:hover {
+    color: #185144;
+}
+header {
+    background: #42796C;
+    color: white;
+}
+header a, header a:hover {
+    color: #98C488;
+}
 header h3 {
     margin-top: 0;
     margin-bottom: 10px;
@@ -44,4 +52,63 @@ img.avatar {
 .navbar-btn.pull-right {
     padding-top: 25px;
     margin-right: 5px;
+}
+.jumbotron {
+    background: transparent;
+}
+.btn-primary {
+    background-color: #08382D;
+    border-color: transparent;
+}
+.btn-primary:hover {
+    background-color: #185144;
+    border-color: #185144;
+    color: #fff;
+}
+.search-form {
+    margin-top:20px;
+}
+.form-control:focus {
+    border-color:#95CB70;
+}
+.logo:hover {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation-name: pulse;
+    animation-name: pulse;
+}
+@-webkit-keyframes pulse {
+    0% {
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1);
+    }
+
+    50% {
+        -webkit-transform: scale3d(1.05, 1.05, 1.05);
+        transform: scale3d(1.05, 1.05, 1.05);
+    }
+
+    100% {
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1);
+    }
+
+    50% {
+        -webkit-transform: scale3d(1.05, 1.05, 1.05);
+        transform: scale3d(1.05, 1.05, 1.05);
+    }
+
+    100% {
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1);
+    }
 }
