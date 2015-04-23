@@ -1,8 +1,9 @@
-body {
-    padding-top: 20px;
-    padding-bottom: 20px;
+a, a:hover {
+    color:#4D8239;
 }
-
+header {
+    background: #C7E3B4;
+}
 header h3 {
     margin-top: 0;
     margin-bottom: 10px;
@@ -44,4 +45,22 @@ img.avatar {
 .navbar-btn.pull-right {
     padding-top: 25px;
     margin-right: 5px;
+}
+.jumbotron {
+    background: transparent;
+}
+.btn-primary {
+    background-color: #4D8239;
+    border-color: transparent;
+}
+.btn-primary:hover {
+    background-color: #95CB70;
+    border-color: #4D8239;
+    color: #fff;
+}
+.search-form {
+    margin-top:20px;
+}
+.form-control:focus {
+    border-color:#95CB70;
 }
