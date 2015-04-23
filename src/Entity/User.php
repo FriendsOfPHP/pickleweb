@@ -7,7 +7,6 @@ namespace PickleWeb\Entity;
  */
 class User implements \Serializable
 {
-
     /**
      * @var string
      */

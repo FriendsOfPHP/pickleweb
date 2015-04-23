@@ -12,7 +12,6 @@ use Predis\Client;
  */
 class GoogleProvider implements ProviderInterface
 {
-
     /**
      * @var Provider\Google
      */
@@ -82,7 +81,7 @@ class GoogleProvider implements ProviderInterface
      */
     public function getUserDetails($token)
     {
-        $data = json_decode($this->httpClient->get('https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' . $token)->getContent(), true);
+        $data = json_decode($this->httpClient->get('https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token='.$token)->getContent(), true);
 
         if (empty($data) || json_last_error() !== JSON_ERROR_NONE) {
             throw new \RuntimeException('cannot fetch account details');

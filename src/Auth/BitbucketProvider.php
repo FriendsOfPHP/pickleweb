@@ -1,6 +1,5 @@
 <?php
 
-
 namespace PickleWeb\Auth;
 
 use Buzz\Browser;
@@ -14,7 +13,6 @@ use Predis\Client;
  */
 class BitbucketProvider implements ProviderInterface
 {
-
     /**
      * @var Bitbucket
      */
@@ -74,7 +72,7 @@ class BitbucketProvider implements ProviderInterface
 
         $tokenCredentials = $this->oauthProvider->getTokenCredentials($temporaryCredential, $oauthToken, $oauthVerifier);
 
-        return $tokenCredentials->getIdentifier() . '@' . $tokenCredentials->getSecret();
+        return $tokenCredentials->getIdentifier().'@'.$tokenCredentials->getSecret();
     }
 
     /**
@@ -84,7 +82,6 @@ class BitbucketProvider implements ProviderInterface
      */
     public function getUserDetails($token)
     {
-
         try {
             // Fetch user data
             list($identifier, $secret) = explode('@', $token);
@@ -129,7 +126,6 @@ class BitbucketProvider implements ProviderInterface
                 'profilepicture' => $data['links']['avatar']['href'],
                 'homepage'       => $data['links']['html']['href'],
             ];
-
         } catch (\Exception $e) {
             throw new \RuntimeException('cannot fetch account details', 0, $e);
         }

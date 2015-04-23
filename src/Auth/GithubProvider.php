@@ -12,7 +12,6 @@ use Predis\Client;
  */
 class GithubProvider implements ProviderInterface
 {
-
     /**
      * @var Provider\Github
      */
@@ -111,7 +110,6 @@ class GithubProvider implements ProviderInterface
                 if (!empty($emails)) {
                     $data['email'] = current($emails)['email'];
                 }
-
             }
 
             return [
@@ -122,7 +120,6 @@ class GithubProvider implements ProviderInterface
                 'profilepicture' => $data['avatar_url'],
                 'homepage'       => $data['html_url'],
             ];
-
         } catch (\Exception $e) {
             throw new \RuntimeException('cannot fetch account details', 0, $e);
         }

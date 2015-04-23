@@ -38,7 +38,7 @@ class AuthController extends ControllerAbstract
      */
     public function loginWithProviderAction($provider)
     {
-        $providerKey = 'authentication.provider.' . $provider;
+        $providerKey = 'authentication.provider.'.$provider;
 
         // Check if provider exist
         if (!$this->app->container->has($providerKey)) {
@@ -49,7 +49,7 @@ class AuthController extends ControllerAbstract
         $authorizationProvider = $this->app->container->get($providerKey);
 
         $token                          = $authorizationProvider->handleAuth($this->app);
-        $_SESSION[$provider . '.token'] = $token;
+        $_SESSION[$provider.'.token'] = $token;
 
         $userDetails = $authorizationProvider->getUserDetails($token);
 
