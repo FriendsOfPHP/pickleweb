@@ -103,7 +103,7 @@ class AuthController extends ControllerAbstract
         }
 
         // persist user in session
-        $_SESSION['user'] = serialize($user);
+        $_SESSION['user'] = $user->getId();
 
         $this->app->redirect('/profile');
     }

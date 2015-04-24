@@ -3,6 +3,7 @@
 namespace PickleWeb;
 
 use PickleWeb\Entity\User;
+use PickleWeb\Entity\UserRepository;
 use RKA\Slim;
 
 /**
@@ -14,6 +15,11 @@ class Application extends Slim
      * @var callable
      */
     private $authentication;
+
+    /**
+     * @var array
+     */
+    private $innerCache = [];
 
     /**
      * @param array $userSettings
@@ -36,7 +42,23 @@ class Application extends Slim
      */
     public function user()
     {
-        return isset($_SESSION['user']) ? unserialize($_SESSION['user']) : null;
+        if (!isset($_SESSION['user'])) {
+            return;
+        };
+
+        if (!isset($this->innerCache['user'])) {
+            /* @var $userRepository UserRepository */
+            $userRepository = $this->container->get('user.repository');
+            $user           = $userRepository->find($_SESSION['user']);
+
+            if (is_null($user)) {
+                return;
+            }
+
+            $this->innerCache['user'] = $user;
+        }
+
+        return $this->innerCache['user'];
     }
 
     /**
@@ -189,7 +211,7 @@ class Application extends Slim
      */
     public function jsonResponse($body, $code)
     {
-        $response = $this->response();
+        $response                 = $this->response();
         $response['Content-Type'] = 'application/json';
         $response->status($code);
         $response->body(json_encode($body));

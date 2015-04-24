@@ -20,7 +20,7 @@ class UserController extends ControllerAbstract
      */
     public function profileAction()
     {
-        $user = $this->app->container->get('user.repository')->find($this->app->user()->getEmail());
+        $user = $this->app->user();
         $extensions = $user->getExtensions();
 
         foreach ($extensions as $extensionName) {
