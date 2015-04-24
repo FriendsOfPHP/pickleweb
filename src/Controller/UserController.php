@@ -7,16 +7,43 @@ namespace PickleWeb\Controller;
  */
 class UserController extends ControllerAbstract
 {
+    public function setFromLocalJson($extensionName)
+    {
+        $this->vendorName = $vendorName;
+        $this->repositoryName = $repositoryName;
+
+        $this->data = $data;
+    }
+
     /**
      * GET /profile.
      */
     public function profileAction()
     {
+        $user = $this->app->container->get('user.repository')->find($this->app->user()->getEmail());
+        $extensions = $user->getExtensions();
+
+        foreach ($extensions as $extensionName) {
+            list($vendorName, $repositoryName) = explode('/', $extensionName);
+            $path = $this->app->config('json_path').'/'.$vendorName.'/'.$repositoryName.'.json';
+            $data = file_get_contents($path);
+            $extension = new \PickleWeb\Extension();
+            $extension->unserialize($data);
+            $latest = $extension->getPackages('dev-master');
+
+            $shortList[] = [
+            'name' => $latest->getName(),
+            'description' => $latest->getDescription(),
+
+            ];
+        }
+
         $this->app
             ->render(
                 'account.html',
                 [
-                    'account' => $this->app->user(),
+                    'account' => $user,
+                    'extensions' => $shortList,
                 ]
             );
     }
