@@ -112,14 +112,4 @@ class UserRepository
 
         return empty($email) ? null : $this->find($email);
     }
-
-    /**
-     * @return null|array
-     */
-    public function getExtensions()
-    {
-        $email = $this->redicClient->hget('extension2users', $id);
-
-        return empty($email) ? null : $this->find($email);
-    }
 }
