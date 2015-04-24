@@ -46,7 +46,7 @@ class Extension
         $informationRoot = $driver->getComposerInformation();
 
         if (!$informationRoot) {
-            $io->write('package: No composer.json or package.xml found for '.($identifier ? $identifier : 'master'));
+            $io->write('package: No composer.json or package.xml found for master'));
             throw new \RuntimeException('Master or default branch must have composer.json');
         }
 
