@@ -36,22 +36,7 @@
         extensions
     </h2>
 
-    {% include "partials/package/list.html" with {
-        packages: [
-            {
-                name: "xdebug",
-                description: "The Xdebug extension helps you debugging your script by providing a lot of valuable debug information."
-            },
-            {
-                name: "hprose",
-                description: "Hprose is a High Performance Remote Object Service Engine."
-            },
-            {
-                name: "uuid",
-                description: "A wrapper around libuuid from the ext2utils project."
-            }
-        ]
-    } %}
+    {{ include("partials/package/list.html", {packages: extensions }) }}
 
     {% if account.uid == user.uid %}
         <a class="btn btn-lg btn-primary pull-right" href="/package/register">Register a new extension</a>
