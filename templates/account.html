@@ -11,7 +11,9 @@
         {{ account.name }}<br/>
         <small>{{ account.nickname }}</small>
     </h2>
+    {% if user.id == account.id %}
     <p><span class="text-muted"><i class="fa fa-envelope-o"></i></span> <a href="mailto:{{ account.email }}">{{ account.email }}</a></p>
+    {% endif %}
     {% if account.githubHomepage %}
     <p><span class="text-muted"><i class="fa fa-github"></i></span> <a href="{{ account.githubHomepage }}">{{ account.githubHomepage }}</a></p>
     {% endif %}
@@ -21,25 +23,21 @@
     {% if account.bitbucketHomepage %}
     <p><span class="text-muted"><i class="fa fa-bitbucket"></i></span> <a href="{{ account.bitbucketHomepage }}">{{ account.bitbucketHomepage }}</a></p>
     {% endif %}
+    {% if account.location %}
+    <p><span class="text-muted"><i class="fa fa-location-arrow"></i></span> {{ account.location }}</p>
+    {% endif %}
     {% if user.id == account.id %}
     <a class="btn btn-danger" href="/profile/remove">Remove account</a>
     {% endif %}
 </div>
 
 <div class="col-lg-9">
-    <h2 class="no-margin-top">
-        {% if account.uid == user.uid %}
-            Your
-        {% else %}
-            {{ account.nickname }}'s
-        {% endif %}
-        extensions
-    </h2>
+    <h2 class="no-margin-top">{% if account.id == user.id %}Your{% else %}{{ account.nickname }}'s{% endif %} extensions</h2>
 
     {{ include("partials/package/list.html", {packages: extensions }) }}
 
-    {% if account.uid == user.uid %}
-        <a class="btn btn-lg btn-primary pull-right" href="/package/register">Register a new extension</a>
+    {% if account.id == user.id %}
+    <a class="btn btn-lg btn-primary pull-right" href="/package/register">Register a new extension</a>
     {% endif %}
 </div>
 {% endblock %}

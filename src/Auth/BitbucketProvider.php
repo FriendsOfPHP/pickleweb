@@ -78,7 +78,7 @@ class BitbucketProvider implements ProviderInterface
     /**
      * @param string $token
      *
-     * @return array
+     * @return ProviderMetadata
      */
     public function getUserDetails($token)
     {
@@ -99,7 +99,6 @@ class BitbucketProvider implements ProviderInterface
             }
 
             // Fetch email
-
             $url      = sprintf('https://api.bitbucket.org/1.0/users/%s/emails', $data['username']);
             $headers  = $this->oauthProvider->getHeaders($tokenObject, 'GET', $url);
             $response = $this->httpClient->get($url, $headers);
@@ -118,14 +117,17 @@ class BitbucketProvider implements ProviderInterface
 
             $data['email'] = empty($emails) ? '' : current($emails)['email'];
 
-            return [
-                'uid'            => $data['uuid'],
-                'nickname'       => $data['username'],
-                'realname'       => $data['display_name'],
-                'email'          => $data['email'],
-                'profilepicture' => $data['links']['avatar']['href'],
-                'homepage'       => $data['links']['html']['href'],
-            ];
+            return new ProviderMetadata(
+                [
+                    'uid'            => $data['uuid'],
+                    'nickName'       => $data['username'],
+                    'realName'       => $data['display_name'],
+                    'email'          => $data['email'],
+                    'profilePicture' => $data['links']['avatar']['href'],
+                    'homepage'       => $data['links']['html']['href'],
+                    'location'       => $data['location'],
+                ]
+            );
         } catch (\Exception $e) {
             throw new \RuntimeException('cannot fetch account details', 0, $e);
         }

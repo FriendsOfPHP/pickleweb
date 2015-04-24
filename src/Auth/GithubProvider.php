@@ -77,7 +77,7 @@ class GithubProvider implements ProviderInterface
     /**
      * @param string $token
      *
-     * @return array
+     * @return ProviderMetadata
      */
     public function getUserDetails($token)
     {
@@ -112,14 +112,17 @@ class GithubProvider implements ProviderInterface
                 }
             }
 
-            return [
-                'uid'            => $data['id'],
-                'nickname'       => $data['login'],
-                'realname'       => $data['name'],
-                'email'          => $data['email'],
-                'profilepicture' => $data['avatar_url'],
-                'homepage'       => $data['html_url'],
-            ];
+            return new ProviderMetadata(
+                [
+                    'uid'            => $data['id'],
+                    'nickName'       => $data['login'],
+                    'realName'       => $data['name'],
+                    'email'          => $data['email'],
+                    'profilePicture' => $data['avatar_url'],
+                    'homepage'       => $data['html_url'],
+                    'location'       => $data['location'],
+                ]
+            );
         } catch (\Exception $e) {
             throw new \RuntimeException('cannot fetch account details', 0, $e);
         }

@@ -2,6 +2,8 @@
 
 namespace PickleWeb\Entity;
 
+use PickleWeb\Auth\ProviderMetadata;
+
 /**
  * Class User.
  */
@@ -30,32 +32,12 @@ class User implements \Serializable
     /**
      * @var string
      */
-    protected $githubId;
+    protected $location;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $githubHomepage;
-
-    /**
-     * @var string
-     */
-    protected $googleId;
-
-    /**
-     * @var string
-     */
-    protected $googleHomepage;
-
-    /**
-     * @var string
-     */
-    protected $bitbucketId;
-
-    /**
-     * @var string
-     */
-    protected $bitbucketHomepage;
+    protected $providerMetadata = [];
 
     /**
      * @var array
@@ -153,21 +135,68 @@ class User implements \Serializable
     /**
      * @return string
      */
-    public function getGithubId()
+    public function getLocation()
     {
-        return $this->githubId;
+        return $this->location;
     }
 
     /**
-     * @param string $githubId
+     * @param string $location
      *
      * @return User
      */
-    public function setGithubId($githubId)
+    public function setLocation($location)
     {
-        $this->githubId = $githubId;
+        $this->location = $location;
 
         return $this;
+    }
+
+    /**
+     * @param string           $provider
+     * @param ProviderMetadata $metadata
+     *
+     * @return $this
+     */
+    public function addProviderMetadata($provider, ProviderMetadata $metadata)
+    {
+        $this->providerMetadata[$provider] = $metadata->toArray();
+
+        return $this;
+    }
+
+    /**
+     * @param string $provider
+     *
+     * @return ProviderMetadata|null
+     */
+    public function getProviderMetadata($provider)
+    {
+        if (!isset($this->providerMetadata[$provider])) {
+            return;
+        }
+
+        return new ProviderMetadata($this->providerMetadata[$provider]);
+    }
+
+    /**
+     * @param string $provider
+     *
+     * @return bool
+     */
+    public function hasProviderMetadata($provider)
+    {
+        return array_key_exists($provider, $this->providerMetadata);
+    }
+
+    /**
+     * @return string
+     */
+    public function getGithubId()
+    {
+        $githubMetadata = $this->getProviderMetadata('github');
+
+        return is_null($githubMetadata) ? null : $githubMetadata->getUid();
     }
 
     /**
@@ -175,19 +204,9 @@ class User implements \Serializable
      */
     public function getGithubHomepage()
     {
-        return $this->githubHomepage;
-    }
+        $githubMetadata = $this->getProviderMetadata('github');
 
-    /**
-     * @param string $githubHomepage
-     *
-     * @return User
-     */
-    public function setGithubHomepage($githubHomepage)
-    {
-        $this->githubHomepage = $githubHomepage;
-
-        return $this;
+        return is_null($githubMetadata) ? null : $githubMetadata->getHomepage();
     }
 
     /**
@@ -195,19 +214,9 @@ class User implements \Serializable
      */
     public function getGoogleId()
     {
-        return $this->googleId;
-    }
+        $googleMetadata = $this->getProviderMetadata('google');
 
-    /**
-     * @param string $googleId
-     *
-     * @return User
-     */
-    public function setGoogleId($googleId)
-    {
-        $this->googleId = $googleId;
-
-        return $this;
+        return is_null($googleMetadata) ? null : $googleMetadata->getUid();
     }
 
     /**
@@ -215,19 +224,9 @@ class User implements \Serializable
      */
     public function getGoogleHomepage()
     {
-        return $this->googleHomepage;
-    }
+        $googleMetadata = $this->getProviderMetadata('google');
 
-    /**
-     * @param string $googleHomepage
-     *
-     * @return User
-     */
-    public function setGoogleHomepage($googleHomepage)
-    {
-        $this->googleHomepage = $googleHomepage;
-
-        return $this;
+        return is_null($googleMetadata) ? null : $googleMetadata->getHomepage();
     }
 
     /**
@@ -235,19 +234,9 @@ class User implements \Serializable
      */
     public function getBitbucketId()
     {
-        return $this->bitbucketId;
-    }
+        $bitbucketMetadata = $this->getProviderMetadata('bitbucket');
 
-    /**
-     * @param string $bitbucketId
-     *
-     * @return User
-     */
-    public function setBitbucketId($bitbucketId)
-    {
-        $this->bitbucketId = $bitbucketId;
-
-        return $this;
+        return is_null($bitbucketMetadata) ? null : $bitbucketMetadata->getUid();
     }
 
     /**
@@ -255,27 +244,21 @@ class User implements \Serializable
      */
     public function getBitbucketHomepage()
     {
-        return $this->bitbucketHomepage;
+        $bitbucketMetadata = $this->getProviderMetadata('bitbucket');
+
+        return is_null($bitbucketMetadata) ? null : $bitbucketMetadata->getHomepage();
     }
 
     /**
-     * @param string $bitbucketHomepage
+     * @param $extensionName
      *
-     * @return User
-     */
-    public function setBitbucketHomepage($bitbucketHomepage)
-    {
-        $this->bitbucketHomepage = $bitbucketHomepage;
-
-        return $this;
-    }
-
-    /**
-     * @param string $extensionName
+     * @return $this
      */
     public function addExtension($extensionName)
     {
         $this->extensions[] = $extensionName;
+
+        return $this;
     }
 
     /**

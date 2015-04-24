@@ -20,7 +20,7 @@ interface ProviderInterface
     /**
      * @param string $token
      *
-     * @return array
+     * @return ProviderMetadata
      */
     public function getUserDetails($token);
 }

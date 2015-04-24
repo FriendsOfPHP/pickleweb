@@ -51,52 +51,43 @@ class AuthController extends ControllerAbstract
         $token                          = $authorizationProvider->handleAuth($this->app);
         $_SESSION[$provider.'.token'] = $token;
 
-        $userDetails = $authorizationProvider->getUserDetails($token);
+        $providerMetadata = $authorizationProvider->getUserDetails($token);
 
-        if (empty($userDetails['email']) || empty($userDetails['uid'])) {
-            throw new \ErrorException('User details incomplete. Unable to fetch user');
+        if (empty($providerMetadata->getEmail()) || empty($providerMetadata->getUid())) {
+            $this->app->flash('error', 'User details incomplete. Unable to fetch user');
+            $this->app->redirect('/login');
         }
 
         // Fetch or persist user from repository
         /* @var $userRepository UserRepository */
         $userRepository = $this->app->container->get('user.repository');
-        $user           = $userRepository->find($userDetails['email']);
-        var_dump($user);
+        $user           = $userRepository->find($providerMetadata->getEmail());
+
         if (is_null($user)) {
-            $user = $userRepository->findByProviderId($provider, $userDetails['uid']);
+            $user = $userRepository->findByProviderId($provider, $providerMetadata->getUid());
             if (is_null($user)) {
                 $user = new User();
-                $user->setEmail($userDetails['email']);
-                $user->setNickname($userDetails['nickname']);
-                $user->setName($userDetails['realname']);
-                $user->setPicture($userDetails['profilepicture']);
+                $user->setEmail($providerMetadata->getEmail())
+                    ->setNickname($providerMetadata->getNickName())
+                    ->setName($providerMetadata->getRealName())
+                    ->setPicture($providerMetadata->getProfilePicture())
+                    ->setLocation($providerMetadata->getLocation())
+                    ->addProviderMetadata($provider, $providerMetadata);
 
                 $userRepository->persist($user);
             }
         }
 
         // Complete information if needed
-        if ('github' == $provider && empty($user->getGithubId())) {
-            $user->setGithubId($userDetails['uid']);
-            $user->setGithubHomepage($userDetails['homepage']);
+        if (!$user->hasProviderMetadata($provider)) {
+            $user->addProviderMetadata($provider, $providerMetadata);
+
             if (empty($user->getPicture())) {
-                $user->setPicture($userDetails['profilepicture']);
+                $user->setPicture($providerMetadata->getProfilePicture());
             }
 
-            $userRepository->persist($user);
-        } elseif ('google' == $provider && empty($user->getGoogleId())) {
-            $user->setGoogleId($userDetails['uid']);
-            $user->setGoogleHomepage($userDetails['homepage']);
-            if (empty($user->getPicture())) {
-                $user->setPicture($userDetails['profilepicture']);
-            }
-
-            $userRepository->persist($user);
-        } elseif ('bitbucket' == $provider && empty($user->getBitbucketId())) {
-            $user->setBitbucketId($userDetails['uid']);
-            $user->setBitbucketHomepage($userDetails['homepage']);
-            if (empty($user->getPicture())) {
-                $user->setPicture($userDetails['profilepicture']);
+            if (empty($user->getLocation())) {
+                $user->setLocation($providerMetadata->getLocation());
             }
 
             $userRepository->persist($user);

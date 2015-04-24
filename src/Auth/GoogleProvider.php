@@ -77,7 +77,7 @@ class GoogleProvider implements ProviderInterface
     /**
      * @param string $token
      *
-     * @return array
+     * @return ProviderMetadata
      */
     public function getUserDetails($token)
     {
@@ -87,13 +87,15 @@ class GoogleProvider implements ProviderInterface
             throw new \RuntimeException('cannot fetch account details');
         }
 
-        return [
-            'uid'            => $data['id'],
-            'nickname'       => $data['given_name'],
-            'realname'       => $data['name'],
-            'email'          => $data['email'],
-            'profilepicture' => $data['picture'],
-            'homepage'       => $data['link'],
-        ];
+        return new ProviderMetadata(
+            [
+                'uid'            => $data['id'],
+                'nickName'       => $data['given_name'],
+                'realName'       => $data['name'],
+                'email'          => $data['email'],
+                'profilePicture' => $data['picture'],
+                'homepage'       => $data['link'],
+            ]
+        );
     }
 }
