@@ -60,9 +60,11 @@ class PackageController extends ControllerAbstract
             }
             unlink($pathTransaction);
 
+            $user = $this->app->user();
+            $user->addExtension($packageName);
+            $userRepository = $this->app->container->get('user.repository');
+            $userRepository->persist($user);
             $this->app->flash('warning', $packageName.'has been registred');
-            $redis = $this->app->container->get('redis.client');
-            $redis->hset('extension2owner', $packageName, $this->app->user()->getId());
             $this->app->redirect('/package/'.$packageName);
         } else {
             $this->app

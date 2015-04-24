@@ -61,6 +61,7 @@ class AuthController extends ControllerAbstract
         /* @var $userRepository UserRepository */
         $userRepository = $this->app->container->get('user.repository');
         $user           = $userRepository->find($userDetails['email']);
+        var_dump($user);
         if (is_null($user)) {
             $user = $userRepository->findByProviderId($provider, $userDetails['uid']);
             if (is_null($user)) {

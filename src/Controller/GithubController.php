@@ -29,26 +29,6 @@ class GithubController extends ControllerAbstract
     }
 
     /**
-     * @param string $username
-     *
-     * @return string
-     */
-    protected function findUser($username)
-    {
-        return true;
-        $userRepository = $this->app->container->get('user.repository');
-        $user = $userRepository->findByProviderId('github', 'pierre.php@gmail.com');
-
-        if (!$user) {
-            return false;
-        }
-
-        return true;
-
-        return $user;
-    }
-
-    /**
      * valid Payload using API key.
      */
     protected function validPayload($vendor, $repository)
@@ -60,9 +40,9 @@ class GithubController extends ControllerAbstract
         }
 
         $redis = $this->app->container->get('redis.client');
-        $userRepository = new \PickleWeb\Entity\UserRepository($redis);
+        $userRepository = $this->app->container->get('user.repository');
         $key = $redis->hget('extension_apikey', $vendor.'_'.$repository);
-var_dump($key);
+
         list($algo, $hash) = explode('=', $hubSignature, 2);
 
         $payload = file_get_contents('php://input');

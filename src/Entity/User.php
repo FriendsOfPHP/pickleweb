@@ -58,6 +58,11 @@ class User implements \Serializable
     protected $bitbucketHomepage;
 
     /**
+     * @var array
+     */
+    protected $extensions = [];
+
+    /**
      * @return string
      */
     public function getId()
@@ -226,14 +231,6 @@ class User implements \Serializable
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function serialize()
-    {
-        return json_encode(get_object_vars($this));
-    }
-
-    /**
      * @return string
      */
     public function getBitbucketId()
@@ -271,6 +268,30 @@ class User implements \Serializable
         $this->bitbucketHomepage = $bitbucketHomepage;
 
         return $this;
+    }
+
+    /**
+     * @param string $extensionName
+     */
+    public function addExtension($extensionName)
+    {
+        $this->extensions[] = $extensionName;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExtensions($extensionName)
+    {
+        return $this->extensions;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function serialize()
+    {
+        return json_encode(get_object_vars($this));
     }
 
     /**
