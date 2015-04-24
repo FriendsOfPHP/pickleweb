@@ -281,7 +281,7 @@ class User implements \Serializable
     /**
      * @return array
      */
-    public function getExtensions($extensionName)
+    public function getExtensions()
     {
         return $this->extensions;
     }
