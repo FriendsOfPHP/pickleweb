@@ -88,6 +88,7 @@ $app->container->singleton(
                     'clientId'     => $config['oauth']['github']['clientId'],
                     'clientSecret' => $config['oauth']['github']['clientSecret'],
                     'scopes'       => ['user:email', 'read:repo_hook'],
+                    'redirectUri' => sprintf('%s://%s/login/github', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'])
                 ]
             ),
             $container->get('redis.client'),
@@ -107,7 +108,7 @@ $app->container->singleton(
                 [
                     'clientId'     => $config['oauth']['google']['clientId'],
                     'clientSecret' => $config['oauth']['google']['clientSecret'],
-                    'redirectUri'  => 'http://127.0.0.1:8080/login/google',
+                    'redirectUri' => sprintf('%s://%s/login/google', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'])
                 ]
             ),
             $container->get('redis.client'),
@@ -127,7 +128,7 @@ $app->container->singleton(
                 [
                     'identifier'   => $config['oauth']['bitbucket']['clientId'],
                     'secret'       => $config['oauth']['bitbucket']['clientSecret'],
-                    'callback_uri' => 'http://127.0.0.1:8080/login/bitbucket',
+                    'callback_uri' => sprintf('%s://%s/login/bitbucket', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'])
                 ]
             ),
             $container->get('redis.client'),
