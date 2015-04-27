@@ -75,7 +75,7 @@ class PackageController extends ControllerAbstract
             } else {
                 $providers = [];
             }
-            $providers[$packageName] = $sha;
+            $providers['providers'][$packageName] = $sha;
 
             $json = json_encode($providers);
             file_put_contents($providersJsonPath, $json);
