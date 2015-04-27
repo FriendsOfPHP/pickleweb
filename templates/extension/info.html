@@ -36,7 +36,7 @@
             <li>License: {{ license }}</li>
         {% endif %}
 {% endfor %}
-{% for version, info in extension.versions %}
+
         {% if extension.homepage %}
             <li>Homepage: <a href="{{ extension.homepage }}">{{ extension.homepage }}</a></li>
         {% endif %}
@@ -44,12 +44,14 @@
         {% if extension.support.source %}
             <li>Source: <a href="{{ extension.support.source }}">{{ extension.support.source }}</a></li>
         {% endif %}
-
+        {% if extension.source.url %}
+            <li>Canonical: <a href="{{ extension.source.url }}">{{ extension.source.url }}</a></li>
+        {% endif %}
         {% if extension.support.issues %}
-            <li>Issues: <a href="{{ extensionsupport.issues }}">{{ extension.support.issues }}</a></li>
+            <li>Issues: <a href="{{ extension.support.issues }}">{{ extension.support.issues }}</a></li>
         {% endif %}
     </ul>
-{% endfor %}
+
     <h2>Versions</h2>
 
     <table class="table table-striped">
