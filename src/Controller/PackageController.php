@@ -69,6 +69,7 @@ class PackageController extends ControllerAbstract
             $redis->hset('extension2owner', $packageName, $user->getId());
 
             $this->app->flash('warning', $packageName.'has been registred');
+
             $this->app->redirect('/package/'.$packageName);
         } else {
             $this->app
@@ -156,7 +157,6 @@ class PackageController extends ControllerAbstract
 
         reset($json['packages'][$name]);
         $firstKey = key($json['packages'][$name]);
-
         $this->app->render(
             'extension/info.html',
             [
