@@ -1,0 +1,1 @@
+{"packages":[],"notify":"\/downloads\/%pacakge%","notify-batch":"providers-url: \"\/json\/%package%$%hash%.json","search":"\/search.json?q=%query%","providers-include":["\/json\/providers.json"]}
