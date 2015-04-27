@@ -68,8 +68,24 @@ class PackageController extends ControllerAbstract
             $redis = $this->app->container->get('redis.client');
             $redis->hset('extension2owner', $packageName, $user->getId());
 
-            $this->app->flash('warning', $packageName.'has been registred');
+            $providersJsonPath = $this->app->config('json_path').'/'.'/providers.json';
 
+            if (file_exists($providersJsonPath)) {
+                $providers = json_decode(file_get_contents($providersJsonPath));
+            } else {
+                $providers = [];
+            }
+            $providers[$packageName] = $sha;
+
+            $json = json_encode($providers);
+            file_put_contents($providersJsonPath, $json);
+
+            $packagesJsonPath = $this->app->config('web_root_dir').'/packages.json';
+            $packages = json_decode(file_get_contents($packagesJsonPath), true);
+            $packages['provider-includes']['/json/providers.json'] = hash('sha256', $json);
+
+            file_put_contents($packagesJsonPath, json_encode($packages));
+            $this->app->flash('warning', $packageName.'has been registred');
             $this->app->redirect('/package/'.$packageName);
         } else {
             $this->app

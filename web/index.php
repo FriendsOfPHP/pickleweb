@@ -10,22 +10,23 @@ use PickleWeb\Auth\GoogleProvider;
 use PickleWeb\Entity\UserRepository;
 use Slim\Helper\Set;
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
 function check_or_create_json_dir(\PickleWeb\Application $app)
 {
     if (is_dir($app->config('json_path')) === false) {
         mkdir($app->config('json_path'), 0777, true);
-        mkdir($app->config('json_path') . 'users/github', 0777, true);
-        mkdir($app->config('json_path') . 'extensions', 0777, true);
+        mkdir($app->config('json_path').'users/github', 0777, true);
+        mkdir($app->config('json_path').'extensions', 0777, true);
     }
 }
 
 $app = new \PickleWeb\Application(
     [
         'view'      => new \PickleWeb\View\Twig(),
-        'json_path' => __DIR__ . '/json/',
-        'cache_dir' => __DIR__ . '/../cache-dir/',
+        'json_path' => __DIR__.'/json/',
+        'cache_dir' => __DIR__.'/../cache-dir/',
+        'web_root_dir' => __DIR__,
     ]
 );
 
@@ -43,7 +44,7 @@ $app = new \PickleWeb\Application(
 $app->container->singleton(
     'app.config',
     function (Set $container) {
-        return json_decode(file_get_contents(__DIR__ . '/../src/config.json'), true);
+        return json_decode(file_get_contents(__DIR__.'/../src/config.json'), true);
     }
 );
 
@@ -88,7 +89,7 @@ $app->container->singleton(
                     'clientId'     => $config['oauth']['github']['clientId'],
                     'clientSecret' => $config['oauth']['github']['clientSecret'],
                     'scopes'       => ['user:email', 'read:repo_hook'],
-                    'redirectUri' => sprintf('%s://%s/login/github', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'])
+                    'redirectUri' => sprintf('%s://%s/login/github', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST']),
                 ]
             ),
             $container->get('redis.client'),
@@ -108,7 +109,7 @@ $app->container->singleton(
                 [
                     'clientId'     => $config['oauth']['google']['clientId'],
                     'clientSecret' => $config['oauth']['google']['clientSecret'],
-                    'redirectUri' => sprintf('%s://%s/login/google', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'])
+                    'redirectUri' => sprintf('%s://%s/login/google', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST']),
                 ]
             ),
             $container->get('redis.client'),
@@ -128,7 +129,7 @@ $app->container->singleton(
                 [
                     'identifier'   => $config['oauth']['bitbucket']['clientId'],
                     'secret'       => $config['oauth']['bitbucket']['clientSecret'],
-                    'callback_uri' => sprintf('%s://%s/login/bitbucket', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'])
+                    'callback_uri' => sprintf('%s://%s/login/bitbucket', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST']),
                 ]
             ),
             $container->get('redis.client'),
