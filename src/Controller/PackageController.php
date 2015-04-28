@@ -86,9 +86,7 @@ class PackageController extends ControllerAbstract
 
             $this->updateRootPackageJson($json);
 
-            $extension->getApiKey($redis = $app->container->get('redis.client'));
-
-            $this->app->flash('warning', $packageName.'has been registred');
+            $this->app->flash('warning', $packageName.' has been registred');
             $this->app->redirect('/package/'.$packageName);
         } else {
             $this->app

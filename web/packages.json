@@ -1,1 +1,0 @@
-{"packages":[],"notify":"\/downloads\/%package%","notify-batch":"\/downloads\/","providers-url":"\/p\/%package%$%hash%.json","search":"\/search.json?q=%query%","provider-includes":{"\/json\/providers.json":"c80d51281c5a2ca6c71317a350530ce16ae5d18bffa6663e8088778515be5be0"}}

@@ -22,7 +22,7 @@ class UserController extends ControllerAbstract
     {
         $user = $this->app->user();
         $extensions = $user->getExtensions();
-
+        $shortList = [];
         foreach ($extensions as $extensionName) {
             list($vendorName, $repositoryName) = explode('/', $extensionName);
             $path = $this->app->config('json_path').'/'.$vendorName.'/'.$repositoryName.'.json';

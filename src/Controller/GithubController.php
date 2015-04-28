@@ -148,6 +148,8 @@ class GithubController extends ControllerAbstract
         }
 
         file_put_contents($path, $json);
+
+        /* Update JSON */
         $this->app->jsonResponse([
             'status' => 'success',
             'message' => $extensionName.'-'.$tag.' imported',
