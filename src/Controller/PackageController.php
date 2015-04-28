@@ -9,9 +9,9 @@ use Composer\IO\BufferIO as BufferIO;
  */
 class PackageController extends ControllerAbstract
 {
-    protected function updateRootPackageJson()
+    protected function updateRootPackageJson($json)
     {
-        $jsonPackages = [
+        $packages = [
             'packages'          => [],
             'notify'            => '/downloads/%package%',
             'notify-batch'      => '/downloads/',
@@ -19,6 +19,10 @@ class PackageController extends ControllerAbstract
             'search'            => '/search.json?q=%query%',
             'provider-includes' => [],
         ];
+
+        $packagesJsonPath = $this->app->config('web_root_dir').'/packages.json';
+        $packages['provider-includes']['/json/providers.json'] = hash('sha256', $json);
+        file_put_contents($packagesJsonPath, json_encode($packages));
     }
 
     /**
@@ -71,7 +75,7 @@ class PackageController extends ControllerAbstract
             $providersJsonPath = $this->app->config('json_path').'/'.'/providers.json';
 
             if (file_exists($providersJsonPath)) {
-                $providers = json_decode(file_get_contents($providersJsonPath));
+                $providers = json_decode(file_get_contents($providersJsonPath), true);
             } else {
                 $providers = [];
             }
@@ -80,11 +84,10 @@ class PackageController extends ControllerAbstract
             $json = json_encode($providers);
             file_put_contents($providersJsonPath, $json);
 
-            $packagesJsonPath = $this->app->config('web_root_dir').'/packages.json';
-            $packages = json_decode(file_get_contents($packagesJsonPath), true);
-            $packages['provider-includes']['/json/providers.json'] = hash('sha256', $json);
+            $this->updateRootPackageJson($json);
 
-            file_put_contents($packagesJsonPath, json_encode($packages));
+            $extension->getApiKey($redis = $app->container->get('redis.client'));
+
             $this->app->flash('warning', $packageName.'has been registred');
             $this->app->redirect('/package/'.$packageName);
         } else {
@@ -141,7 +144,6 @@ class PackageController extends ControllerAbstract
         file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $jsonPackage);
         file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.log', $log->getOutput());
         $latest = $extension->getPackages()['dev-master'];
-        $extension->getApiKey($this->app);
 
         $this->app
                 ->render(

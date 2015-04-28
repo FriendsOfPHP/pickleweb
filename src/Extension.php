@@ -169,9 +169,11 @@ class Extension
         $this->name = $packageName;
     }
 
-    public function getApiKey($app)
+    /**
+     * @param Predis\Client $redis
+     */
+    public function getApiKey(Predis\Client $redis)
     {
-        $redis = $app->container->get('redis.client');
         $key = $redis->hget('extension_apikey', $this->vendorName.'_'.$this->repositoryName);
         if (!$key) {
             $key = bin2hex(openssl_random_pseudo_bytes(32));
