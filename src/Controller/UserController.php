@@ -2,7 +2,7 @@
 
 namespace PickleWeb\Controller;
 
-use PickleWeb\Entity\Extension as Extension;
+use PickleWeb\Entity\ExtensionRepository as ExtensionRepository;
 
 /**
  * Class UserController.
@@ -24,14 +24,11 @@ class UserController extends ControllerAbstract
     {
         $user = $this->app->user();
         $extensions = $user->getExtensions();
+        $redis = $this->app->container->get('redis.client');
+        $extensionRepository = new ExtensionRepository($redis);
         $shortList = [];
         foreach ($extensions as $extensionName) {
-            list($vendorName, $repositoryName) = explode('/', $extensionName);
-            /* Todo: load from Redis*/
-            $path = $this->app->config('json_path').'/'.$vendorName.'/'.$repositoryName.'.json';
-            $data = file_get_contents($path);
-            $extension = new Extension();
-            $extension->unserialize($data);
+            $extension = $extensionRepository->find($extensionName);
             $latest = $extension->getPackages('dev-master');
 
             $shortList[] = [
@@ -79,6 +76,10 @@ class UserController extends ControllerAbstract
      */
     public function viewAccountAction($name = null)
     {
+        $redis = $this->app->container->get('redis.client');
+        $userRepository = new UserRepository($redis);
+        $user = $userRepository->find($name);
+
         $jsonPath = $this->app->config('json_path').'users/github/'.$name.'.json';
 
         $this->app
@@ -87,7 +88,7 @@ class UserController extends ControllerAbstract
             ->render(
                 'account.html',
                 [
-                    'account' => json_decode(file_get_contents($jsonPath), true),
+                    'account' => $user,
                 ]
             );
     }
