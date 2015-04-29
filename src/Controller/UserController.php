@@ -27,6 +27,7 @@ class UserController extends ControllerAbstract
         $shortList = [];
         foreach ($extensions as $extensionName) {
             list($vendorName, $repositoryName) = explode('/', $extensionName);
+            /* Todo: load from Redis*/
             $path = $this->app->config('json_path').'/'.$vendorName.'/'.$repositoryName.'.json';
             $data = file_get_contents($path);
             $extension = new Extension();

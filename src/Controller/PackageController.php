@@ -237,6 +237,7 @@ class PackageController extends ControllerAbstract
     {
         $jsonPath = $this->app->config('json_path').$vendor.'/'.$package.'.json';
 
+		/*TODO: load from redis */
         $this->app->notFoundIf(file_exists($jsonPath) === false);
 
         $name = $vendor.'/'.$package;
