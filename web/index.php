@@ -162,6 +162,7 @@ $app->get('/login/:provider', 'PickleWeb\Controller\AuthController:loginWithProv
 
 // Packages
 $app->getSecured('/package/register', 'PickleWeb\Controller\PackageController:registerAction');
+$app->getSecured('/package/:vendor/:package/remove', 'PickleWeb\Controller\PackageController:removeConfirmAction');
 $app->postSecured('/package/register', 'PickleWeb\Controller\PackageController:registerPackageAction');
 $app->get('/package/:vendor/:package', 'PickleWeb\Controller\PackageController:viewPackageAction');
 

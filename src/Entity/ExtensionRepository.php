@@ -3,7 +3,6 @@
 namespace PickleWeb\Entity;
 
 use Predis\Client;
-use PickleWeb\Entity\User as User;
 
 /**
  * Class ExtensionRepository.
@@ -11,7 +10,7 @@ use PickleWeb\Entity\User as User;
 class ExtensionRepository
 {
     const EXTENSION_HASH_STORE = 'extensions';
-	const EXTENSION2USER_HASH_STORE = 'extension2user';
+    const EXTENSION2USER_HASH_STORE = 'extension2user';
 
     /**
      * @var Client
@@ -28,13 +27,12 @@ class ExtensionRepository
 
     /**
      * @param Extension $extension
-     * @param User $extension
-     * 
+     * @param User      $extension
      */
     public function persist(Extension $extension, User $user)
     {
-        $this->redicClient->hset(self::EXTENSION_HASH_STORE, $extension->getName, serialize($extension));
-        $this->redicClient->hset(self:EXTENSION2USER_HASH_STORE, $extension->getName(), $user);
+        $this->redicClient->hset(self::EXTENSION_HASH_STORE, $extension->getName(), serialize($extension));
+        $this->redicClient->hset(self::EXTENSION2USER_HASH_STORE, $extension->getName(), $user);
     }
 
     /**
@@ -42,8 +40,8 @@ class ExtensionRepository
      */
     public function remove(Extension $extension)
     {
-		$id = $extension->getName();
-		$this->redicClient->hdel(self::EXTENSION2USER_HASH_STORE, $id);
+        $id = $extension->getName();
+        $this->redicClient->hdel(self::EXTENSION2USER_HASH_STORE, $id);
         $this->redicClient->hdel(self::EXTENSION_HASH_STORE, $id);
     }
 

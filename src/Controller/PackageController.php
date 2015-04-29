@@ -3,6 +3,8 @@
 namespace PickleWeb\Controller;
 
 use Composer\IO\BufferIO as BufferIO;
+use PickleWeb\Entity\ExtensionRepository as ExtensionRepository;
+use PickleWeb\Entity\Extension as Extension;
 
 /**
  * Class PackageController.
@@ -23,6 +25,30 @@ class PackageController extends ControllerAbstract
         $packagesJsonPath = $this->app->config('web_root_dir').'/packages.json';
         $packages['provider-includes']['/json/providers.json'] = hash('sha256', $json);
         file_put_contents($packagesJsonPath, json_encode($packages));
+    }
+
+    public function removeExtension()
+    {
+    }
+
+    public function removeConfirmAction($vendor, $package)
+    {
+        $name = $vendor.'/'.$package;
+        $redis = $this->app->container->get('redis.client');
+        $extensionRepository = new ExtensionRepository($redis);
+        $extension = $extensionRepository->find($name);
+        if (!$extension) {
+            $this->app->flash('error', 'Extension '.$name.' does not exist');
+            $this->app->redirect('/profile');
+            exit();
+        }
+        $this->app
+            ->render(
+                'extension/removeConfirm.html',
+                [
+                    'name' => $name,
+                ]
+            );
     }
 
     /**
