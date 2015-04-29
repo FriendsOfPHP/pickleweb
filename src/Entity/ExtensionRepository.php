@@ -31,8 +31,9 @@ class ExtensionRepository
      */
     public function persist(Extension $extension, User $user)
     {
-        $this->redicClient->hset(self::EXTENSION_HASH_STORE, $extension->getName(), serialize($extension));
-        $this->redicClient->hset(self::EXTENSION2USER_HASH_STORE, $extension->getName(), $user);
+        $extensionJson = serialize($extension);
+        $this->redicClient->hset(self::EXTENSION_HASH_STORE, $extension->getName(), $extensionJson);
+        $this->redicClient->hset(self::EXTENSION2USER_HASH_STORE, $extension->getName(), $user->getName());
     }
 
     /**

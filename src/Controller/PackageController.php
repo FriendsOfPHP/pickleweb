@@ -5,6 +5,7 @@ namespace PickleWeb\Controller;
 use Composer\IO\BufferIO as BufferIO;
 use PickleWeb\Entity\ExtensionRepository as ExtensionRepository;
 use PickleWeb\Entity\Extension as Extension;
+use PickleWeb\Entity\UserRepository as UserRepository;
 
 /**
  * Class PackageController.
@@ -27,8 +28,45 @@ class PackageController extends ControllerAbstract
         file_put_contents($packagesJsonPath, json_encode($packages));
     }
 
-    public function removeExtension()
+    protected function checkOwnerShip(Extension $extension)
     {
+        if (!in_array($extension->getName(), $this->app->user()->getExtensions())) {
+            $this->app->flash('error', 'You do now mange this '.$name);
+            $this->app->redirect('/profile');
+            exit();
+        }
+    }
+
+    public function removeAction($vendor, $extension)
+    {
+        $name = $vendor.'/'.$extension;
+        $jsonPathBase = $this->app->config('json_path').'/'.$name;
+
+        $shaFile = readlink($jsonPathBase.'.json');
+
+        $redis = $this->app->container->get('redis.client');
+
+        $extensionRepository = new ExtensionRepository($redis);
+        $extension = $extensionRepository->find($name);
+
+        if (!$extension) {
+            $this->app->flash('error', 'Extension '.$name.' does not exist');
+            $this->app->redirect('/profile');
+            exit();
+        }
+
+        $this->checkOwnerShip($extension);
+
+        $userRepository = new UserRepository($redis);
+        $user = $this->app->user();
+        $user->removeExtension($name);
+        $userRepository->persist($user);
+        $extensionRepository->remove($extension);
+        unlink($shaFile);
+        unlink($jsonPathBase.'.json');
+
+        $this->app->flash('werning', 'Extension '.$name.' has been removed');
+        $this->app->redirect('/profile');
     }
 
     public function removeConfirmAction($vendor, $package)
@@ -37,11 +75,14 @@ class PackageController extends ControllerAbstract
         $redis = $this->app->container->get('redis.client');
         $extensionRepository = new ExtensionRepository($redis);
         $extension = $extensionRepository->find($name);
+        $this->checkOwnerShip($extension);
+
         if (!$extension) {
             $this->app->flash('error', 'Extension '.$name.' does not exist');
             $this->app->redirect('/profile');
             exit();
         }
+
         $this->app
             ->render(
                 'extension/removeConfirm.html',
@@ -82,7 +123,7 @@ class PackageController extends ControllerAbstract
             $jsonPathSha  = $jsonPathBase.'$'.$sha.'.json';
 
             file_put_contents($jsonPathSha, $transaction);
-            link($jsonPathSha, $jsonPathBase.'.json');
+            symlink($jsonPathSha, $jsonPathBase.'.json');
 
             $pathTransactionLog = substr($pathTransaction, 0, -4).'log';
             if (file_exists($pathTransactionLog)) {
@@ -96,7 +137,11 @@ class PackageController extends ControllerAbstract
             $userRepository->persist($user);
 
             $redis = $this->app->container->get('redis.client');
-            $redis->hset('extension2owner', $packageName, $user->getId());
+
+            $extensionRepository = new ExtensionRepository($redis);
+            $extension = new Extension();
+            $extension->unserialize($transaction);
+            $extensionRepository->persist($extension, $user);
 
             $providersJsonPath = $this->app->config('json_path').'/'.'/providers.json';
 

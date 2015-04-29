@@ -254,6 +254,24 @@ class User implements \Serializable
      *
      * @return $this
      */
+    public function removeExtension($extensionName)
+    {
+        $new_ext = [];
+        foreach ($this->extensions as $ext) {
+            if ($ext != $extensionName) {
+                $new_ext[] = $extensionName;
+            }
+        }
+        $this->extensions = $new_ext;
+
+        return $this;
+    }
+
+    /**
+     * @param $extensionName
+     *
+     * @return $this
+     */
     public function addExtension($extensionName)
     {
         $this->extensions[] = $extensionName;
