@@ -2,6 +2,8 @@
 
 namespace PickleWeb\Controller;
 
+use PickleWeb\Entity\Extension as Extension;
+
 /**
  * Class UserController.
  */
@@ -27,7 +29,7 @@ class UserController extends ControllerAbstract
             list($vendorName, $repositoryName) = explode('/', $extensionName);
             $path = $this->app->config('json_path').'/'.$vendorName.'/'.$repositoryName.'.json';
             $data = file_get_contents($path);
-            $extension = new \PickleWeb\Extension();
+            $extension = new Extension();
             $extension->unserialize($data);
             $latest = $extension->getPackages('dev-master');
 

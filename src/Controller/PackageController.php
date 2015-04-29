@@ -116,7 +116,7 @@ class PackageController extends ControllerAbstract
                 $this->app->redirect('/package/register?repository='.$repo);
             }
 
-            $extension = new \PickleWeb\Extension();
+            $extension = new \PickleWeb\Entity\Extension();
             $extension->setFromRepository($driver, $log);
 
             $vendorName = $extension->getVendor();

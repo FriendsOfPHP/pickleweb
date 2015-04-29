@@ -1,6 +1,6 @@
 <?php
 
-namespace PickleWeb;
+namespace PickleWeb\Entity;
 
 /**
  * Class Extension.

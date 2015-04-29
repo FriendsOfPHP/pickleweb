@@ -512,16 +512,16 @@
         },
         {
             "name": "league/oauth2-client",
-            "version": "0.10.1",
+            "version": "0.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/oauth2-client.git",
-                "reference": "cd2e968b494641c1fd2b852691d000cd95e560de"
+                "reference": "ea977f95f3842ab24ad47c0458cbf1aa3634d862"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/oauth2-client/zipball/cd2e968b494641c1fd2b852691d000cd95e560de",
-                "reference": "cd2e968b494641c1fd2b852691d000cd95e560de",
+                "url": "https://api.github.com/repos/thephpleague/oauth2-client/zipball/ea977f95f3842ab24ad47c0458cbf1aa3634d862",
+                "reference": "ea977f95f3842ab24ad47c0458cbf1aa3634d862",
                 "shasum": ""
             },
             "require": {
@@ -569,7 +569,7 @@
                 "oauth2",
                 "single sign on"
             ],
-            "time": "2015-04-02 15:09:47"
+            "time": "2015-04-25 20:41:03"
         },
         {
             "name": "predis/predis",
