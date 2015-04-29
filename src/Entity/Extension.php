@@ -2,6 +2,8 @@
 
 namespace PickleWeb\Entity;
 
+use \PickleWeb\Entity\Package as Package;
+
 /**
  * Class Extension.
  */
@@ -66,7 +68,7 @@ class Extension
 
         $this->data = [];
 
-        $tmpPackage = new \PickleWeb\Package();
+        $tmpPackage = new Package();
         $tmpPackage->setName($packageName);
         $tmpPackage->setTag('dev-master');
         $tmpPackage->setFromArray($informationRoot);
@@ -86,7 +88,7 @@ class Extension
             $information['version_normalized'] = $tag['version'];
             $information['source'] = $tag['source'];
 
-            $tmpPackage = new \PickleWeb\Package();
+            $tmpPackage = new Package();
             $tmpPackage->setName($packageName);
             $tmpPackage->setTag($tag['id']);
             $tmpPackage->setFromArray($information);
@@ -160,7 +162,7 @@ class Extension
         $packages = &$data['packages'][$packageName];
 
         foreach ($packages as $version => $info) {
-            $tmpPackage = new \PickleWeb\Package();
+            $tmpPackage = new Package();
             $tmpPackage->setName($packageName);
             $tmpPackage->setTag($version);
             $tmpPackage->setFromArray($info);
