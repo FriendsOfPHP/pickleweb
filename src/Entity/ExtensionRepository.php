@@ -31,8 +31,8 @@ class ExtensionRepository
      */
     public function persist(Extension $extension, User $user)
     {
-        $extensionJson = serialize($extension);
-        $this->redicClient->hset(self::EXTENSION_HASH_STORE, $extension->getName(), $extensionJson);
+        $extensionSerialize = $extension->serialize();
+        $this->redicClient->hset(self::EXTENSION_HASH_STORE, $extension->getName(), $extensionSerialize);
         $this->redicClient->hset(self::EXTENSION2USER_HASH_STORE, $extension->getName(), $user->getName());
     }
 
@@ -53,8 +53,10 @@ class ExtensionRepository
      */
     public function find($name)
     {
-        $extension = $this->redicClient->hget(self::EXTENSION_HASH_STORE, strtolower(trim($name)));
+        $extensionSerialize = $this->redicClient->hget(self::EXTENSION_HASH_STORE, strtolower(trim($name)));
+        $extension = new Extension();
+        $extension->unserialize($extensionSerialize);
 
-        return empty($extension) ? null : unserialize($extension);
+        return empty($extension) ? null : $extension;
     }
 }

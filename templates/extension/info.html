@@ -12,14 +12,14 @@
         <span class="label label-primary">Hippy</span>-->
     </h1>
 
-    {% if extension.description %}
+    {% if extension.getDescription()  %}
         <p class="lead">
-            {{ extension.description }}
+            {{ extension.getDescription() }}
         </p>
     {% endif %}
 
     <ul>
-{% for maintainer in extension.authors %}
+{% for maintainer in extension.getAuthors() %}
         <li>
             Maintainer:
             {% if maintainer.homepage %}

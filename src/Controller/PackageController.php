@@ -235,22 +235,20 @@ class PackageController extends ControllerAbstract
      */
     public function viewPackageAction($vendor, $package)
     {
-        $jsonPath = $this->app->config('json_path').$vendor.'/'.$package.'.json';
-
-		/*TODO: load from redis */
-        $this->app->notFoundIf(file_exists($jsonPath) === false);
-
         $name = $vendor.'/'.$package;
-        $json = json_decode(file_get_contents($jsonPath), true);
 
-        reset($json['packages'][$name]);
-        $firstKey = key($json['packages'][$name]);
+        $redis = $this->app->container->get('redis.client');
+        $extensionRepository = new ExtensionRepository($redis);
+        $extension = $extensionRepository->find($name);
+
+        $this->app->notFoundIf($extension == null);
+
         $this->app->render(
             'extension/info.html',
             [
                 'name'      => $name,
-                'extension' => $json['packages'][$name][$firstKey],
-                'versions'  => $json['packages'][$vendor.'/'.$package],
+                'extension' => $extension->getPackages('dev-master'),
+                'versions'  => $extension->getPackages(),
             ]
         );
     }
