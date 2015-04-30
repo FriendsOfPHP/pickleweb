@@ -31,6 +31,7 @@ class Package implements \Serializable
         'homepage',
         'authors',
         'description',
+        'keywords',
         'time',
         'support',
         'source',
@@ -143,6 +144,14 @@ class Package implements \Serializable
     public function getVersionNormalized()
     {
         return $this->values['version_normalized'];
+    }
+
+    /**
+     * @return null|array
+     */
+    public function getKeywords()
+    {
+        return $this->values['keywords'];
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace PickleWeb\Entity;
 
-use \PickleWeb\Entity\Package as Package;
+use PickleWeb\Entity\Package as Package;
 
 /**
  * Class Extension.

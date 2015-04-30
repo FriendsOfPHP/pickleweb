@@ -51,6 +51,14 @@
             <li>Issues: <a href="{{ extension.support.issues }}">{{ extension.support.issues }}</a></li>
         {% endif %}
     </ul>
+    <h2>API Keys (Hooks)</h2>
+    <p>
+		{% if apikey %}
+		{{ apikey }}
+		{% else %}
+		<a href="/package/{{ extension.name}}/getapikey">Get an API key</a>
+		{% endif %}
+    </p>
 
     <h2>Versions</h2>
 

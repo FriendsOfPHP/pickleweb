@@ -166,6 +166,7 @@ $app->getSecured('/package/:vendor/:package/remove', 'PickleWeb\Controller\Packa
 $app->postSecured('/package/:vendor/:package/remove', 'PickleWeb\Controller\PackageController:removeAction');
 $app->postSecured('/package/register', 'PickleWeb\Controller\PackageController:registerPackageAction');
 $app->get('/package/:vendor/:package', 'PickleWeb\Controller\PackageController:viewPackageAction');
+$app->get('/package/:vendor/:package/getapikey', 'PickleWeb\Controller\PackageController:getApiKey');
 
 // Users
 $app->getSecured('/profile', 'PickleWeb\Controller\UserController:profileAction');
