@@ -63,11 +63,13 @@ class PackageController extends ControllerAbstract
         $name = $vendor.'/'.$extension;
         $extension = $this->getExtension($name);
         $this->checkOwnerShip($extension);
-
-        if (!$extension->getApiKey()) {
+        $redis = $this->app->container->get('redis.client');
+        if (!$extension->getApiKey($this->app)) {
             $this->app->flash('error', 'Failed to generate key for '.$name);
+        } else {
+            $this->app->flash('warning', 'key for '.$name.'has been generated');
         }
-        $this->app->redirect('/package/'.$packageName);
+        $this->app->redirect('/package/'.$name);
     }
 
     public function removeAction($vendor, $extension)
@@ -277,6 +279,7 @@ class PackageController extends ControllerAbstract
                 'name'      => $name,
                 'extension' => $extension->getPackages('dev-master'),
                 'versions'  => $extension->getPackages(),
+                'apikey'    => $extension->getApiKey($this->app),
             ]
         );
     }

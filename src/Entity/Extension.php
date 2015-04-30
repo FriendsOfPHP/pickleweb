@@ -76,7 +76,12 @@ class Extension
 
         foreach ($tags as $tag) {
             $io->write('package: looking for composer.json for tag '.$tag['version'].'/'.$tag['tag']);
-            $information = $driver->getComposerInformation($tag['id']);
+            try {
+                $information = $driver->getComposerInformation($tag['id']);
+            } catch (\Exception $e) {
+                throw new \RuntimeException('Error importing '.$tag['version'].' '.$e->getMessage());
+            }
+
             if (!$information) {
                 $io->write('package: no composer.json found for tag '.$tag['version'].'ref: '.$tag['id']);
             } else {
@@ -172,14 +177,16 @@ class Extension
     /**
      * @param Predis\Client $redis
      */
-    public function getApiKey(Predis\Client $redis)
+    public function getApiKey(\PickleWeb\Application $app)
     {
-        $key = $redis->hget('extension_apikey', $this->vendorName.'_'.$this->repositoryName);
+        $redis = $app->container->get('redis.client');
+        $key = $redis->hget('extension_apikey', $this->getName());
         if (!$key) {
             $key = bin2hex(openssl_random_pseudo_bytes(32));
             $key .= $app->config('apiSecret');
             $key = hash('sha256', $key);
-            $redis->hset('extension_apikey', $this->vendorName.'_'.$this->repositoryName, $key);
+            $res = $redis->hset('extension_apikey', $this->getName(), $key);
+            echo 'stored';
         }
 
         return $key;

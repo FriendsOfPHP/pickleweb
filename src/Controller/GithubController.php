@@ -2,6 +2,8 @@
 
 namespace PickleWeb\Controller;
 
+use PickleWeb\Entity\ExtensionRepository as ExtensionRepository;
+use PickleWeb\Entity\Extension as Extension;
 use Composer\IO\BufferIO as BufferIO;
 use Composer\Package\Version\VersionParser as VersionParser;
 
@@ -10,6 +12,8 @@ use Composer\Package\Version\VersionParser as VersionParser;
  */
 class GithubController extends ControllerAbstract
 {
+    protected $user;
+
     /**
      * @param string $name
      *
@@ -41,7 +45,7 @@ class GithubController extends ControllerAbstract
 
         $redis = $this->app->container->get('redis.client');
         $userRepository = $this->app->container->get('user.repository');
-        $key = $redis->hget('extension_apikey', $vendor.'_'.$repository);
+        $key = $redis->hget('extension_apikey', $vendor.'/'.$repository);
 
         list($algo, $hash) = explode('=', $hubSignature, 2);
 
@@ -92,7 +96,19 @@ class GithubController extends ControllerAbstract
         $extensionName = $payload->repository->full_name;
         $tag = $payload->ref;
         $repository = $payload->repository->git_url;
+
         $ownerId    = $payload->repository->owner->id;
+        $userRepository = $this->app->container->get('user.repository');
+        $this->user = $userRepository->findByProviderId('github', $ownerId);
+        if (!$this->user) {
+            $this->app->jsonResponse(
+            [
+                'status' => 'error',
+                'message' => 'Owner Id not found',
+            ],
+            200
+            );
+        }
 
         $normalizedVersion = VersionParser::Normalize($tag);
         if (!$normalizedVersion) {
@@ -121,7 +137,7 @@ class GithubController extends ControllerAbstract
 
         try {
             $driver = new \PickleWeb\Repository\Github($repository, false, $this->app->config('cache_dir'), $log);
-            $extension = new \PickleWeb\Extension();
+            $extension = new Extension();
             $extension->setFromRepository($driver, $log);
         } catch (\Exception $e) {
             $this->app->jsonResponse([
@@ -132,6 +148,7 @@ class GithubController extends ControllerAbstract
 
             return;
         }
+
         $vendorName = $extension->getVendor();
         $repositoryName = $extension->getRepositoryName();
 
@@ -146,6 +163,9 @@ class GithubController extends ControllerAbstract
 
             return;
         }
+        $redis = $this->app->container->get('redis.client');
+        $extensionRepository = new ExtensionRepository($redis);
+        $extensionRepository->persist($extension, $this->user);
 
         file_put_contents($path, $json);
 
