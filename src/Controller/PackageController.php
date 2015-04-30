@@ -12,11 +12,9 @@ use PickleWeb\Entity\UserRepository as UserRepository;
  */
 class PackageController extends ControllerAbstract
 {
-	/**
-	 * 
-	 * 
-	 */
-
+    /**
+     *
+     */
     protected function updateRootPackageJson($json)
     {
         $packages = [
@@ -41,10 +39,10 @@ class PackageController extends ControllerAbstract
             exit();
         }
     }
-    
+
     protected function getExtension($name)
     {
-		$redis = $this->app->container->get('redis.client');
+        $redis = $this->app->container->get('redis.client');
         $extensionRepository = new ExtensionRepository($redis);
         $extension = $extensionRepository->find($name);
 
@@ -53,26 +51,31 @@ class PackageController extends ControllerAbstract
             $this->app->redirect('/profile');
             exit();
         }
-        return $extension;
-	}
 
-	/**
-	 *
-	 * @return Extension|null
-	 */
-	public function getApiKey($vendor, $extension)
-	{
-		$name = $vendor.'/'.$extension;
-		$extension = $this->getExtension($name);
-		return $extension->getApiKey();
-	}
+        return $extension;
+    }
+
+    /**
+     * @return Extension|null
+     */
+    public function getApiKey($vendor, $extension)
+    {
+        $name = $vendor.'/'.$extension;
+        $extension = $this->getExtension($name);
+        $this->checkOwnerShip($extension);
+
+        if (!$extension->getApiKey()) {
+            $this->app->flash('error', 'Failed to generate key for '.$name);
+        }
+        $this->app->redirect('/package/'.$packageName);
+    }
 
     public function removeAction($vendor, $extension)
     {
         $name = $vendor.'/'.$extension;
 
         $redis = $this->app->container->get('redis.client');
-		$extension = $this->getExtension($name);
+        $extension = $this->getExtension($name);
 
         if (!$extension) {
             $this->app->flash('error', 'Extension '.$name.' does not exist');
@@ -102,8 +105,7 @@ class PackageController extends ControllerAbstract
     {
         $name = $vendor.'/'.$package;
         $redis = $this->app->container->get('redis.client');
-        $extensionRepository = new ExtensionRepository($redis);
-        $extension = $extensionRepository->find($name);
+        $extension = $this->getExtension($name);
         $this->checkOwnerShip($extension);
 
         if (!$extension) {
@@ -265,7 +267,7 @@ class PackageController extends ControllerAbstract
     public function viewPackageAction($vendor, $package)
     {
         $name = $vendor.'/'.$package;
-		$extension = $this->getExtension($name);
+        $extension = $this->getExtension($name);
 
         $this->app->notFoundIf($extension == null);
 
