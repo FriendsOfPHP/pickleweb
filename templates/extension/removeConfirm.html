@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+
+{% set title = 'Extension: ' ~ name %}
+
+{% block content %}
+<div class="col-lg-6 col-lg-offset-3 alert alert-danger">
+    <form action="/package/{{ name }}/remove" method="post">
+        <strong>Delete {{ name }}</strong><br/><br/>
+        <div class="text-center">
+            Are you sure you want to remove this extension ?<br/><br/>
+            <button type="submit" class="btn btn-danger" href="/package/{{ name }}/remove">Remove extension</button> <a class="btn btn-primary" href="/package/{{ name }}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
