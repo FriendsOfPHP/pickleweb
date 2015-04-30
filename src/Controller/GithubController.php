@@ -22,10 +22,17 @@ class GithubController extends ControllerAbstract
     protected function findRegisteredExension($name)
     {
         list($vendorName, $repoName) = explode('/', $name);
+        $extensionRepository = new ExtensionRepository($redis);
+        $extension = $extensionRepository->find($name);
+        if (!$extension) {
+            $this->app->jsonResponse(
+            [
+                'status' => 'error',
+                'message' => 'extension not found',
+            ],
+            404
+            );
 
-        $vendorDir = $this->app->config('json_path').'/'.$vendorName;
-
-        if (!(is_dir($vendorDir) && file_exists($vendorDir.'/'.$repoName.'.json'))) {
             return false;
         }
 
@@ -44,7 +51,6 @@ class GithubController extends ControllerAbstract
         }
 
         $redis = $this->app->container->get('redis.client');
-        $userRepository = $this->app->container->get('user.repository');
         $key = $redis->hget('extension_apikey', $vendor.'/'.$repository);
 
         list($algo, $hash) = explode('=', $hubSignature, 2);
@@ -124,12 +130,6 @@ class GithubController extends ControllerAbstract
         }
 
         if (!$this->findRegisteredExension($extensionName)) {
-            $this->app->jsonResponse([
-            'status' => 'error',
-            'message' => 'Package not found ('.$extensionName.')',
-            ],
-            200);
-
             return;
         }
 
