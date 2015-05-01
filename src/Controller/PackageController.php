@@ -12,6 +12,8 @@ use PickleWeb\Entity\UserRepository as UserRepository;
  */
 class PackageController extends ControllerAbstract
 {
+    protected $showKey = false;
+
     /**
      *
      */
@@ -56,7 +58,7 @@ class PackageController extends ControllerAbstract
     }
 
     /**
-     * @return Extension|null
+     *
      */
     public function getApiKey($vendor, $extension)
     {
@@ -70,6 +72,15 @@ class PackageController extends ControllerAbstract
             $this->app->flash('warning', 'key for '.$name.'has been generated');
         }
         $this->app->redirect('/package/'.$name);
+    }
+
+    /**
+     *
+     */
+    public function showApiKey($vendor, $extension)
+    {
+        $this->showKey = true;
+        $this->viewPackageAction($vendor, $extension);
     }
 
     public function removeAction($vendor, $extension)
@@ -272,7 +283,13 @@ class PackageController extends ControllerAbstract
         $extension = $this->getExtension($name);
 
         $this->app->notFoundIf($extension == null);
+        if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
+            $http = 'https://';
+        } else {
+            $http = 'http://';
+        }
 
+        $hookUrl = $http.$_SERVER['HTTP_HOST'].'/github/hooks/'.$name;
         $this->app->render(
             'extension/info.html',
             [
@@ -280,6 +297,8 @@ class PackageController extends ControllerAbstract
                 'extension' => $extension->getPackages('dev-master'),
                 'versions'  => $extension->getPackages(),
                 'apikey'    => $extension->getApiKey($this->app),
+                'showkey'   => $this->showKey,
+                'hookurl'   => $hookUrl,
             ]
         );
     }
