@@ -15,7 +15,7 @@ class PackageController extends ControllerAbstract
     protected $showKey = false;
 
     /**
-     *
+     * @param string $json
      */
     protected function updateRootPackageJson($json)
     {
@@ -33,6 +33,9 @@ class PackageController extends ControllerAbstract
         file_put_contents($packagesJsonPath, json_encode($packages));
     }
 
+    /**
+     * @param Extension $extension
+     */
     protected function checkOwnerShip(Extension $extension)
     {
         if (!in_array($extension->getName(), $this->app->user()->getExtensions())) {
@@ -42,6 +45,11 @@ class PackageController extends ControllerAbstract
         }
     }
 
+    /**
+     * @param string $name
+     *
+     * @return Extension
+     */
     protected function getExtension($name)
     {
         $redis = $this->app->container->get('redis.client');
@@ -58,7 +66,10 @@ class PackageController extends ControllerAbstract
     }
 
     /**
+     * GET /package/:vendor/:package/getapikey.
      *
+     * @param string $vendor
+     * @param string $package
      */
     public function getApiKey($vendor, $extension)
     {
@@ -75,7 +86,10 @@ class PackageController extends ControllerAbstract
     }
 
     /**
+     * GET /package/:vendor/:package/showapikey.
      *
+     * @param string $vendor
+     * @param string $extension
      */
     public function showApiKey($vendor, $extension)
     {
@@ -83,6 +97,12 @@ class PackageController extends ControllerAbstract
         $this->viewPackageAction($vendor, $extension);
     }
 
+    /**
+     * POST /package/:vendor/:package/remove.
+     *
+     * @param string $vendor
+     * @param string $extension
+     */
     public function removeAction($vendor, $extension)
     {
         $name = $vendor.'/'.$extension;
@@ -114,6 +134,12 @@ class PackageController extends ControllerAbstract
         $this->app->redirect('/profile');
     }
 
+    /**
+     * GET /package/:vendor/:package/remove.
+     *
+     * @param string $vendor
+     * @param string $package
+     */
     public function removeConfirmAction($vendor, $package)
     {
         $name = $vendor.'/'.$package;
@@ -281,15 +307,15 @@ class PackageController extends ControllerAbstract
     {
         $name = $vendor.'/'.$package;
         $extension = $this->getExtension($name);
-
         $this->app->notFoundIf($extension == null);
+
         if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
             $http = 'https://';
         } else {
             $http = 'http://';
         }
-
         $hookUrl = $http.$_SERVER['HTTP_HOST'].'/github/hooks/'.$name;
+
         $this->app->render(
             'extension/info.html',
             [
