@@ -15,14 +15,14 @@ class UserRepository
     /**
      * @var Client
      */
-    protected $redicClient;
+    protected $redisClient;
 
     /**
-     * @param Client $redicClient
+     * @param Client $redisClient
      */
-    public function __construct(Client $redicClient)
+    public function __construct(Client $redisClient)
     {
-        $this->redicClient = $redicClient;
+        $this->redisClient = $redisClient;
     }
 
     /**
@@ -30,7 +30,7 @@ class UserRepository
      */
     public function persist(User $user)
     {
-        $this->redicClient->transaction(
+        $this->redisClient->transaction(
             function (MultiExec $tx) use ($user) {
                 $id = $user->getId();
                 $tx->hset(self::USER_HASH_STORE, $id, serialize($user));
@@ -55,7 +55,7 @@ class UserRepository
      */
     public function remove(User $user)
     {
-        $this->redicClient->transaction(
+        $this->redisClient->transaction(
             function (MultiExec $tx) use ($user) {
                 $id = $user->getId();
                 $tx->hdel(self::USER_HASH_STORE, $id);
@@ -82,7 +82,7 @@ class UserRepository
      */
     public function find($email)
     {
-        $user = $this->redicClient->hget(self::USER_HASH_STORE, strtolower(trim($email)));
+        $user = $this->redisClient->hget(self::USER_HASH_STORE, strtolower(trim($email)));
 
         return empty($user) ? null : unserialize($user);
     }
@@ -95,7 +95,7 @@ class UserRepository
      */
     public function findByProviderId($provider, $id)
     {
-        $email = $this->redicClient->hget($provider.'_'.self::USER_HASH_STORE, $id);
+        $email = $this->redisClient->hget($provider.'_'.self::USER_HASH_STORE, $id);
 
         return empty($email) ? null : $this->find($email);
     }
@@ -108,7 +108,7 @@ class UserRepository
      */
     public function findByProviderApiKey($provider, $key)
     {
-        $email = $this->redicClient->hget($provider.'_API_'.self::USER_HASH_STORE, $id);
+        $email = $this->redisClient->hget($provider.'_API_'.self::USER_HASH_STORE, $id);
 
         return empty($email) ? null : $this->find($email);
     }

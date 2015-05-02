@@ -15,14 +15,14 @@ class ExtensionRepository
     /**
      * @var Client
      */
-    protected $redicClient;
+    protected $redisClient;
 
     /**
-     * @param Client $redicClient
+     * @param Client $redisClient
      */
-    public function __construct(Client $redicClient)
+    public function __construct(Client $redisClient)
     {
-        $this->redicClient = $redicClient;
+        $this->redisClient = $redisClient;
     }
 
     /**
@@ -32,8 +32,8 @@ class ExtensionRepository
     public function persist(Extension $extension, User $user)
     {
         $extensionSerialize = $extension->serialize();
-        $this->redicClient->hset(self::EXTENSION_HASH_STORE, $extension->getName(), $extensionSerialize);
-        $this->redicClient->hset(self::EXTENSION2USER_HASH_STORE, $extension->getName(), $user->getName());
+        $this->redisClient->hset(self::EXTENSION_HASH_STORE, $extension->getName(), $extensionSerialize);
+        $this->redisClient->hset(self::EXTENSION2USER_HASH_STORE, $extension->getName(), $user->getName());
     }
 
     /**
@@ -42,8 +42,8 @@ class ExtensionRepository
     public function remove(Extension $extension)
     {
         $id = $extension->getName();
-        $this->redicClient->hdel(self::EXTENSION2USER_HASH_STORE, $id);
-        $this->redicClient->hdel(self::EXTENSION_HASH_STORE, $id);
+        $this->redisClient->hdel(self::EXTENSION2USER_HASH_STORE, $id);
+        $this->redisClient->hdel(self::EXTENSION_HASH_STORE, $id);
     }
 
     /**
@@ -53,7 +53,7 @@ class ExtensionRepository
      */
     public function find($name)
     {
-        $extensionSerialize = $this->redicClient->hget(self::EXTENSION_HASH_STORE, strtolower(trim($name)));
+        $extensionSerialize = $this->redisClient->hget(self::EXTENSION_HASH_STORE, strtolower(trim($name)));
         if (!$extensionSerialize) {
             return;
         }
