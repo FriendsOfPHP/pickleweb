@@ -6,6 +6,7 @@ use PickleWeb\Entity\ExtensionRepository as ExtensionRepository;
 use PickleWeb\Entity\Extension as Extension;
 use Composer\IO\BufferIO as BufferIO;
 use Composer\Package\Version\VersionParser as VersionParser;
+use PickleWeb\Rest as Rest;
 
 /**
  * Class GithubController.
@@ -21,6 +22,7 @@ class GithubController extends ControllerAbstract
      */
     protected function findRegisteredExension($name)
     {
+        $redis = $this->app->container->get('redis.client');
         list($vendorName, $repoName) = explode('/', $name);
         $extensionRepository = new ExtensionRepository($redis);
         $extension = $extensionRepository->find($name);
@@ -167,9 +169,9 @@ class GithubController extends ControllerAbstract
         $extensionRepository = new ExtensionRepository($redis);
         $extensionRepository->persist($extension, $this->user);
 
-        file_put_contents($path, $json);
+        $rest = new Rest($extension, $this->app);
+        $rest->update();
 
-        /* Update JSON */
         $this->app->jsonResponse([
             'status' => 'success',
             'message' => $extensionName.'-'.$tag.' imported',

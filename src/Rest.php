@@ -90,6 +90,12 @@ class Rest
 
         $jsonPathSha = $vendorDir.'/'.$repositoryName.'$'.$this->sha.'.json';
         file_put_contents($jsonPathSha, $jsonPackage);
+        $linkPath = $vendorDir.'/'.$repositoryName.'.json';
+        if (file_exists($linkPath)) {
+            $targetPath = readlink($linkPath);
+            unlink($targetPath);
+            unlink($linkPath);
+        }
         symlink($jsonPathSha, $vendorDir.'/'.$repositoryName.'.json');
         $shaProviders = $this->updateProviders();
         $this->updateRootPackageJson($shaProviders);
