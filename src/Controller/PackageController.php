@@ -6,6 +6,7 @@ use Composer\IO\BufferIO as BufferIO;
 use PickleWeb\Entity\ExtensionRepository as ExtensionRepository;
 use PickleWeb\Entity\Extension as Extension;
 use PickleWeb\Entity\UserRepository as UserRepository;
+use PickleWeb\Rest as Rest;
 
 /**
  * Class PackageController.
@@ -15,31 +16,12 @@ class PackageController extends ControllerAbstract
     protected $showKey = false;
 
     /**
-     * @param string $json
-     */
-    protected function updateRootPackageJson($json)
-    {
-        $packages = [
-            'packages'          => [],
-            'notify'            => '/downloads/%package%',
-            'notify-batch'      => '/downloads/',
-            'providers-url'     => '/p/%package%$%hash%.json',
-            'search'            => '/search.json?q=%query%',
-            'provider-includes' => [],
-        ];
-
-        $packagesJsonPath = $this->app->config('web_root_dir').'/packages.json';
-        $packages['provider-includes']['/json/providers.json'] = hash('sha256', $json);
-        file_put_contents($packagesJsonPath, json_encode($packages));
-    }
-
-    /**
      * @param Extension $extension
      */
     protected function checkOwnerShip(Extension $extension)
     {
         if (!in_array($extension->getName(), $this->app->user()->getExtensions())) {
-            $this->app->flash('error', 'You do now mange this '.$name);
+            $this->app->flash('error', 'You do now mange this '.$extension->getName());
             $this->app->redirect('/profile');
             exit();
         }
@@ -122,6 +104,7 @@ class PackageController extends ControllerAbstract
         $user = $this->app->user();
         $user->removeExtension($name);
         $userRepository->persist($user);
+        $extensionRepository = new ExtensionRepository($redis);
         $extensionRepository->remove($extension);
 
         $jsonPathBase = $this->app->config('json_path').'/'.$name;
@@ -167,69 +150,7 @@ class PackageController extends ControllerAbstract
      */
     public function registerAction()
     {
-        if ($this->app->request()->get('confirm')) {
-            $transaction     = $this->app->request()->get('id');
-            $pathTransaction = $this->app->config('cache_dir').'/'.$transaction.'.json';
-            if (!file_exists($pathTransaction)) {
-                $this->app->redirect('/package/register');
-                exit();
-            }
-
-            $transaction = file_get_contents($pathTransaction);
-            $data = json_decode($transaction, true);
-
-            $packageName = key($data['packages']);
-
-            list($vendorName, $extensionName) = explode('/', $packageName);
-
-            $vendorDir = $this->app->config('json_path').'/'.$vendorName;
-            if (!is_dir($vendorDir)) {
-                mkdir($vendorDir);
-            }
-
-            $sha = hash('sha256', $transaction);
-
-            $jsonPathBase = $vendorDir.'/'.$extensionName;
-            $jsonPathSha  = $jsonPathBase.'$'.$sha.'.json';
-
-            file_put_contents($jsonPathSha, $transaction);
-            symlink($jsonPathSha, $jsonPathBase.'.json');
-
-            $pathTransactionLog = substr($pathTransaction, 0, -4).'log';
-            if (file_exists($pathTransactionLog)) {
-                unlink($pathTransactionLog);
-            }
-            unlink($pathTransaction);
-
-            $user = $this->app->user();
-            $user->addExtension($packageName);
-            $userRepository = $this->app->container->get('user.repository');
-            $userRepository->persist($user);
-
-            $redis = $this->app->container->get('redis.client');
-
-            $extensionRepository = new ExtensionRepository($redis);
-            $extension = new Extension();
-            $extension->unserialize($transaction);
-            $extensionRepository->persist($extension, $user);
-
-            $providersJsonPath = $this->app->config('json_path').'/'.'/providers.json';
-
-            if (file_exists($providersJsonPath)) {
-                $providers = json_decode(file_get_contents($providersJsonPath), true);
-            } else {
-                $providers = [];
-            }
-            $providers['providers'][$packageName] = $sha;
-
-            $json = json_encode($providers);
-            file_put_contents($providersJsonPath, $json);
-
-            $this->updateRootPackageJson($json);
-
-            $this->app->flash('warning', $packageName.' has been registred');
-            $this->app->redirect('/package/'.$packageName);
-        } else {
+        if (!$this->app->request()->get('confirm')) {
             $this->app
                 ->render(
                     'extension/register.html',
@@ -237,7 +158,47 @@ class PackageController extends ControllerAbstract
                         'repository' => $this->app->request()->get('repository'),
                     ]
                 );
+
+            return;
         }
+
+        $transaction     = $this->app->request()->get('id');
+        $pathTransaction = $this->app->config('cache_dir').'/'.$transaction.'.json';
+        if (!file_exists($pathTransaction)) {
+            $this->app->flash('error', 'No active registration process');
+            $this->app->redirect('/package/register');
+            exit();
+        }
+
+        $serializeExtension = file_get_contents($pathTransaction);
+        unlink($pathTransaction);
+        $extension = unserialize($serializeExtension);
+
+        $packageName = $extension->getName();
+
+        $vendorName = $extension->getVendor();
+        $extensionName = $extension->getRepositoryName();
+
+        $pathTransactionLog = $transaction.'log';
+        if (file_exists($pathTransactionLog)) {
+            unlink($pathTransactionLog);
+        }
+
+        $user = $this->app->user();
+        $user->addExtension($packageName);
+        $userRepository = $this->app->container->get('user.repository');
+        $userRepository->persist($user);
+
+        $redis = $this->app->container->get('redis.client');
+
+        $extensionRepository = new ExtensionRepository($redis);
+        $extensionRepository->persist($extension, $user);
+
+        $rest = new Rest($extension, $this->app);
+        $rest->update();
+
+        $this->app->flash('warning', $packageName.' has been registred');
+        $this->app->redirect('/package/'.$packageName);
     }
 
     /**
@@ -260,27 +221,27 @@ class PackageController extends ControllerAbstract
             $extension = new \PickleWeb\Entity\Extension();
             $extension->setFromRepository($driver, $log);
 
+            $redis = $this->app->container->get('redis.client');
+            $extensionRepository = new ExtensionRepository($redis);
+            if ($extensionRepository->find($extension->getName())) {
+                $this->app->flash('error', $extension->getName().' is already registred');
+                $this->app->redirect('/package/register?repository='.$repo);
+
+                return;
+            }
+
             $vendorName = $extension->getVendor();
             $repository = $extension->getRepositoryName();
             $extensionName = $extension->getName();
-
-            $jsonPackage = $extension->serialize();
         } catch (\RuntimeException $exception) {
             /* todo: handle bad data in a better way =) */
-            $this->app->flash('error', 'An error occurred while retrieving extension data. Please try again later.'.$exception->getMessage());
+            $this->app->flash('error', 'An error occurred while retrieving extension data. Please veriry your tag and try again later.'.$exception->getMessage());
             $this->app->redirect('/package/register?repository='.$repo);
         }
 
-        $vendorDir = $this->app->config('json_path').$vendorName;
-        if (file_exists($vendorDir.'/'.$repository.'.json')) {
-            $this->app->flash('error', $vendorName.'/'.$repository.' is already registred');
-            $this->app->redirect('/package/'.$vendorName.'/'.$repository);
-            exit();
-        }
-
-        $transaction = hash('sha256', $jsonPackage);
-
-        file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $jsonPackage);
+        $serializedExtension = serialize($extension);
+        $transaction = hash('sha256', $serializedExtension);
+        file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $serializedExtension);
         file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.log', $log->getOutput());
         $latest = $extension->getPackages()['dev-master'];
 

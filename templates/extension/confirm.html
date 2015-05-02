@@ -5,9 +5,15 @@
 {% block content %}
     {% include "partials/search.html" %}
 
+    {% if transaction %}
+        <p class="pull-right">
+            <a class="btn btn-lg btn-success" href="/package/register?confirm=1&id={{ transaction }}">Confirm registration</a>
+        </p>
+    {% endif %}
     <h1>
         Register extension: {{ extension.getName() }}
     </h1>
+
 <p><pre>{{ log }}</pre></p>
     {% if latest.getDescription() %}
         <p class="lead">

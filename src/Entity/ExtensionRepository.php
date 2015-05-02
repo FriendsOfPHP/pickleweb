@@ -54,6 +54,9 @@ class ExtensionRepository
     public function find($name)
     {
         $extensionSerialize = $this->redicClient->hget(self::EXTENSION_HASH_STORE, strtolower(trim($name)));
+        if (!$extensionSerialize) {
+            return;
+        }
         $extension = new Extension();
         $extension->unserialize($extensionSerialize);
 
