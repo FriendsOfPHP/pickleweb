@@ -67,11 +67,14 @@
 		<ul>
 			<li>key: {{ apikey }}</li>
 			<li>url: {{ hookurl }}</li>
+			<li><a href="/package/{{ extension.name}}">Hide hook URL and key</a></li>
 		</ul>
 		{% else %}
 		<a href="/package/{{ extension.name}}/getapikey">Get an API key</a>
 		{% endif %}
     </p>
+{% else %}
+		<a href="/package/{{ extension.name}}/showapikey">Show hook URL and key</a>
 {% endif %}
     <h2>Versions</h2>
 
