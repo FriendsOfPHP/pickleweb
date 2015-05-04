@@ -8,6 +8,7 @@ use PickleWeb\Auth\BitbucketProvider;
 use PickleWeb\Auth\GithubProvider;
 use PickleWeb\Auth\GoogleProvider;
 use PickleWeb\Entity\UserRepository;
+use PickleWeb\Entity\ExtensionRepository;
 use Slim\Helper\Set;
 
 require __DIR__.'/../vendor/autoload.php';
@@ -74,6 +75,14 @@ $app->container->singleton(
     'user.repository',
     function (Set $container) {
         return new UserRepository($container->get('redis.client'));
+    }
+);
+
+// User repository
+$app->container->singleton(
+    'extension.repository',
+    function (Set $container) {
+        return new ExtensionRepository($container->get('redis.client'));
     }
 );
 

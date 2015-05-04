@@ -2,7 +2,6 @@
 
 namespace PickleWeb;
 
-use PickleWeb\Entity\ExtensionRepository as ExtensionRepository;
 use PickleWeb\Entity\Extension as Extension;
 use Predis\Client;
 
@@ -78,7 +77,7 @@ class Rest
      */
     public function update()
     {
-        $extensionRepository = new ExtensionRepository($this->redis);
+        $extensionRepository = $this->app->container->get('extension.repository');
 
         $vendorDir = $this->app->config('json_path').'/'.$this->extension->getVendor();
         if (!is_dir($vendorDir)) {

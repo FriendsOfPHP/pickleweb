@@ -3,7 +3,6 @@
 namespace PickleWeb\Controller;
 
 use Composer\IO\BufferIO as BufferIO;
-use PickleWeb\Entity\ExtensionRepository as ExtensionRepository;
 use PickleWeb\Entity\Extension as Extension;
 use PickleWeb\Entity\UserRepository as UserRepository;
 use PickleWeb\Rest as Rest;
@@ -35,7 +34,7 @@ class PackageController extends ControllerAbstract
     protected function getExtension($name)
     {
         $redis = $this->app->container->get('redis.client');
-        $extensionRepository = new ExtensionRepository($redis);
+        $extensionRepository = $this->app->container->get('extension.repository');
         $extension = $extensionRepository->find($name);
 
         if (!$extension) {
@@ -104,7 +103,7 @@ class PackageController extends ControllerAbstract
         $user = $this->app->user();
         $user->removeExtension($name);
         $userRepository->persist($user);
-        $extensionRepository = new ExtensionRepository($redis);
+        $extensionRepository = $this->app->container->get('extension.repository');
         $extensionRepository->remove($extension);
 
         $jsonPathBase = $this->app->config('json_path').'/'.$name;
@@ -191,7 +190,7 @@ class PackageController extends ControllerAbstract
 
         $redis = $this->app->container->get('redis.client');
 
-        $extensionRepository = new ExtensionRepository($redis);
+        $extensionRepository = $this->app->container->get('extension.repository');
         $extensionRepository->persist($extension, $user);
 
         $rest = new Rest($extension, $this->app);
@@ -222,7 +221,7 @@ class PackageController extends ControllerAbstract
             $extension->setFromRepository($driver, $log);
 
             $redis = $this->app->container->get('redis.client');
-            $extensionRepository = new ExtensionRepository($redis);
+            $extensionRepository = $this->app->container->get('extension.repository');
             if ($extensionRepository->find($extension->getName())) {
                 $this->app->flash('error', $extension->getName().' is already registred');
                 $this->app->redirect('/package/register?repository='.$repo);

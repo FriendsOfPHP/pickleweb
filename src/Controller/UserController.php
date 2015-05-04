@@ -2,8 +2,6 @@
 
 namespace PickleWeb\Controller;
 
-use PickleWeb\Entity\ExtensionRepository as ExtensionRepository;
-
 /**
  * Class UserController.
  */
@@ -25,7 +23,7 @@ class UserController extends ControllerAbstract
         $user = $this->app->user();
         $extensions = $user->getExtensions();
         $redis = $this->app->container->get('redis.client');
-        $extensionRepository = new ExtensionRepository($redis);
+        $extensionRepository = $this->app->container->get('extension.repository');
         $shortList = [];
         foreach ($extensions as $extensionName) {
             $extension = $extensionRepository->find($extensionName);
