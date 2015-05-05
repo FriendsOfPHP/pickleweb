@@ -49,7 +49,7 @@ class Application extends Slim
         if (!isset($this->innerCache['user'])) {
             /* @var $userRepository UserRepository */
             $userRepository = $this->container->get('user.repository');
-            $user           = $userRepository->find($_SESSION['user']);
+            $user = $userRepository->find($_SESSION['user']);
 
             if (is_null($user)) {
                 return;
@@ -211,7 +211,7 @@ class Application extends Slim
      */
     public function jsonResponse($body, $code)
     {
-        $response                 = $this->response();
+        $response = $this->response();
         $response['Content-Type'] = 'application/json';
         $response->status($code);
         $response->body(json_encode($body));

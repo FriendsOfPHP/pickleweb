@@ -4,6 +4,7 @@ namespace PickleWeb\Controller;
 
 use Composer\IO\BufferIO as BufferIO;
 use PickleWeb\Entity\Extension as Extension;
+use PickleWeb\Entity\Package as Package;
 use PickleWeb\Entity\UserRepository as UserRepository;
 use PickleWeb\Rest as Rest;
 
@@ -161,7 +162,7 @@ class PackageController extends ControllerAbstract
             return;
         }
 
-        $transaction     = $this->app->request()->get('id');
+        $transaction = $this->app->request()->get('id');
         $pathTransaction = $this->app->config('cache_dir').'/'.$transaction.'.json';
         if (!file_exists($pathTransaction)) {
             $this->app->flash('error', 'No active registration process');
@@ -171,10 +172,10 @@ class PackageController extends ControllerAbstract
 
         $serializeExtension = file_get_contents($pathTransaction);
         unlink($pathTransaction);
-        $extension = unserialize($serializeExtension);
+        $extension = new Extension();
+        $extension->unserialize($serializeExtension);
 
         $packageName = $extension->getName();
-
         $vendorName = $extension->getVendor();
         $extensionName = $extension->getRepositoryName();
 
@@ -191,13 +192,14 @@ class PackageController extends ControllerAbstract
         $redis = $this->app->container->get('redis.client');
 
         $extensionRepository = $this->app->container->get('extension.repository');
+
         $extensionRepository->persist($extension, $user);
 
         $rest = new Rest($extension, $this->app);
         $rest->update();
 
-        $this->app->flash('warning', $packageName.' has been registred');
-        $this->app->redirect('/package/'.$packageName);
+        //$this->app->flash('warning', $packageName.' has been registred');
+        //$this->app->redirect('/package/'.$packageName);
     }
 
     /**
@@ -206,7 +208,7 @@ class PackageController extends ControllerAbstract
     public function registerPackageAction()
     {
         $token = $_SESSION['github.token'];
-        $repo  = $this->app->request()->post('repository');
+        $repo = $this->app->request()->post('repository');
         $log = new BufferIO();
 
         try {
@@ -238,7 +240,7 @@ class PackageController extends ControllerAbstract
             $this->app->redirect('/package/register?repository='.$repo);
         }
 
-        $serializedExtension = serialize($extension);
+        $serializedExtension = $extension->serialize();
         $transaction = hash('sha256', $serializedExtension);
         file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $serializedExtension);
         file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.log', $log->getOutput());
@@ -248,11 +250,11 @@ class PackageController extends ControllerAbstract
                 ->render(
                     'extension/confirm.html',
                     [
-                        'log'         => $log->getOutput(),
+                        'log' => $log->getOutput(),
                         'transaction' => $transaction,
-                        'latest'      => $latest,
-                        'tags'        => $extension->getPackages(),
-                        'vcs'         => $repo,
+                        'latest' => $latest,
+                        'tags' => $extension->getPackages(),
+                        'vcs' => $repo,
                     ]
                 );
     }
@@ -279,12 +281,12 @@ class PackageController extends ControllerAbstract
         $this->app->render(
             'extension/info.html',
             [
-                'name'      => $name,
+                'name' => $name,
                 'extension' => $extension->getPackages('dev-master'),
-                'versions'  => $extension->getPackages(),
-                'apikey'    => $extension->getApiKey($this->app),
-                'showkey'   => $this->showKey,
-                'hookurl'   => $hookUrl,
+                'versions' => $extension->getPackages(),
+                'apikey' => $extension->getApiKey($this->app),
+                'showkey' => $this->showKey,
+                'hookurl' => $hookUrl,
             ]
         );
     }

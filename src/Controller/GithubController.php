@@ -104,7 +104,7 @@ class GithubController extends ControllerAbstract
         $tag = $payload->ref;
         $repository = $payload->repository->git_url;
 
-        $ownerId    = $payload->repository->owner->id;
+        $ownerId = $payload->repository->owner->id;
         $userRepository = $this->app->container->get('user.repository');
         $this->user = $userRepository->findByProviderId('github', $ownerId);
         if (!$this->user) {

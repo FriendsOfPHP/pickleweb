@@ -33,8 +33,8 @@ class GoogleProvider implements ProviderInterface
     public function __construct(Provider\Google $oauth2Provider, Client $redisClient, Browser $httpClient)
     {
         $this->oauth2Provider = $oauth2Provider;
-        $this->redisClient    = $redisClient;
-        $this->httpClient     = $httpClient;
+        $this->redisClient = $redisClient;
+        $this->httpClient = $httpClient;
     }
 
     /**
@@ -44,9 +44,9 @@ class GoogleProvider implements ProviderInterface
      */
     public function handleAuth(Application $app)
     {
-        $code         = $app->request()->get('code');
-        $state        = $app->request()->get('state');
-        $key          = sprintf('google.oauth2state.%s', session_id());
+        $code = $app->request()->get('code');
+        $state = $app->request()->get('state');
+        $key = sprintf('google.oauth2state.%s', session_id());
         $sessionState = $this->redisClient->get($key);
 
         if (is_null($code)) {
@@ -89,12 +89,12 @@ class GoogleProvider implements ProviderInterface
 
         return new ProviderMetadata(
             [
-                'uid'            => $data['id'],
-                'nickName'       => $data['given_name'],
-                'realName'       => $data['name'],
-                'email'          => $data['email'],
+                'uid' => $data['id'],
+                'nickName' => $data['given_name'],
+                'realName' => $data['name'],
+                'email' => $data['email'],
                 'profilePicture' => $data['picture'],
-                'homepage'       => $data['link'],
+                'homepage' => $data['link'],
             ]
         );
     }

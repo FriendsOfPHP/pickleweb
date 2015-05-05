@@ -33,8 +33,8 @@ class GithubProvider implements ProviderInterface
     public function __construct(Provider\Github $oauth2Provider, Client $redisClient, Browser $httpClient)
     {
         $this->oauth2Provider = $oauth2Provider;
-        $this->redisClient    = $redisClient;
-        $this->httpClient     = $httpClient;
+        $this->redisClient = $redisClient;
+        $this->httpClient = $httpClient;
     }
 
     /**
@@ -44,9 +44,9 @@ class GithubProvider implements ProviderInterface
      */
     public function handleAuth(Application $app)
     {
-        $code         = $app->request()->get('code');
-        $state        = $app->request()->get('state');
-        $key          = sprintf('github.oauth2state.%s', session_id());
+        $code = $app->request()->get('code');
+        $state = $app->request()->get('state');
+        $key = sprintf('github.oauth2state.%s', session_id());
         $sessionState = $this->redisClient->get($key);
 
         if (is_null($code)) {
@@ -85,7 +85,7 @@ class GithubProvider implements ProviderInterface
 
             // Fetch user data
             $response = $this->httpClient->get('https://api.github.com/user', ['Authorization' => sprintf('token %s', $token), 'User-Agent' => 'Pickleweb']);
-            $data     = json_decode($response->getContent(), true);
+            $data = json_decode($response->getContent(), true);
 
             if (empty($data) || json_last_error() !== JSON_ERROR_NONE) {
                 throw new \RuntimeException('Json error');
@@ -94,7 +94,7 @@ class GithubProvider implements ProviderInterface
             // Fetch emails if needed
             if (empty($data['email'])) {
                 $response = $this->httpClient->get('https://api.github.com/user/emails', ['Authorization' => sprintf('token %s', $token), 'User-Agent' => 'Pickleweb']);
-                $emails   = json_decode($response->getContent(), true);
+                $emails = json_decode($response->getContent(), true);
 
                 if (empty($emails) || json_last_error() !== JSON_ERROR_NONE) {
                     throw new \RuntimeException('Json error');
@@ -114,13 +114,13 @@ class GithubProvider implements ProviderInterface
 
             return new ProviderMetadata(
                 [
-                    'uid'            => $data['id'],
-                    'nickName'       => $data['login'],
-                    'realName'       => $data['name'],
-                    'email'          => $data['email'],
+                    'uid' => $data['id'],
+                    'nickName' => $data['login'],
+                    'realName' => $data['name'],
+                    'email' => $data['email'],
                     'profilePicture' => $data['avatar_url'],
-                    'homepage'       => $data['html_url'],
-                    'location'       => $data['location'],
+                    'homepage' => $data['html_url'],
+                    'location' => $data['location'],
                 ]
             );
         } catch (\Exception $e) {

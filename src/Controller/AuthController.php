@@ -48,7 +48,7 @@ class AuthController extends ControllerAbstract
         /* @var $authorizationProvider ProviderInterface */
         $authorizationProvider = $this->app->container->get($providerKey);
 
-        $token                          = $authorizationProvider->handleAuth($this->app);
+        $token = $authorizationProvider->handleAuth($this->app);
         $_SESSION[$provider.'.token'] = $token;
 
         $providerMetadata = $authorizationProvider->getUserDetails($token);
@@ -61,7 +61,7 @@ class AuthController extends ControllerAbstract
         // Fetch or persist user from repository
         /* @var $userRepository UserRepository */
         $userRepository = $this->app->container->get('user.repository');
-        $user           = $userRepository->find($providerMetadata->getEmail());
+        $user = $userRepository->find($providerMetadata->getEmail());
 
         if (is_null($user)) {
             $user = $userRepository->findByProviderId($provider, $providerMetadata->getUid());

@@ -39,11 +39,11 @@ class Rest
     protected function updateRootPackageJson($sha)
     {
         $packages = [
-            'packages'          => [],
-            'notify'            => '/downloads/%package%',
-            'notify-batch'      => '/downloads/',
-            'providers-url'     => '/p/%package%$%hash%.json',
-            'search'            => '/search.json?q=%query%',
+            'packages' => [],
+            'notify' => '/downloads/%package%',
+            'notify-batch' => '/downloads/',
+            'providers-url' => '/p/%package%$%hash%.json',
+            'search' => '/search.json?q=%query%',
             'provider-includes' => [],
         ];
 

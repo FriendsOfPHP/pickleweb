@@ -34,8 +34,8 @@ class BitbucketProvider implements ProviderInterface
     public function __construct(Bitbucket $oauthProvider, Client $redisClient, Browser $httpClient)
     {
         $this->oauthProvider = $oauthProvider;
-        $this->redisClient   = $redisClient;
-        $this->httpClient    = $httpClient;
+        $this->redisClient = $redisClient;
+        $this->httpClient = $httpClient;
     }
 
     /**
@@ -45,9 +45,9 @@ class BitbucketProvider implements ProviderInterface
      */
     public function handleAuth(Application $app)
     {
-        $oauthToken          = $app->request()->get('oauth_token');
-        $oauthVerifier       = $app->request()->get('oauth_verifier');
-        $key                 = sprintf('bitbucket.oauthCredential.%s', session_id());
+        $oauthToken = $app->request()->get('oauth_token');
+        $oauthVerifier = $app->request()->get('oauth_verifier');
+        $key = sprintf('bitbucket.oauthCredential.%s', session_id());
         $temporaryCredential = $this->redisClient->get($key);
 
         if (!empty($temporaryCredential)) {
@@ -89,20 +89,20 @@ class BitbucketProvider implements ProviderInterface
             $tokenObject->setIdentifier($identifier);
             $tokenObject->setSecret($secret);
 
-            $url      = 'https://api.bitbucket.org/2.0/user';
-            $headers  = $this->oauthProvider->getHeaders($tokenObject, 'GET', $url);
+            $url = 'https://api.bitbucket.org/2.0/user';
+            $headers = $this->oauthProvider->getHeaders($tokenObject, 'GET', $url);
             $response = $this->httpClient->get($url, $headers);
-            $data     = json_decode($response->getContent(), true);
+            $data = json_decode($response->getContent(), true);
 
             if (empty($data) || json_last_error() !== JSON_ERROR_NONE) {
                 throw new \RuntimeException('Json error');
             }
 
             // Fetch email
-            $url      = sprintf('https://api.bitbucket.org/1.0/users/%s/emails', $data['username']);
-            $headers  = $this->oauthProvider->getHeaders($tokenObject, 'GET', $url);
+            $url = sprintf('https://api.bitbucket.org/1.0/users/%s/emails', $data['username']);
+            $headers = $this->oauthProvider->getHeaders($tokenObject, 'GET', $url);
             $response = $this->httpClient->get($url, $headers);
-            $emails   = json_decode($response->getContent(), true);
+            $emails = json_decode($response->getContent(), true);
 
             if (empty($emails) || json_last_error() !== JSON_ERROR_NONE) {
                 throw new \RuntimeException('Json error');
@@ -119,13 +119,13 @@ class BitbucketProvider implements ProviderInterface
 
             return new ProviderMetadata(
                 [
-                    'uid'            => $data['uuid'],
-                    'nickName'       => $data['username'],
-                    'realName'       => $data['display_name'],
-                    'email'          => $data['email'],
+                    'uid' => $data['uuid'],
+                    'nickName' => $data['username'],
+                    'realName' => $data['display_name'],
+                    'email' => $data['email'],
                     'profilePicture' => $data['links']['avatar']['href'],
-                    'homepage'       => $data['links']['html']['href'],
-                    'location'       => $data['location'],
+                    'homepage' => $data['links']['html']['href'],
+                    'location' => $data['location'],
                 ]
             );
         } catch (\Exception $e) {

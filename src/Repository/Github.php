@@ -70,7 +70,7 @@ class Github
     public function __construct($url, $token = '', $cacheDir = false, $bufferIO = null)
     {
         $this->url = $url;
-        $this->io  = new NullIO();
+        $this->io = new NullIO();
         $this->log = $bufferIO ? $bufferIO : new BufferIO();
 
         $config = Factory::createConfig();
@@ -87,7 +87,7 @@ class Github
         $this->io->loadConfiguration($config);
 
         $this->repository = new Repository\VcsRepository(['url' => $url, 'no-api' => false], $this->io, $config);
-        $driver           = $this->vcsDriver = $this->repository->getDriver();
+        $driver = $this->vcsDriver = $this->repository->getDriver();
         if (!$driver) {
             throw new \Exception('No driver found for <'.$url.'>');
         }
@@ -98,7 +98,7 @@ class Github
         $this->client = $client;
 
         preg_match('#^(?:(?:https?|git)://([^/]+)/|git@([^:]+):)([^/]+)/(.+?)(?:\.git|/)?$#', $url, $match);
-        $this->vendorName     = $match[3];
+        $this->vendorName = $match[3];
         $this->repositoryName = $match[4];
     }
 
@@ -158,11 +158,11 @@ class Github
         foreach ($tags as $version => $id) {
             try {
                 $normalizedVersion = VersionParser::Normalize($version);
-                $normalizedTags[]  = [
+                $normalizedTags[] = [
                     'version' => $normalizedVersion,
-                    'tag'     => $version,
-                    'id'      => $id,
-                    'source'  => $this->driver->getSource($id),
+                    'tag' => $version,
+                    'id' => $id,
+                    'source' => $this->driver->getSource($id),
                 ];
             } catch (\Exception $e) {
                 continue;
@@ -191,7 +191,7 @@ class Github
         }
 
         $composerInfo['source'] = $this->driver->getSource($identifier);
-        $composerInfo['dist']   = $this->driver->getDist($identifier);
+        $composerInfo['dist'] = $this->driver->getDist($identifier);
 
         return $composerInfo;
     }
@@ -207,7 +207,7 @@ class Github
             'package.xml',
             'package2.xml',
         ];
-        $found           = false;
+        $found = false;
         foreach ($packageXmlNames as $path) {
             try {
                 $contents = $this->client->api('repo')->contents()->download($this->vendorName, $this->repositoryName, $path, $identifier);
@@ -228,16 +228,16 @@ class Github
         $packagexmlPath = $this->cacheDir.DIRECTORY_SEPARATOR.'package.xml';
         file_put_contents($packagexmlPath, $contents);
 
-        $loader  = new \Pickle\Package\XML\Loader(new Package\Loader());
+        $loader = new \Pickle\Package\XML\Loader(new Package\Loader());
         $package = $loader->load($packagexmlPath);
         $package->setRootDir($this->cacheDir);
         $dumper = new \Pickle\Package\Dumper();
-        $xml    = simplexml_load_file($packagexmlPath);
+        $xml = simplexml_load_file($packagexmlPath);
 
         $date = $xml->date;
         $time = $xml->time;
 
-        $info         = $dumper->dump($package);
+        $info = $dumper->dump($package);
         $info['name'] = $this->vendorName.'/'.$this->repositoryName;
         $info['type'] = 'extension';
         $info['time'] = date('Y-m-d H:i', strtotime($date.' '.$time));
@@ -250,8 +250,8 @@ class Github
     protected function getRepositoryNameAndVendorName($url)
     {
         preg_match('#^(?:(?:https?|git)://([^/]+)/|git@([^:]+):)([^/]+)/(.+?)(?:\.git|/)?$#', $url, $match);
-        $owner           = $match[3];
-        $repository      = $match[4];
+        $owner = $match[3];
+        $repository = $match[4];
 
         return [
             'vendor' => $owner,
