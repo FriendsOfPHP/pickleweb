@@ -190,16 +190,14 @@ class PackageController extends ControllerAbstract
         $userRepository->persist($user);
 
         $redis = $this->app->container->get('redis.client');
-
         $extensionRepository = $this->app->container->get('extension.repository');
-
         $extensionRepository->persist($extension, $user);
 
         $rest = new Rest($extension, $this->app);
         $rest->update();
 
-        //$this->app->flash('warning', $packageName.' has been registred');
-        //$this->app->redirect('/package/'.$packageName);
+        $this->app->flash('warning', $packageName.' has been registred');
+        $this->app->redirect('/package/'.$packageName);
     }
 
     /**

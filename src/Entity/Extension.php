@@ -172,6 +172,9 @@ class Extension
             $this->data[$version] = $tmpPackage;
         }
         $this->name = $packageName;
+        list($vendorName, $repositoryName) = explode('/', $packageName);
+        $this->repositoryName = $repositoryName;
+        $this->vendorName     = $vendorName;
     }
 
     /**

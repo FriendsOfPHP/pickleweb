@@ -83,16 +83,18 @@ class Rest
         if (!is_dir($vendorDir)) {
             mkdir($vendorDir);
         }
+
         $jsonPackage = $this->extension->serialize();
         $repositoryName = $this->extension->getRepositoryName();
+
         $this->sha = hash('sha256', $jsonPackage);
 
         $jsonPathSha = $vendorDir.'/'.$repositoryName.'$'.$this->sha.'.json';
+        var_dump($jsonPathSha);
         file_put_contents($jsonPathSha, $jsonPackage);
         $linkPath = $vendorDir.'/'.$repositoryName.'.json';
         if (file_exists($linkPath)) {
             $targetPath = readlink($linkPath);
-            unlink($targetPath);
             unlink($linkPath);
         }
         symlink($jsonPathSha, $vendorDir.'/'.$repositoryName.'.json');
