@@ -90,8 +90,8 @@ class Rest
         $this->sha = hash('sha256', $jsonPackage);
 
         $jsonPathSha = $vendorDir.'/'.$repositoryName.'$'.$this->sha.'.json';
-        var_dump($jsonPathSha);
         file_put_contents($jsonPathSha, $jsonPackage);
+
         $linkPath = $vendorDir.'/'.$repositoryName.'.json';
         if (file_exists($linkPath)) {
             $targetPath = readlink($linkPath);
