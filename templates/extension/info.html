@@ -94,7 +94,7 @@
         {% endfor %}
         </tbody>
     </table>
-
+<a class="btn btn-danger" href="/package/{{ extension.name}}/remove">Remove {{ extension.name }}</a>
     {% if transaction %}
         <p class="pull-right">
             <a class="btn btn-success" href="/package/register?confirm=1&id={{ transaction }}">Confirm registration</a>
