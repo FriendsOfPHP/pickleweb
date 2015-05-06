@@ -113,6 +113,16 @@ class Github
         return $this->repositoryMeta['owner']['id'];
     }
 
+    public function getStars()
+    {
+        return $this->repositoryMeta['stargazers_count'];
+    }
+
+    public function getWatchers()
+    {
+        return $this->repositoryMeta['watchers_count'];
+    }
+
     /**
      * @return array
      */

@@ -34,7 +34,6 @@ class PackageController extends ControllerAbstract
      */
     protected function getExtension($name)
     {
-        $redis = $this->app->container->get('redis.client');
         $extensionRepository = $this->app->container->get('extension.repository');
         $extension = $extensionRepository->find($name);
 
@@ -164,6 +163,7 @@ class PackageController extends ControllerAbstract
 
         $transaction = $this->app->request()->get('id');
         $pathTransaction = $this->app->config('cache_dir').'/'.$transaction.'.json';
+        $pathMetaTransaction = $this->app->config('cache_dir').'/'.$transaction.'_meta.json';
         if (!file_exists($pathTransaction)) {
             $this->app->flash('error', 'No active registration process');
             $this->app->redirect('/package/register');
@@ -174,6 +174,13 @@ class PackageController extends ControllerAbstract
         unlink($pathTransaction);
         $extension = new Extension();
         $extension->unserialize($serializeExtension);
+
+        $serializeExtensionMeta = file_get_contents($pathMetaTransaction);
+        unlink($pathMetaTransaction);
+
+        $extensionMeta = json_decode($serializeExtensionMeta, true);
+        $extension->setWatchers($extensionMeta['watchers']);
+        $extension->setStars($extensionMeta['stars']);
 
         $packageName = $extension->getName();
         $vendorName = $extension->getVendor();
@@ -228,10 +235,15 @@ class PackageController extends ControllerAbstract
 
                 return;
             }
-
+            $extension->setStars($driver->getStars());
+            $extension->setWatchers($driver->getWatchers());
             $vendorName = $extension->getVendor();
             $repository = $extension->getRepositoryName();
             $extensionName = $extension->getName();
+            $extensionMeta = [
+                'watchers' => $extension->getStars(),
+                'stars' => $extension->getWatchers(),
+            ];
         } catch (\RuntimeException $exception) {
             /* todo: handle bad data in a better way =) */
             $this->app->flash('error', 'An error occurred while retrieving extension data. Please veriry your tag and try again later.'.$exception->getMessage());
@@ -241,7 +253,10 @@ class PackageController extends ControllerAbstract
         $serializedExtension = $extension->serialize();
         $transaction = hash('sha256', $serializedExtension);
         file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $serializedExtension);
-        file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.log', $log->getOutput());
+
+        $serializedMeta = json_encode($extensionMeta);
+        file_put_contents($this->app->config('cache_dir').'/'.$transaction.'_meta.json', $serializedMeta);
+
         $latest = $extension->getPackages()['dev-master'];
 
         $this->app
@@ -281,6 +296,7 @@ class PackageController extends ControllerAbstract
             [
                 'name' => $name,
                 'extension' => $extension->getPackages('dev-master'),
+                'meta' => ['watchers' => $extension->getWatchers(), 'stars' => $extension->getStars()],
                 'versions' => $extension->getPackages(),
                 'apikey' => $extension->getApiKey($this->app),
                 'showkey' => $this->showKey,

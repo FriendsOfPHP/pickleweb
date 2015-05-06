@@ -11,6 +11,7 @@ class ExtensionRepository
 {
     const EXTENSION_HASH_STORE = 'extensions';
     const EXTENSION2USER_HASH_STORE = 'extension2user';
+    const EXTENSIONMETA_HASH_STORE = 'extensionmeta';
 
     /**
      * @var Client
@@ -33,6 +34,13 @@ class ExtensionRepository
     {
         $this->redisClient->hset(self::EXTENSION_HASH_STORE, $extension->getName(), $extension->serialize());
         $this->redisClient->hset(self::EXTENSION2USER_HASH_STORE, $extension->getName(), $user->getName());
+        $meta = [
+                'watchers' => $extension->getStars(),
+                'stars' => $extension->getWatchers(),
+            ];
+        $this->redisClient->hset(self::EXTENSIONMETA_HASH_STORE, $extension->getName(),
+            json_encode($meta)
+        );
     }
 
     /**
@@ -43,6 +51,7 @@ class ExtensionRepository
         $id = $extension->getName();
         $this->redisClient->hdel(self::EXTENSION2USER_HASH_STORE, $id);
         $this->redisClient->hdel(self::EXTENSION_HASH_STORE, $id);
+        $this->redisClient->hdel(self::EXTENSIONMETA_HASH_STORE, $id);
     }
 
     /**
@@ -58,6 +67,9 @@ class ExtensionRepository
         }
         $extension = new Extension();
         $extension->unserialize($extensionSerialize);
+        $meta = json_decode($this->redisClient->hget(self::EXTENSIONMETA_HASH_STORE, $extension->getName()), true);
+        $extension->setWatchers($meta['watchers']);
+        $extension->setStars($meta['stars']);
 
         return empty($extension) ? null : $extension;
     }

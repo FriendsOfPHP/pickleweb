@@ -33,6 +33,16 @@ class Extension
     protected $repositoryUrl;
 
     /**
+     * @var int
+     */
+    protected $starsCount;
+
+    /**
+     * @var int
+     */
+    protected $watchersCount;
+
+    /**
      * @param Repository\Vcs\GitHubDriver $driver
      * @param BufferIO                    $io
      *
@@ -59,6 +69,8 @@ class Extension
         list($vendorName, $repository) = explode('/', $packageName);
         $this->vendorName = $vendorName;
         $this->repositoryName = $repository;
+        $this->starCount = $driver->getStars();
+        $this->watcherCount = $driver->getWatchers();
 
         if (empty($vendorName) || empty($repository)) {
             throw new \RuntimeException($info['name'].' is not a valid name. vendor/repository required as name');
@@ -115,6 +127,26 @@ class Extension
     public function getVendor()
     {
         return $this->vendorName;
+    }
+
+    public function getStars()
+    {
+        return $this->starsCount;
+    }
+
+    public function setStars($count)
+    {
+        $this->starsCount = $count > 0 ? $count : 0;
+    }
+
+    public function getWatchers()
+    {
+        return $this->watchersCount;
+    }
+
+    public function setWatchers($count)
+    {
+        $this->watchersCount = $count > 0 ? $count : 0;
     }
 
     /**
@@ -174,7 +206,7 @@ class Extension
         $this->name = $packageName;
         list($vendorName, $repositoryName) = explode('/', $packageName);
         $this->repositoryName = $repositoryName;
-        $this->vendorName     = $vendorName;
+        $this->vendorName = $vendorName;
     }
 
     /**
