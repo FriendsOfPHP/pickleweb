@@ -134,6 +134,13 @@ class Extension
         return $this->starsCount;
     }
 
+    public function getDescription()
+    {
+        reset($this->data);
+
+        return current($this->data)->getDescription();
+    }
+
     public function setStars($count)
     {
         $this->starsCount = $count > 0 ? $count : 0;

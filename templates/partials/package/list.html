@@ -4,6 +4,8 @@
             <span class="badge"><a href="/package/{{ package.name }}"><i class="fa fa-arrow-right"></i></a></span>
             <h3><a href="/package/{{ package.name }}">{{ package.name }}</a></h3>
             <p>{{ package.description }}</p>
+			<span class="label label-primary">&#9733; {{ package.stars }}</span>
+			<span class="label label-primary">Watchers {{ package.watchers }}</span>
         </li>
     {% endfor %}
 </ul>
