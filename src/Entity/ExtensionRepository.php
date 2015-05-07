@@ -73,4 +73,27 @@ class ExtensionRepository
 
         return empty($extension) ? null : $extension;
     }
+
+    /**
+     * @return array|null
+     */
+    public function getAll()
+    {
+        $extensionsSerialize = $this->redisClient->hgetall(self::EXTENSION_HASH_STORE);
+        if (!$extensionsSerialize) {
+            return;
+        }
+
+        $result = [];
+        foreach ($extensionsSerialize as $serialized) {
+            $extension = new Extension();
+            $extension->unserialize($serialized);
+            $meta = json_decode($this->redisClient->hget(self::EXTENSIONMETA_HASH_STORE, $extension->getName()), true);
+            $extension->setWatchers($meta['watchers']);
+            $extension->setStars($meta['stars']);
+            $result[$extension->getName()] = $extension;
+        }
+
+        return $result;
+    }
 }
