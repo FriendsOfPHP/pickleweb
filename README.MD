@@ -44,6 +44,9 @@ You are now ready to [run](#running) the Pickle Web application and use authenti
 php -S 0.0.0.0:8080 -t web
 ```
 
+On Windows this might under circumstances require administrative privileges to work properly. In any case, the credentials under which PHP is running need to allow symlinking.
+
+
 ### Docker
 
 First, install [`docker`](https://docs.docker.com/installation/) (or [`boot2docker`](http://boot2docker.io/)) and
