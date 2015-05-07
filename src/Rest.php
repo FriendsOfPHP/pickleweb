@@ -102,3 +102,5 @@ class Rest
         $this->updateRootPackageJson($shaProviders);
     }
 }
+
+/* vim: set tabstop=4 shiftwidth=4 expandtab: fdm=marker */

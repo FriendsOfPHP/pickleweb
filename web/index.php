@@ -193,3 +193,5 @@ $app->post('/github/hooks/:vendor/:repository', 'PickleWeb\Controller\GithubCont
  * Run application
  */
 $app->run();
+
+/* vim: set tabstop=4 shiftwidth=4 expandtab: fdm=marker */

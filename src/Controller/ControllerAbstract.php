@@ -22,3 +22,5 @@ abstract class ControllerAbstract
         $this->app = $app;
     }
 }
+
+/* vim: set tabstop=4 shiftwidth=4 expandtab: fdm=marker */

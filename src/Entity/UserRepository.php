@@ -113,3 +113,5 @@ class UserRepository
         return empty($email) ? null : $this->find($email);
     }
 }
+
+/* vim: set tabstop=4 shiftwidth=4 expandtab: fdm=marker */

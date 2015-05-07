@@ -310,3 +310,5 @@ class User implements \Serializable
         }
     }
 }
+
+/* vim: set tabstop=4 shiftwidth=4 expandtab: fdm=marker */

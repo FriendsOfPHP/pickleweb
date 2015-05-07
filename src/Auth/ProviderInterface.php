@@ -24,3 +24,5 @@ interface ProviderInterface
      */
     public function getUserDetails($token);
 }
+
+/* vim: set tabstop=4 shiftwidth=4 expandtab: fdm=marker */
