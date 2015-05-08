@@ -227,7 +227,6 @@ class Extension
             $key .= $app->config('apiSecret');
             $key = hash('sha256', $key);
             $res = $redis->hset('extension_apikey', $this->getName(), $key);
-            echo 'stored';
         }
 
         return $key;
