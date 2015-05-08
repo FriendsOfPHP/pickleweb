@@ -249,7 +249,6 @@ class PackageController extends ControllerAbstract
             $this->app->flash('error', 'An error occurred while retrieving extension data. Please veriry your tag and try again later.'.$exception->getMessage());
             $this->app->redirect('/package/register?repository='.$repo);
         }
-
         $serializedExtension = $extension->serialize();
         $transaction = hash('sha256', $serializedExtension);
         file_put_contents($this->app->config('cache_dir').'/'.$transaction.'.json', $serializedExtension);

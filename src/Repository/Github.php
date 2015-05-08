@@ -164,20 +164,18 @@ class Github
                     return $res;
         });
 
+        $versionParser = new VersionParser();
         $normalizedTags = [];
         foreach ($tags as $version => $id) {
-            try {
-                $versionParser = new VersionParser();
-                $normalizedVersion = $versionParser->normalize($tag);
-                $normalizedTags[] = [
+            $normalizedVersion = $versionParser->normalize($version);
+            $tmp = [
                     'version' => $normalizedVersion,
                     'tag' => $version,
                     'id' => $id,
                     'source' => $this->driver->getSource($id),
                 ];
-            } catch (\Exception $e) {
-                continue;
-            }
+
+            $normalizedTags[] = $tmp;
         }
 
         return $normalizedTags;

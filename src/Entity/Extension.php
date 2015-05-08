@@ -85,7 +85,6 @@ class Extension
         $this->data['dev-master'] = $tmpPackage;
 
         $tags = $driver->getReleaseTags();
-
         foreach ($tags as $tag) {
             $io->write('package: looking for composer.json for tag '.$tag['version'].'/'.$tag['tag']);
             try {
