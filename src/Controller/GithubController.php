@@ -87,6 +87,18 @@ class GithubController extends ControllerAbstract
 
             return;
         }
+        $hubEvent = $this->app->request()->headers()->get('X-GitHub-Event');
+        if (!($hubEvent == 'create' || $hubEvent == 'delete')) {
+            $this->app->jsonResponse(
+            [
+                'status' => 'error',
+                'message' => 'operation not supported',
+            ],
+            400
+            );
+
+            return;
+        }
 
         if (!($payload->ref_type == 'tag' || $payload->ref_type == 'release')) {
             $this->app->jsonResponse(
@@ -172,7 +184,7 @@ class GithubController extends ControllerAbstract
         if (!$json) {
             $this->app->jsonResponse([
                 'status' => 'error',
-                'message' => $extensionName.'-'.$tag.' error on import:'.$e->getMessage(),
+                'message' => $extensionName.'-'.$tag.' error on import: fail to store',
             ],
             500);
 

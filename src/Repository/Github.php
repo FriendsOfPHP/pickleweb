@@ -167,7 +167,12 @@ class Github
         $versionParser = new VersionParser();
         $normalizedTags = [];
         foreach ($tags as $version => $id) {
-            $normalizedVersion = $versionParser->normalize($version);
+            try {
+                $normalizedVersion = $versionParser->normalize($version);
+            } catch (\Exception $e) {
+                /* We just continue, repo can have any tags, we just care about valid semver one */
+                continue;
+            }
             $tmp = [
                     'version' => $normalizedVersion,
                     'tag' => $version,
