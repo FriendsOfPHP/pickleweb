@@ -102,7 +102,7 @@ class Github
         $this->repositoryName = $match[4];
     }
 
-    protected function getMeta()
+    public function getMeta()
     {
         if (!$this->repositoryMeta) {
             $client = new \Github\Client();

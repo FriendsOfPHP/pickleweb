@@ -179,6 +179,10 @@ class GithubController extends ControllerAbstract
         $vendorName = $extension->getVendor();
         $repositoryName = $extension->getRepositoryName();
 
+        /* only to set the meta, may be cleaner to do it in there */
+        $extension->getStars();
+        $extension->getWatchers();
+
         $path = $this->app->config('json_path').'/'.$vendorName.'/'.$repositoryName.'.json';
         $json = $extension->serialize();
         if (!$json) {
