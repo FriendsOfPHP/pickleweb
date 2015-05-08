@@ -92,7 +92,7 @@ class GithubController extends ControllerAbstract
             $this->app->jsonResponse(
             [
                 'status' => 'error',
-                'message' => 'Only tag/release hooks are supported',
+                'message' => 'Only tag/release hooks are supported', 1,
             ],
             200
             );
@@ -113,11 +113,25 @@ class GithubController extends ControllerAbstract
                 'status' => 'error',
                 'message' => 'Owner Id not found',
             ],
-            200
+            401
             );
+
+            return;
         }
         $versionParser = new VersionParser();
-        $normalizedVersion = $versionParser->normalize($tag);
+        try {
+            $normalizedVersion = $versionParser->normalize($tag);
+        } catch (\Exception $e) {
+            $this->app->jsonResponse(
+            [
+                'status' => 'error',
+                'message' => 'Invalid tag <'.$tag.'>',
+            ],
+            400
+            );
+
+            return;
+        }
         if (!$normalizedVersion) {
             $this->app->jsonResponse(
             [
