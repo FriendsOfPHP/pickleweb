@@ -186,6 +186,10 @@ $app->getSecured('/profile/remove', 'PickleWeb\Controller\UserController:removeC
 $app->postSecured('/profile/remove', 'PickleWeb\Controller\UserController:removeAction');
 $app->get('/account(/:name)', 'PickleWeb\Controller\UserController:viewAccountAction');
 
+// Admin
+$app->getSecured('/admin/updatephpext', 'PickleWeb\Controller\AdminController:updateBundleExtensions');
+$app->postSecured('/admin/updatephpext', 'PickleWeb\Controller\AdminController:saveBundleExtensions');
+
 // Hooks
 $app->post('/github/hooks/:vendor/:repository', 'PickleWeb\Controller\GithubController:hookAction');
 

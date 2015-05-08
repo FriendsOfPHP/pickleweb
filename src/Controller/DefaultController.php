@@ -15,7 +15,7 @@ class DefaultController extends ControllerAbstract
     public function indexAction()
     {
         $extensionRepository = $this->app->container->get('extension.repository');
-        $extensions = (array)$extensionRepository->getAll();
+        $extensions = (array) $extensionRepository->getAll();
 
         $list = [];
         foreach ($extensions as $name => $extension) {

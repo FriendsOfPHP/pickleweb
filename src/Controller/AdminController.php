@@ -14,10 +14,8 @@ class AdminController extends ControllerAbstract
         'ext_skel',
         'ext_skel_win32.php',
     ];
-    /**
-     * GET /.
-     */
-    public function updateBundleExtensions()
+
+    protected function fetchExtensionsFromRepository()
     {
         $token = $_SESSION['github.token'];
         if (!$token) {
@@ -47,12 +45,52 @@ class AdminController extends ControllerAbstract
         $this->branches = $branchesToFetch;
         $extensions = $this->fetchExtensionPerBranch();
 
+        return $extensions;
+    }
+
+    /**
+     * GET /.
+     */
+    public function updateBundleExtensions()
+    {
+        $extensions = $this->fetchExtensionsFromRepository();
         $this->app->render('bundleExtensionEdit.html',
             [
             'extensions' => $extensions,
             ]);
 
         $this->generateBundledExtJson($extensions);
+    }
+
+    /**
+     * POST /.
+     */
+    public function saveBundleExtensions()
+    {
+        $extensionsRepository = $this->fetchExtensionsFromRepository();
+
+        $extensionsPostMapping = $this->app->request()->post('externalName');
+        if (!$extensionsPostMapping) {
+            $this->app->flash('error', 'Invalid request arguements.');
+            $this->app->redirect('/');
+            exit();
+        }
+
+        foreach ($extensionsPostMapping as $branch => $extensions) {
+            foreach ($extensions as $extensionName => $externalName) {
+                if (!isset($extensionsRepository[$branch][$extensionName])) {
+                    $this->app->flash('error', 'Invalid request arguments.');
+                    $this->app->redirect('/');
+                    exit();
+                }
+                $extensionsRepository[$branch][$extensionName] = $externalName;
+            }
+        }
+
+        $this->generateBundledExtJson($extensionsRepository);
+        $this->app->flash('warning', 'bundled extension mapping against external repository saved.');
+        $this->app->redirect('/profile');
+        exit();
     }
 
     protected function fetchExtensionPerBranch()
@@ -82,9 +120,10 @@ class AdminController extends ControllerAbstract
     protected function generateBundledExtJson($extensions)
     {
         $jsonPathBase = $this->app->config('json_path').'/';
-        foreach ($extensions as $branch => $extensions) {
+        foreach ($extensions as $branch => $extensionsBundled) {
             $jsonPath = $jsonPathBase.$branch.'.json';
-            file_put_contents($jsonPath, json_encode($extensions));
+            $json = json_encode($extensionsBundled);
+            file_put_contents($jsonPath, $json);
         }
     }
 }
