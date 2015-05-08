@@ -102,24 +102,33 @@ class Github
         $this->repositoryName = $match[4];
     }
 
-    public function getOwnerId()
+    protected function getMeta()
     {
         if (!$this->repositoryMeta) {
             $client = new \Github\Client();
             $meta = $client->api('repo')->show($this->vendorName, $this->repositoryName);
             $this->repositoryMeta = $meta;
         }
+    }
+
+    public function getOwnerId()
+    {
+        $this->getMeta();
 
         return $this->repositoryMeta['owner']['id'];
     }
 
     public function getStars()
     {
+        $this->getMeta();
+
         return $this->repositoryMeta['stargazers_count'];
     }
 
     public function getWatchers()
     {
+        $this->getMeta();
+
         return $this->repositoryMeta['watchers_count'];
     }
 
