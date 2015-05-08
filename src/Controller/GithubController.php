@@ -116,8 +116,8 @@ class GithubController extends ControllerAbstract
             200
             );
         }
-
-        $normalizedVersion = VersionParser::Normalize($tag);
+        $versionParser = new VersionParser();
+        $normalizedVersion = $versionParser->normalize($tag);
         if (!$normalizedVersion) {
             $this->app->jsonResponse(
             [

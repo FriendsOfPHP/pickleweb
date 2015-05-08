@@ -167,7 +167,8 @@ class Github
         $normalizedTags = [];
         foreach ($tags as $version => $id) {
             try {
-                $normalizedVersion = VersionParser::Normalize($version);
+                $versionParser = new VersionParser();
+                $normalizedVersion = $versionParser->normalize($tag);
                 $normalizedTags[] = [
                     'version' => $normalizedVersion,
                     'tag' => $version,
