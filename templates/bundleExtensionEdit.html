@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+
+{% set title = 'Bundle Extensions' %}
+
+{% block content %}
+
+<form id="submit-extension-form" action="/admin/updatephpext" method="post">
+<input class="btn btn-primary" type="submit" value="Save">
+{% for branch,exts in extensions %}
+
+<h1>{{ branch }}</h1>
+    <div>
+{% for extensionName,ExternalName in exts %}
+        <label for="externalName">{{ extensionName}}</label>
+        <input type="text" name="externalName[{{ branch }}][{{ extensionName }}]"  size="80" value="{{ externalName }}"/><br />
+{% endfor %}
+    </div>
+{% endfor %}
+<input class="btn btn-primary" type="submit" value="Save">
+</form>
+{% endblock %}
