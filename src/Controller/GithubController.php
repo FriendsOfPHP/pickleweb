@@ -131,6 +131,7 @@ class GithubController extends ControllerAbstract
         $ownerId = $payload->repository->owner->id;
         $userRepository = $this->app->container->get('user.repository');
         $this->user = $userRepository->findByProviderId('github', $ownerId);
+
         if (!$this->user) {
             $this->app->jsonResponse(
             [
@@ -191,9 +192,12 @@ class GithubController extends ControllerAbstract
         $vendorName = $extension->getVendor();
         $packageName = $extension->getPackageName();
 
+        $stargazersCount = $payload->repository->stargazers_count;
+        $watchersCount = $payload->repository->watchers_count;
+
         /* only to set the meta, may be cleaner to do it in there */
-        $extension->getStars();
-        $extension->getWatchers();
+        $extension->setStars($stargazersCount);
+        $extension->setWatchers($watchersCount);
 
         $path = $this->app->config('json_path').'/'.$vendorName.'/'.$packageName.'.json';
         $json = $extension->serialize();

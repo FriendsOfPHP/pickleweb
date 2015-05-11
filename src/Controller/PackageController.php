@@ -238,7 +238,7 @@ class PackageController extends ControllerAbstract
             $extension->setStars($driver->getStars());
             $extension->setWatchers($driver->getWatchers());
             $vendorName = $extension->getVendor();
-            $repository = $extension->getRepositoryName();
+            $repository = $extension->getPackageName();
 
             $extensionMeta = [
                 'watchers' => $extension->getStars(),
