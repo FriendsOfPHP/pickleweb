@@ -1,6 +1,6 @@
 {% extends "index.html" %}
 
-{% set title = 'Package: ' ~ extension.name %}
+{% set title = 'Package: ' ~ latest.getName() %}
 
 {% block content %}
     {% include "partials/search.html" %}
@@ -11,7 +11,7 @@
         </p>
     {% endif %}
     <h1>
-        Register extension: {{ extension.getName() }}
+        Register extension: {{ latest.getName() }}
     </h1>
 
 <p><pre>{{ log }}</pre></p>
