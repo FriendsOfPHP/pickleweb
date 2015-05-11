@@ -215,7 +215,7 @@ class Github
         }
 		if ($composerInfo['name'] !) $composerInfoMaster['name']) {
 			$this->log->write($identifier." composer.json name does not match master's one, skipping");
-			return NULL;
+			return false;
 		}
         $composerInfo['source'] = $this->driver->getSource($identifier);
         $composerInfo['dist'] = $this->driver->getDist($identifier);
