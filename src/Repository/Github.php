@@ -96,10 +96,6 @@ class Github
         $client = new \Github\Client();
         $client->authenticate($token, null, \GitHub\Client::AUTH_URL_TOKEN);
         $this->client = $client;
-
-        preg_match('#^(?:(?:https?|git)://([^/]+)/|git@([^:]+):)([^/]+)/(.+?)(?:\.git|/)?$#', $url, $match);
-        $this->vendorName = $match[3];
-        $this->repositoryName = $match[4];
     }
 
     public function getMeta()
@@ -202,8 +198,13 @@ class Github
      */
     public function getComposerInformation($identifier = null)
     {
+		$composerInfoMaster = $this->driver->getComposerInformation($this->driver->getRootIdentifier());
+		if (!$composerInfoMaster) {
+			throw new \Exception('master must have a valid composer.json');
+		}
         $composerInfo = $this->driver->getComposerInformation($identifier ? $identifier : $this->driver->getRootIdentifier());
         if (!$composerInfo) {
+
             $this->log->write('github driver: no composer.json found for '.($identifier ? $identifier : 'master'));
             $composerInfo = $this->convertPackageXml($identifier);
             if (!$composerInfo) {
@@ -212,7 +213,10 @@ class Github
                 return false;
             }
         }
-
+		if ($composerInfo['name'] !) $composerInfoMaster['name']) {
+			$this->log->write($identifier." composer.json name does not match master's one, skipping");
+			return NULL;
+		}
         $composerInfo['source'] = $this->driver->getSource($identifier);
         $composerInfo['dist'] = $this->driver->getDist($identifier);
 
@@ -268,18 +272,6 @@ class Github
         unlink($packagexmlPath);
 
         return $info;
-    }
-
-    protected function getRepositoryNameAndVendorName($url)
-    {
-        preg_match('#^(?:(?:https?|git)://([^/]+)/|git@([^:]+):)([^/]+)/(.+?)(?:\.git|/)?$#', $url, $match);
-        $owner = $match[3];
-        $repository = $match[4];
-
-        return [
-            'vendor' => $owner,
-            '$repository' => $repository,
-            ];
     }
 }
 

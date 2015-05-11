@@ -184,7 +184,6 @@ class PackageController extends ControllerAbstract
 
         $packageName = $extension->getName();
         $vendorName = $extension->getVendor();
-        $extensionName = $extension->getRepositoryName();
 
         $pathTransactionLog = $transaction.'log';
         if (file_exists($pathTransactionLog)) {
@@ -239,7 +238,7 @@ class PackageController extends ControllerAbstract
             $extension->setWatchers($driver->getWatchers());
             $vendorName = $extension->getVendor();
             $repository = $extension->getRepositoryName();
-            $extensionName = $extension->getName();
+
             $extensionMeta = [
                 'watchers' => $extension->getStars(),
                 'stars' => $extension->getWatchers(),
