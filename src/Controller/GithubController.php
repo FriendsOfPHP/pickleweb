@@ -88,6 +88,17 @@ class GithubController extends ControllerAbstract
             return;
         }
         $hubEvent = $this->app->request()->headers()->get('X-GitHub-Event');
+        if ($hubEvent == 'ping') {
+            $this->app->jsonResponse(
+                        [
+                            'status' => 'ping',
+                            'message' => 'hook setup',
+                        ],
+                        200
+                        );
+
+            return;
+        }
         if (!($hubEvent == 'create' || $hubEvent == 'delete')) {
             $this->app->jsonResponse(
             [
