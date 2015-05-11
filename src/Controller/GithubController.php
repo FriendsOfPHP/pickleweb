@@ -126,7 +126,7 @@ class GithubController extends ControllerAbstract
         $extensionName = $payload->repository->full_name;
         $tag = $payload->ref;
         $repository = $payload->repository->git_url;
-        $time = $payload->pushed_at;
+        $time = $payload->repository->pushed_at;
 
         $ownerId = $payload->repository->owner->id;
         $userRepository = $this->app->container->get('user.repository');
