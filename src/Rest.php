@@ -85,7 +85,7 @@ class Rest
         }
 
         $jsonPackage = $this->extension->serialize();
-        $repositoryName = $this->extension->getRepositoryName();
+        $repositoryName = $this->extension->getPackageName();
 
         $this->sha = hash('sha256', $jsonPackage);
 

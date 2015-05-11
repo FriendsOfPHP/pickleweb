@@ -20,7 +20,7 @@ class Extension
     /**
      * @var string
      */
-    protected $repositoryName;
+    protected $packageName;
 
     /**
      * @var array
@@ -64,22 +64,21 @@ class Extension
             throw new \RuntimeException($informationRoot['name'].' is not an extension package');
         }
 
-        $this->name = $packageName = $informationRoot['name'];
+        $this->name = $name = $informationRoot['name'];
 
-        list($vendorName, $repository) = explode('/', $packageName);
-        $this->vendorName = $vendorName;
-        $this->repositoryName = $repository;
+        list($this->vendorName, $this->packageName) = explode('/', $name);
+
         $this->starCount = $driver->getStars();
         $this->watcherCount = $driver->getWatchers();
 
-        if (empty($vendorName) || empty($repository)) {
+        if (empty($this->vendorName) || empty($this->packageName)) {
             throw new \RuntimeException($info['name'].' is not a valid name. vendor/repository required as name');
         }
 
         $this->data = [];
 
         $tmpPackage = new Package();
-        $tmpPackage->setName($packageName);
+        $tmpPackage->setName($name);
         $tmpPackage->setTag('dev-master');
         $tmpPackage->setFromArray($informationRoot);
         $this->data['dev-master'] = $tmpPackage;
@@ -103,7 +102,7 @@ class Extension
             $information['source'] = $tag['source'];
 
             $tmpPackage = new Package();
-            $tmpPackage->setName($packageName);
+            $tmpPackage->setName($name);
             $tmpPackage->setTag($tag['id']);
             $tmpPackage->setFromArray($information);
             $this->data[$tag['tag']] = $tmpPackage;
@@ -158,9 +157,9 @@ class Extension
     /**
      * @return string
      */
-    public function getRepositoryName()
+    public function getPackageName()
     {
-        return $this->repositoryName;
+        return $this->packageName;
     }
 
     /**
@@ -210,9 +209,7 @@ class Extension
             $this->data[$version] = $tmpPackage;
         }
         $this->name = $packageName;
-        list($vendorName, $repositoryName) = explode('/', $packageName);
-        $this->repositoryName = $repositoryName;
-        $this->vendorName = $vendorName;
+        list($this->vendorName, $this->packageName) = explode('/', $packageName);
     }
 
     /**
