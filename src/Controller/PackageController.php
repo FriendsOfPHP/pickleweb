@@ -224,7 +224,7 @@ class PackageController extends ControllerAbstract
             }
 
             $extension = new \PickleWeb\Entity\Extension();
-            print_r($extension);
+
             $extension->setFromRepository($driver, $log);
 
             $redis = $this->app->container->get('redis.client');
