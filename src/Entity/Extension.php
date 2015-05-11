@@ -61,7 +61,7 @@ class Extension
         }
 
         if ($informationRoot['type'] != 'extension') {
-            throw new \RuntimeException($info['name'].' is not an extension package');
+            throw new \RuntimeException($informationRoot['name'].' is not an extension package');
         }
 
         $this->name = $packageName = $informationRoot['name'];
