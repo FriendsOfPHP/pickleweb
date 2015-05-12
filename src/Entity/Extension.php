@@ -42,6 +42,11 @@ class Extension
      */
     protected $watchersCount;
 
+    protected function convertTime($time)
+    {
+        return date('Y-m-d H:i:s', strtotime($time));
+    }
+
     /**
      * @param Repository\Vcs\GitHubDriver $driver
      * @param BufferIO                    $io
@@ -54,7 +59,7 @@ class Extension
             throw new \RuntimeException(get_class($driver).' not supported');
         }
         $informationRoot = $driver->getComposerInformation();
-
+        $informationRoot['time'] = $this->convertTime($informationRoot['time']);
         if (!$informationRoot) {
             $io->write('package: No composer.json or package.xml found for master');
             throw new \RuntimeException('Master or default branch must have composer.json');
@@ -100,7 +105,7 @@ class Extension
 
             $information['version_normalized'] = $tag['version'];
             $information['source'] = $tag['source'];
-
+            $information['time'] = $this->convertTime($information['time']);
             $tmpPackage = new Package();
             $tmpPackage->setName($name);
             $tmpPackage->setTag($tag['id']);
