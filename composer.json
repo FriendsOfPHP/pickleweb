@@ -28,7 +28,7 @@
         "knplabs/github-api"         : "~1.2",
         "predis/predis"              : "1.0.*",
         "kriswallsmith/buzz"         : "0.*",
-		"solarium/solarium"        : "*"
+        "solarium/solarium"          : "*"
     },
     "require-dev" : {
         "atoum/atoum"        : "*",
