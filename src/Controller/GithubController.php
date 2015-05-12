@@ -199,7 +199,6 @@ class GithubController extends ControllerAbstract
         $extension->setStars($stargazersCount);
         $extension->setWatchers($watchersCount);
 
-        $path = $this->app->config('json_path').'/'.$vendorName.'/'.$packageName.'.json';
         $json = $extension->serialize();
         if (!$json) {
             $this->app->jsonResponse([
