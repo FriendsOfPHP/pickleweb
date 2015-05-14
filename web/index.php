@@ -22,12 +22,12 @@ function check_or_create_json_dir(\PickleWeb\Application $app)
         mkdir($app->config('json_path').'extensions', 0777, true);
     }
 }
-
+$cacheDir = __DIR__.'/../cache-dir/';
 $app = new \PickleWeb\Application(
     [
-        'view'      => new \PickleWeb\View\Twig(),
+        'view'      => new \PickleWeb\View\Twig(['cache' => $cacheDir . 'twig']),
         'json_path' => __DIR__.'/json/',
-        'cache_dir' => __DIR__.'/../cache-dir/',
+        'cache_dir' => $cacheDr,
         'web_root_dir' => __DIR__,
     ]
 );
