@@ -22,6 +22,7 @@ function check_or_create_json_dir(\PickleWeb\Application $app)
         mkdir($app->config('json_path').'extensions', 0777, true);
     }
 }
+
 $cacheDir = __DIR__.'/../cache-dir/';
 $app = new \PickleWeb\Application(
     [
@@ -160,16 +161,6 @@ $app->container->singleton(
         );
     }
 );
-
-/*
- * Declare controllers if you need to inject dependancies in it
- *
- * example :
- *
- * $app->container->singleton('PickleWeb\Controller\AuthController', function ($container) {
- *     return new PickleWeb\Controller\AuthController($container['authorization.oauth2.github']);
- * });
- */
 
 /*
  * Declare routes
