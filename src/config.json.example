@@ -18,5 +18,10 @@
         "host": "redis",
         "port": "6379",
         "db"  : "1"
+    },
+    "elasticsearch": {
+        "host": "elasticsearch",
+        "port": "127.0.0.1",
+        "path": ""
     }
 }

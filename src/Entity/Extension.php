@@ -132,9 +132,14 @@ class Extension
         return $this->vendorName;
     }
 
-    public function getStars()
+    /**
+     * @return array
+     */
+    public function getKeywords()
     {
-        return $this->starsCount;
+        reset($this->data);
+
+        return current($this->data)->getKeywords();
     }
 
     public function getDescription()
@@ -142,6 +147,14 @@ class Extension
         reset($this->data);
 
         return current($this->data)->getDescription();
+    }
+
+    /**
+     * @return int
+     */
+    public function getStars()
+    {
+        return $this->starsCount;
     }
 
     public function setStars($count)
@@ -165,6 +178,14 @@ class Extension
     public function getPackageName()
     {
         return $this->packageName;
+    }
+
+    /**
+     * @return array
+     */
+    public function getVersions()
+    {
+        return array_keys($this->data);
     }
 
     /**

@@ -10,6 +10,7 @@ use PickleWeb\Auth\GoogleProvider;
 use PickleWeb\Entity\UserRepository;
 use PickleWeb\Entity\ExtensionRepository;
 use Slim\Helper\Set;
+use \Elastica\Client;
 
 require __DIR__.'/../vendor/autoload.php';
 
@@ -84,6 +85,19 @@ $app->container->singleton(
     function (Set $container) {
         return new ExtensionRepository($container->get('redis.client'));
     }
+);
+
+$app->container->singleton(
+	'elastica.client',
+	function (Set $container) {
+		$configApp = $container->get('app.config');
+		$client = new \Elastica\Client([
+					'host' => $configApp['elasticsearch']['host'],
+					'port'  => $configApp['elasticsearch']['port']
+					]);
+
+		return $client;
+	}
 );
 
 // Github Authorization provider
@@ -192,6 +206,12 @@ $app->postSecured('/admin/updatephpext', 'PickleWeb\Controller\AdminController:s
 
 // Hooks
 $app->post('/github/hooks/:vendor/:repository', 'PickleWeb\Controller\GithubController:hookAction');
+
+// Search
+$app->get('/search/create', 'PickleWeb\Controller\SearchController:createIndex');
+
+$app->get('/search/:query', 'PickleWeb\Controller\SearchController:search');
+
 
 /*
  * Run application

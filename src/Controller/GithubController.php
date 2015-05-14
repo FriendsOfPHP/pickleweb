@@ -6,6 +6,7 @@ use PickleWeb\Entity\Extension as Extension;
 use Composer\IO\BufferIO as BufferIO;
 use Composer\Package\Version\VersionParser as VersionParser;
 use PickleWeb\Rest as Rest;
+use PickleWeb\Indexer;
 
 /**
  * Class GithubController.
@@ -215,6 +216,10 @@ class GithubController extends ControllerAbstract
 
         $rest = new Rest($extension, $this->app);
         $rest->update();
+
+        $es = $this->app->container->get('elastica.client');
+        $indexer = new Indexer($es);
+        $indexer->index($extension);
 
         $this->app->jsonResponse([
             'status' => 'success',

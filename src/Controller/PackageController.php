@@ -7,6 +7,7 @@ use PickleWeb\Entity\Extension as Extension;
 use PickleWeb\Entity\Package as Package;
 use PickleWeb\Entity\UserRepository as UserRepository;
 use PickleWeb\Rest as Rest;
+use PickleWeb\Indexer as Indexer;
 
 /**
  * Class PackageController.
@@ -201,6 +202,10 @@ class PackageController extends ControllerAbstract
 
         $rest = new Rest($extension, $this->app);
         $rest->update();
+
+        $es = $this->app->container->get('elastica.client');
+        $indexer = new Indexer($es);
+        $indexer->indexExtension($extension);
 
         $this->app->flash('warning', $packageName.' has been registred');
         $this->app->redirect('/package/'.$packageName);
