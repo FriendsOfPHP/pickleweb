@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b9d1c4e01f3bffd6cada901e4eebad62",
+    "hash": "1e63d191b1b9c8eceb401cf4ba3f13fa",
     "packages": [
         {
             "name": "akrabat/rka-slim-controller",
@@ -622,6 +622,103 @@
             "time": "2015-01-02 12:51:34"
         },
         {
+            "name": "psr/log",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/fe0936ee26643249e916849d48e3a51d5f5e278b",
+                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Psr\\Log\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "time": "2012-12-21 11:40:51"
+        },
+        {
+            "name": "ruflin/elastica",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ruflin/Elastica.git",
+                "reference": "dfe06cc383a671ececa097ce0a05e7e46a504401"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ruflin/Elastica/zipball/dfe06cc383a671ececa097ce0a05e7e46a504401",
+                "reference": "dfe06cc383a671ececa097ce0a05e7e46a504401",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "psr/log": "~1.0"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "~1.4",
+                "munkie/elasticsearch-thrift-php": "1.4.*",
+                "phpunit/phpunit": "4.1.*"
+            },
+            "suggest": {
+                "egeloen/http-adapter": "Allow using httpadapter transport",
+                "guzzlehttp/guzzle": "Allow using guzzle 4.x as the http transport (Requires php 5.4)",
+                "monolog/monolog": "Logging request",
+                "munkie/elasticsearch-thrift-php": "Allow using thrift transport"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Elastica\\": "lib/Elastica/",
+                    "Elastica\\Test\\": "test/lib/Elastica/Test/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Ruflin",
+                    "homepage": "http://ruflin.com/"
+                }
+            ],
+            "description": "Elasticsearch Client",
+            "homepage": "http://elastica.io/",
+            "keywords": [
+                "client",
+                "search"
+            ],
+            "time": "2015-05-13 08:07:20"
+        },
+        {
             "name": "seld/jsonlint",
             "version": "1.3.1",
             "source": {
@@ -712,60 +809,6 @@
                 "router"
             ],
             "time": "2015-03-08 18:41:17"
-        },
-        {
-            "name": "solarium/solarium",
-            "version": "3.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/solariumphp/solarium.git",
-                "reference": "a9d8a52ba9fd8add04b2294fad997a004c1f2fab"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/solariumphp/solarium/zipball/a9d8a52ba9fd8add04b2294fad997a004c1f2fab",
-                "reference": "a9d8a52ba9fd8add04b2294fad997a004c1f2fab",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.2",
-                "symfony/event-dispatcher": "~2.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~3.7",
-                "satooshi/php-coveralls": "~0.6",
-                "squizlabs/php_codesniffer": "~1.4",
-                "zendframework/zendframework1": "~1.12"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "3.3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Solarium\\": "library/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "NewBSD"
-            ],
-            "authors": [
-                {
-                    "name": "See GitHub contributors",
-                    "homepage": "https://github.com/basdenooijer/solarium/contributors"
-                }
-            ],
-            "description": "PHP Solr client",
-            "homepage": "http://www.solarium-project.org",
-            "keywords": [
-                "php",
-                "search",
-                "solr"
-            ],
-            "time": "2014-11-12 06:53:41"
         },
         {
             "name": "symfony/console",
@@ -1332,7 +1375,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "composer/composer": 15
+        "composer/composer": 15,
+        "ruflin/elastica": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
