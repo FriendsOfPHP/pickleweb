@@ -3,7 +3,13 @@ redis:
     command: redis-server --appendonly yes
     volumes:
         - ./data/redis:/data
-
+elasticsearch:
+    image: elasticsearch
+    ports:
+     - "9200:9200"
+     - "9300:9300"
+    volumes:
+        - ./data/es:/data
 web:
     build: .
     volumes:
@@ -12,3 +18,4 @@ web:
         - 8080:8080
     links:
         - redis
+        - elasticsearch
