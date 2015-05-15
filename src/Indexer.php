@@ -1,4 +1,4 @@
-<?php
+-<?php
 
 namespace PickleWeb;
 
@@ -55,7 +55,7 @@ class Indexer
                                 [
                                     'id' => $id,
                                     'name' => $id,
-                                    'descrription' => $extension->getDescription(),
+                                    'description' => $extension->getDescription(),
                                     'tags' => $extension->getVersions(),
                                     'keywords' => $extension->getKeywords(),
                                 ]
