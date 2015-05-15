@@ -199,7 +199,7 @@ $app->postSecured('/admin/updatephpext', 'PickleWeb\Controller\AdminController:s
 $app->post('/github/hooks/:vendor/:repository', 'PickleWeb\Controller\GithubController:hookAction');
 
 // Search
-$app->get('/search/:query', 'PickleWeb\Controller\SearchController:search');
+$app->get('/search/', 'PickleWeb\Controller\SearchController:search');
 
 /*
  * Run application

@@ -21,11 +21,17 @@ class SearchController extends ControllerAbstract
      *
      * @return bool
      */
-    public function search($query = '')
+    public function search()
     {
+        $q = $this->app->request()->get('q');
+        if (!$q) {
+            echo json_encode(null);
+            exit();
+        }
+
         $es = $this->app->container->get('elastica.client');
         $search = new Search($es);
-        $results = $search->search($query);
+        $results = $search->search($q);
 
         $hits = [];
         foreach ($results->getResults() as $result) {
