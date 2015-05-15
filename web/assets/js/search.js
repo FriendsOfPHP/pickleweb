@@ -3,7 +3,7 @@
 (function ($) {
     "use strict";
 
-    var list = $('.search-list'),
+    var list = $('#results'),
         form = $('form#search-form'),
         showResults,
         doSearch,
@@ -13,22 +13,9 @@
         firstQuery = true;
 
     showResults = function (data) {
-		var items = [];
-		$.each( data, function( key, val ) {
-			items.push( "<li id='" + val._id + "'>" 
-			+ '<h2>' +val._id + '<h2>'
-			+ '<p><span>' + val._source.description + '</span> '
-			+ '<span>stars: ' + val._source.stars + '</span></p>'
-			+ "</li>" );
-		});
-
-		$('#results').html($( "<ul/>", {
-				"class": "my-new-list",
-				html: items.join("")
-				}).html());
+		$('#results').html(data);
 
         searching = false;
-
         if (searchQueued) {
             doSearch();
             searchQueued = false;
@@ -66,7 +53,6 @@ if (0)
         }
 
         $.ajax({
-			dataType: "json",
             url: form.attr('action'),
             data: 'q='+currentQuery,
             success: showResults

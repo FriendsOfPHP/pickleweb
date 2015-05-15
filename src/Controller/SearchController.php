@@ -42,6 +42,39 @@ class SearchController extends ControllerAbstract
         return true;
     }
 
+    /**
+     * @param string $query
+     *
+     * @return bool
+     */
+    public function searchHtml()
+    {
+        $q = $this->app->request()->get('q');
+        if (!$q) {
+            echo json_encode(null);
+            exit();
+        }
+
+        $es = $this->app->container->get('elastica.client');
+        $search = new Search($es);
+        $results = $search->search($q);
+
+        $hits = [];
+        foreach ($results->getResults() as $result) {
+            $result = $result->getHit();
+            $hits[] = $result['_source'];
+        }
+
+        $this->app->render(
+            'partials/searchResutls.html',
+            [
+                'packages' => $hits,
+            ]
+        );
+
+        return true;
+    }
+
     public function createIndex()
     {
         $es = $this->app->container->get('elastica.client');

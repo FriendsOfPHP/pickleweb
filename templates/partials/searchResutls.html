@@ -1,0 +1,11 @@
+<ul class="list-group">
+    {% for package in packages %}
+        <li class="list-group-item">
+			{{ package[name] }}
+            <span class="badge"><a href="/package/{{ package.name }}"><i class="fa fa-arrow-right"></i></a></span>
+            <h3><a href="/package/{{ package.name }}">{{ package.name }}</a></h3>
+            <p>{{ package.description }}</p>
+			<span class="label label-primary">&#9733; {{ package.stars }}</span>
+        </li>
+    {% endfor %}
+</ul>

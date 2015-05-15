@@ -26,7 +26,8 @@ function check_or_create_json_dir(\PickleWeb\Application $app)
 $cacheDir = __DIR__.'/../cache-dir/';
 $app = new \PickleWeb\Application(
     [
-        'view'      => new \PickleWeb\View\Twig(['cache' => $cacheDir . 'twig']),
+		'view'      => new \PickleWeb\View\Twig(),
+        //'view'      => new \PickleWeb\View\Twig(['cache' => $cacheDir . 'twig']),
         'json_path' => __DIR__.'/json/',
         'cache_dir' => $cacheDr,
         'web_root_dir' => __DIR__,
@@ -199,7 +200,8 @@ $app->postSecured('/admin/updatephpext', 'PickleWeb\Controller\AdminController:s
 $app->post('/github/hooks/:vendor/:repository', 'PickleWeb\Controller\GithubController:hookAction');
 
 // Search
-$app->get('/search/', 'PickleWeb\Controller\SearchController:search');
+$app->get('/search', 'PickleWeb\Controller\SearchController:search');
+$app->get('/searchhtml/', 'PickleWeb\Controller\SearchController:searchHtml');
 
 /*
  * Run application
