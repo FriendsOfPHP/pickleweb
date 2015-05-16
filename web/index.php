@@ -29,7 +29,7 @@ $app = new \PickleWeb\Application(
 		'view'      => new \PickleWeb\View\Twig(),
         //'view'      => new \PickleWeb\View\Twig(['cache' => $cacheDir . 'twig']),
         'json_path' => __DIR__.'/json/',
-        'cache_dir' => $cacheDr,
+        'cache_dir' => $cacheDir,
         'web_root_dir' => __DIR__,
     ]
 );
