@@ -10,6 +10,31 @@ use PickleWeb\Entity\Extension as Extension;
 class DefaultController extends ControllerAbstract
 {
     /**
+     * 
+     * @return bool
+     */
+    protected function getTrendExtensions()
+    {
+        $es = $this->app->container->get('elastica.client');
+
+		$elasticaQueryString  = new \Elastica\Query\QueryString();
+		$elasticaQueryString->setQuery('*');
+
+		$elasticaQuery = new \Elastica\Query();
+		$elasticaQuery->setQuery($elasticaQueryString);
+		$elasticaQuery->setSort(["stars" => 'desc']);
+
+        $elasticaIndex = $es->getIndex('packages');
+		$results = $elasticaIndex->search($elasticaQuery);
+
+        $hits = [];
+        foreach ($results->getResults() as $result) {
+            $hits[] = $result->getHit();
+        }
+        return $hits;
+    }
+
+    /**
      * GET /.
      */
     public function indexAction()
