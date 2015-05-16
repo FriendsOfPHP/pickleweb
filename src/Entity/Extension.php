@@ -99,6 +99,7 @@ class Extension
 
             if (!$information) {
                 $io->write('package: no composer.json found for tag '.$tag['version'].'ref: '.$tag['id']);
+                continue;
             } else {
                 $io->write('...found');
             }
