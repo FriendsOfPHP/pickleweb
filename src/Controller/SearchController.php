@@ -17,8 +17,7 @@ class SearchController extends ControllerAbstract
     protected $client;
 
     /**
-     * @param string $query
-     *
+     * 
      * @return bool
      */
     public function search()
@@ -43,7 +42,6 @@ class SearchController extends ControllerAbstract
     }
 
     /**
-     * @param string $query
      *
      * @return bool
      */
@@ -75,6 +73,10 @@ class SearchController extends ControllerAbstract
         return true;
     }
 
+    /**
+     *
+     * @return bool
+     */
     public function createIndex()
     {
         $es = $this->app->container->get('elastica.client');
@@ -84,6 +86,11 @@ class SearchController extends ControllerAbstract
         return true;
     }
 
+    /**
+     * @var Extension
+     * 
+     * @return bool
+     */
     public function index(Extension $extension)
     {
         $es = $this->app->container->get('elastica.client');
