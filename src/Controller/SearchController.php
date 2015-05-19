@@ -22,7 +22,7 @@ class SearchController extends ControllerAbstract
      */
     public function search()
     {
-        $q = $this->app->request()->get('q');
+        $q = $this->getQuery();
         if (!$q) {
             echo json_encode(null);
             exit();
@@ -47,7 +47,7 @@ class SearchController extends ControllerAbstract
      */
     public function searchHtml()
     {
-        $q = $this->app->request()->get('q');
+        $q = $this->getQuery();
         if (!$q) {
             echo json_encode(null);
             exit();
@@ -98,6 +98,23 @@ class SearchController extends ControllerAbstract
         $indexer->index($extension);
 
         return true;
+    }
+
+    protected function getQuery()
+    {
+        $q = $this->app->request()->get('q');
+        if (!$q) {
+                return NULL;
+        }
+
+        /* Pattern order is significant. */
+        $q = str_replace(
+                array("\\",   "/",),
+                array("\\\\", "\/",),
+                $q
+	);
+
+	return $q;
     }
 }
 
