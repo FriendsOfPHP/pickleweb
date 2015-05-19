@@ -55,7 +55,11 @@ if (0)
         $.ajax({
             url: form.attr('action'),
             data: 'q='+currentQuery,
-            success: showResults
+            success: showResults,
+            error: function(xhr, status, error) {
+		/* TODO errors should be delivered as JSON so they can be parsed and presented to the user. */
+		searching = false;
+	    }
         });
 		firstQuery = false;
         searching = true;
