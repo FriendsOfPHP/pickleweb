@@ -85,7 +85,7 @@ if (0)
             return;
         }
 
-        if ($('#search_query_query').val().match(/^\s*$/) !== null) {
+        if ($('#search_query').val().match(/^\s*$/) !== null) {
             document.activeElement.blur();
             return;
         }
