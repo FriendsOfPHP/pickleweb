@@ -5,34 +5,37 @@ namespace PickleWeb\Entity;
 use PickleWeb\Auth\ProviderMetadata;
 
 /**
- * Class User.
+ * Class User
+ *
+ * @package PickleWeb\Entity
  */
 class User implements \Serializable
 {
-    /**
-     * @var string
-     */
-    protected $email;
 
     /**
      * @var string
      */
-    protected $nickname;
+    protected $email = '';
 
     /**
      * @var string
      */
-    protected $name;
+    protected $nickname = '';
 
     /**
      * @var string
      */
-    protected $picture;
+    protected $name = '';
 
     /**
      * @var string
      */
-    protected $location;
+    protected $picture = '';
+
+    /**
+     * @var string
+     */
+    protected $location = '';
 
     /**
      * @var array
@@ -256,13 +259,12 @@ class User implements \Serializable
      */
     public function removeExtension($extensionName)
     {
-        $new_ext = [];
-        foreach ($this->extensions as $ext) {
-            if ($ext != $extensionName) {
-                $new_ext[] = $extensionName;
+        $this->extensions = array_filter(
+            $this->extensions,
+            function ($ext) use ($extensionName) {
+                return $ext != $extensionName;
             }
-        }
-        $this->extensions = $new_ext;
+        );
 
         return $this;
     }
