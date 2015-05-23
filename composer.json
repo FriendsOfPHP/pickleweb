@@ -28,10 +28,11 @@
         "knplabs/github-api"         : "~1.2",
         "predis/predis"              : "1.0.*",
         "kriswallsmith/buzz"         : "0.*",
-        "ruflin/elastica": "dev-master"
+        "ruflin/elastica"            : "dev-master"
     },
     "require-dev" : {
         "atoum/atoum"        : "*",
+        "atoum/stubs"        : "*",
         "fabpot/php-cs-fixer": "~1.7"
     },
     "autoload"    : {
